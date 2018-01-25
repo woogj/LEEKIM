@@ -34,12 +34,39 @@
         android:padding="20dp"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/edtID"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:layout_weight="0.15"
+                android:background="@drawable/round_button_base_blue"
+                android:textSize="20dp"
+                android:hint="아이디"
+                />
+            <Button
+                android:id="@+id/checkID"
+                android:text="중복확인"
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
         <EditText
             android:id="@+id/edtName"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:paddingLeft="10dp"
             android:layout_weight="0.15"
+            android:layout_marginTop="10dp"
             android:background="@drawable/round_button_base_blue"
             android:textSize="20dp"
             android:hint="이름"
@@ -50,7 +77,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:paddingLeft="10dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:layout_weight="0.15"
             android:background="@drawable/round_button_base_blue"
             android:hint="이메일"
@@ -61,7 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:paddingLeft="10dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:layout_weight="0.15"
             android:background="@drawable/round_button_base_blue"
             android:hint="비밀번호" />
@@ -71,7 +98,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:paddingLeft="10dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:layout_weight="0.15"
             android:background="@drawable/round_button_base_blue"
             android:hint="비밀번호 확인" />
