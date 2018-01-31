@@ -12,7 +12,7 @@ import android.view.View;
 
 public class Drawing extends View {
     int startX = -1, startY = -1, stopX = -1, stopY = -1;
-
+    Rect setXY = new Rect(0, 0, 0, 0);
     public Drawing(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -40,7 +40,6 @@ public class Drawing extends View {
             case 1:
             case 2:
             case 3:
-                Rect setXY = null;
                 if (startX > stopX && startY > stopY) {
                     setXY = new Rect(stopX, stopY, startX, startY);
                 }else if (startX > stopX) {
@@ -56,6 +55,7 @@ public class Drawing extends View {
                 Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 1024, nh, true);
                 canvas.drawBitmap(scaled, null, setXY, null);
                 scaled.recycle();
+                break;
             case 4:
         }
     }

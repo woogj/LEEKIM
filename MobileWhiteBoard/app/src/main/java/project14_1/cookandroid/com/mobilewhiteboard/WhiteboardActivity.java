@@ -20,7 +20,6 @@ public class WhiteboardActivity extends AppCompatActivity {
     static int type = 0;
     static Uri rsrc = null;
     static Bitmap bitmap = null;
-    private static int PICK_IMAGE_REQUEST = 1;
 
     protected void onCreate(Bundle savedIntanteState){
         super.onCreate(savedIntanteState);
@@ -33,7 +32,7 @@ public class WhiteboardActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/*");
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+                startActivityForResult(Intent.createChooser(intent, "사진 선택"), 1);
                 type = 3;
             }
         });
