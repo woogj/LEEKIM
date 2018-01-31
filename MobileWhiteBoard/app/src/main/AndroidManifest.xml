@@ -20,8 +20,10 @@
         <activity android:name=".MainViewActivity" > </activity>
         <activity android:name=".MemoActivity" > </activity>
         <activity android:name=".TeamChoiceActivity" > </activity>
-        <activity android:name=".WhiteboardActivity" > </activity>
+        <activity android:name=".WhiteboardActivity"
+            android:screenOrientation="sensorLandscape"> </activity>
         <activity android:name=".TeamTaskActivity" > </activity>
+
     </application>
 
 </manifest>
