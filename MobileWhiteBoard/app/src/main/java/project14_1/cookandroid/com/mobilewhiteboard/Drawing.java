@@ -40,7 +40,16 @@ public class Drawing extends View {
             case 1:
             case 2:
             case 3:
-                Rect setXY = new Rect(startX, startY, stopX, stopY);
+                Rect setXY = null;
+                if (startX > stopX && startY > stopY) {
+                    setXY = new Rect(stopX, stopY, startX, startY);
+                }else if (startX > stopX) {
+                    setXY = new Rect(stopX, startY, startX, stopY);
+                }else if (startY > stopY) {
+                    setXY = new Rect(startX, stopY, stopX, startY);
+                }else {
+                    setXY = new Rect(startX, startY, stopX, stopY);
+                }
 
                 Bitmap bitmap = WhiteboardActivity.bitmap;
                 int nh = (int) (bitmap.getHeight() * (1024.0 / bitmap.getWidth()));
