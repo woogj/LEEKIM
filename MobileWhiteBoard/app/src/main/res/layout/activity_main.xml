@@ -36,7 +36,9 @@
         android:background="@drawable/round_button_base_blue"
         android:text=""
         android:hint="ID"
-        android:paddingLeft="10dp"/>
+        android:paddingLeft="10dp"
+        android:singleLine="true"
+        android:lines="1"/>
 
     <EditText
         android:id="@+id/edt_login_PW"
@@ -47,7 +49,9 @@
         android:background="@drawable/round_button_base_blue"
         android:hint="Password"
         android:text=""
-        android:paddingLeft="10dp"/>
+        android:paddingLeft="10dp"
+        android:singleLine="true"
+        android:lines="1"/>
 
 
     <LinearLayout

@@ -1,15 +1,17 @@
 package project14_1.cookandroid.com.mobilewhiteboard;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
 public class Drawing extends View {
-    int startX = -1, startY = -1, endX = -1, endY = -1;
+    int startX = -1, startY = -1, stopX = -1, stopY = -1;
 
     public Drawing(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -23,8 +25,8 @@ public class Drawing extends View {
                 break;
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_UP:
-                endX = (int) event.getX();
-                endY = (int) event.getY();
+                stopX = (int) event.getX();
+                stopY = (int) event.getY();
                 this.invalidate();
                 break;
         }
@@ -33,28 +35,19 @@ public class Drawing extends View {
 
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setStrokeWidth(5);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.BLACK);
 
-        canvas.drawLine(startX, startY, endX, endY, paint);
+        switch (WhiteboardActivity.type) {
+            case 1:
+            case 2:
+            case 3:
+                Rect setXY = new Rect(startX, startY, stopX, stopY);
+
+                Bitmap bitmap = WhiteboardActivity.bitmap;
+                int nh = (int) (bitmap.getHeight() * (1024.0 / bitmap.getWidth()));
+                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 1024, nh, true);
+                canvas.drawBitmap(scaled, null, setXY, null);
+                scaled.recycle();
+            case 4:
+        }
     }
-        /*
-        super.onDraw(canvas);
-        //Canvas가 보유한 여러가지 기능 테스트
-        //텍스트 그리기
-        Paint paint = new Paint();
-        paint.setColor(Color.BLUE);
-        paint.setTextSize(80);
-        canvas.drawText("텍스트입니다.", 200, 200, paint);
-
-        //선 그리기
-        Paint paint2 = new Paint();
-        paint2.setColor(Color.BLACK);
-
-        canvas.drawLine(200, 500, 500, 600, paint2);
-    }
-    */
 }
