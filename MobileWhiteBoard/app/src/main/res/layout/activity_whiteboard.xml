@@ -1,78 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:orientation="horizontal"
-android:layout_width="match_parent"
-android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-<LinearLayout
-    android:layout_width="0dip"
-    android:layout_height="fill_parent"
-    android:layout_weight="0.17"
-    android:background="@drawable/border"
-    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.17"
+        android:background="@drawable/border"
+        android:orientation="vertical">
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        android:layout_weight="1"
-        android:background="@null"
-        android:padding="10sp"
-        android:scaleType="fitXY"
-        android:src="@drawable/returnback" />
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:padding="10sp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_return" />
 
-    <ImageButton
-        android:id="@+id/Ib_text"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        android:layout_weight="1"
-        android:background="@null"
-        android:padding="0sp"
-        android:scaleType="fitXY"
-        android:src="@drawable/text" />
+        <ImageButton
+            android:id="@+id/Ib_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:padding="0sp"
+            android:scaleType="fitXY"
+            android:src="@drawable/text" />
 
-    <ImageButton
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        android:layout_weight="1"
-        android:background="@null"
-        android:padding="0sp"
-        android:scaleType="fitXY"
-        android:src="@drawable/drawing" />
+        <ImageButton
+            android:id="@+id/btnDrawing"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:padding="5sp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_drawing"
+            android:onClick="onClick"/>
 
-    <ImageButton
-        android:id="@+id/ib_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        android:layout_weight="1"
-        android:background="@null"
-        android:padding="5sp"
-        android:scaleType="fitXY"
-        android:src="@drawable/picture" />
+        <ImageButton
+            android:id="@+id/ib_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:padding="5sp"
+            android:scaleType="fitXY"
+            android:src="@drawable/picture" />
 
-    <ImageButton
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        android:layout_weight="1"
-        android:background="@null"
-        android:padding="15sp"
-        android:scaleType="fitXY"
-        android:src="@drawable/postit" />
-</LinearLayout>
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:padding="15sp"
+            android:scaleType="fitXY"
+            android:src="@drawable/postit" />
+    </LinearLayout>
 
-<LinearLayout
-    android:layout_width="0dip"
-    android:layout_height="fill_parent"
-    android:layout_weight="0.83">
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:layout_weight="0.83">
 
-    <project14_1.cookandroid.com.mobilewhiteboard.Drawing
-        android:id="@+id/Drawing"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/DrawTool"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:orientation="horizontal"
+            android:gravity="right">
+            <ImageButton
+                android:id="@+id/btnPen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:padding="5dp"
+                android:scaleType="fitXY"
+                android:layout_gravity="right"
+                android:src="@drawable/pen"
+                tools:ignore="DuplicateIds" />
+            <ImageButton
+                android:id="@+id/btnEraser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:layout_marginRight="5px"
+                android:padding="5sp"
+                android:scaleType="fitXY"
+                android:src="@drawable/icon_eraser"
+                android:layout_gravity="right" />
+            <ImageButton
+                android:id="@+id/btnClear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:padding="5sp"
+                android:scaleType="fitXY"
+                android:src="@drawable/clean"
+                android:layout_gravity="right" />
+            <ImageButton
+                android:id="@+id/btnSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:padding="10sp"
+                android:scaleType="fitXY"
+                android:src="@drawable/save"
+                android:layout_gravity="right" />
+        </LinearLayout>
+
+        <project14_1.cookandroid.com.mobilewhiteboard.Drawing
+            android:id="@+id/Drawing"
+            android:visibility="invisible"
+            android:background="@color/colorWhite"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
 
 </LinearLayout>
