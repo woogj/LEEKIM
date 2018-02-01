@@ -13,13 +13,17 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
+import android.text.Layout;
+import android.widget.LinearLayout;
 
 /**
  * Created by com on 2018-01-21.
  */
 public class WhiteboardActivity extends AppCompatActivity {
 
-    ImageButton ib_image, btn_drawing, btnClear, btnEraser, btnPen;
+    ImageButton Ib_picture, btn_drawing, btnClear, btnEraser, btnPen;
+    View drawTool;
+
     static int type = 0;
     static Uri rsrc = null;
     static Bitmap bitmap = null;
@@ -30,30 +34,29 @@ public class WhiteboardActivity extends AppCompatActivity {
         super.onCreate(savedIntanteState);
         setContentView(R.layout.activity_whiteboard);
 
-        ib_image = (ImageButton) findViewById(R.id.ib_image);
+        Ib_picture = (ImageButton) findViewById(R.id.Ib_picture);
         btn_drawing = (ImageButton) findViewById(R.id.btnDrawing);
         btnClear = (ImageButton)findViewById(R.id.btnClear);
         btnEraser = (ImageButton)findViewById(R.id.btnEraser);
         btnPen = (ImageButton)findViewById(R.id.btnPen);
+        drawTool = (View) findViewById(R.id.DrawTool);
 
-        ib_image.setOnClickListener(new View.OnClickListener() {
+        btn_drawing.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                drawTool.setVisibility(View.VISIBLE);
+                type = 2;
+            }
+        });
+
+        Ib_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/*");
                 startActivityForResult(Intent.createChooser(intent, "사진 선택"), 1);
                 type = 3;
-            }
-        });
-
-        btn_drawing.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                View drawing = (View) findViewById(R.id.Drawing);
-                View drawTool = (View) findViewById(R.id.DrawTool);
-                drawing.setVisibility(View.VISIBLE);
-                drawTool.setVisibility(View.VISIBLE);
-
+                drawTool.setVisibility(View.GONE);
             }
         });
 
