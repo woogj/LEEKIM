@@ -16,6 +16,9 @@ import android.support.v7.app.AlertDialog;
 import android.text.Layout;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by com on 2018-01-21.
  */
