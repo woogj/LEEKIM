@@ -55,9 +55,24 @@ public class WhiteboardActivity extends AppCompatActivity {
         Ib_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                startActivityForResult(Intent.createChooser(intent, "사진 선택"), 1);
+                AlertDialog.Builder dlg = new AlertDialog.Builder(WhiteboardActivity.this);
+                dlg.setTitle("사진 업로드 옵션");
+                dlg.setMessage("사진을 불러올 앱을 선택해주세요.");
+                dlg.setPositiveButton("카메라", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(WhiteboardActivity.this,"아직 준비중입니다.",Toast.LENGTH_LONG).show();
+                    }
+                });
+                dlg.setNegativeButton("갤러리", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                        intent.setType("image/*");
+                        startActivityForResult(Intent.createChooser(intent, "사진 선택"), 1);
+                    }
+                });
+                dlg.show();
                 type = 3;
                 drawTool.setVisibility(View.GONE);
             }

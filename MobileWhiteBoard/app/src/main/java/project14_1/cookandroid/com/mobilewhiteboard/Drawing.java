@@ -17,7 +17,7 @@ import java.util.List;
 public class Drawing extends View {
     int startX = -1, startY = -1, stopX = -1, stopY = -1;
     Rect setXY = new Rect(0, 0, 0, 0);
-    boolean dt = false; //dt는 drawing trigger를 줄인것
+    boolean et = false; //et는 end trigger를 줄인것
 
     private Path drawPath;
     public static Paint drawPaint, canvasPaint;
@@ -63,12 +63,12 @@ public class Drawing extends View {
                     case MotionEvent.ACTION_DOWN:
                         startX = (int) event.getX();
                         startY = (int) event.getY();
-                        dt = false;
+                        et = false;
                         break;
                     case MotionEvent.ACTION_MOVE:
                         stopX = (int) event.getX();
                         stopY = (int) event.getY();
-                        dt = false;
+                        et = false;
                         this.invalidate();
                         break;
                     case MotionEvent.ACTION_UP:
@@ -86,7 +86,7 @@ public class Drawing extends View {
                         picture.setXY = setXY;
                         picture.bitmap = WhiteboardActivity.bitmap;
                         pictures.add(picture);
-                        dt = true;
+                        et = true;
                         this.invalidate();
                         break;
                 }
@@ -132,11 +132,36 @@ public class Drawing extends View {
                 canvas.drawPath(drawPath, drawPaint);
                 break;
             case 3:
-                for (int i=0; i<pictures.size(); i++) {
+                Bitmap bitmap = null;
+                for (int i = 0; i < pictures.size(); i++) {
                     Pictures picture = pictures.get(i);
                     int nh = (int) (picture.bitmap.getHeight() * (1024.0 / picture.bitmap.getWidth()));
                     Bitmap scaled = Bitmap.createScaledBitmap(picture.bitmap, 1024, nh, true);
                     canvas.drawBitmap(scaled, null, picture.setXY, null);
+                    scaled.recycle();
+                }
+                if (et == true) {
+                    WhiteboardActivity.type = 0;
+                    et = false;
+                    startX = 0;
+                    startY = 0;
+                    stopX = 0;
+                    stopY = 0;
+                }else {
+                    if (startX > stopX && startY > stopY) {
+                        setXY = new Rect(stopX, stopY, startX, startY);
+                    } else if (startX > stopX) {
+                        setXY = new Rect(stopX, startY, startX, stopY);
+                    } else if (startY > stopY) {
+                        setXY = new Rect(startX, stopY, stopX, startY);
+                    } else {
+                        setXY = new Rect(startX, startY, stopX, stopY);
+                    }
+
+                    bitmap = WhiteboardActivity.bitmap;
+                    int nh = (int) (bitmap.getHeight() * (1024.0 / bitmap.getWidth()));
+                    Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 1024, nh, true);
+                    canvas.drawBitmap(scaled, null, setXY, null);
                     scaled.recycle();
                 }
                 break;
