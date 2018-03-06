@@ -10,12 +10,18 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.graphics.Path;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Drawing extends View {
     int startX = -1, startY = -1, stopX = -1, stopY = -1;
+    int oldx = -1, oldy = -1;
+    EditText edt;
+    WhiteboardActivity cnxt;
     Rect setXY = new Rect(0, 0, 0, 0);
     boolean et = false; //et는 end trigger를 줄인것
 
@@ -29,9 +35,64 @@ public class Drawing extends View {
 
     public Drawing(Context context, AttributeSet attrs) {
         super(context, attrs);
+        cnxt = (WhiteboardActivity) context;
         setupDrawing();
     }
 
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        switch (WhiteboardActivity.type) {
+            case 1:
+                break;
+            case 2:
+                canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
+                canvas.drawPath(drawPath, drawPaint);
+                break;
+            case 3:
+                Bitmap bitmap = null;
+                for (int i = 0; i < pictures.size(); i++) {
+                    Pictures picture = pictures.get(i);
+                    int nh = (int) (picture.bitmap.getHeight() * (1024.0 / picture.bitmap.getWidth()));
+                    Bitmap scaled = Bitmap.createScaledBitmap(picture.bitmap, 1024, nh, true);
+                    canvas.drawBitmap(scaled, null, picture.setXY, null);
+                    scaled.recycle();
+                }
+                if (et == true) {
+                    WhiteboardActivity.type = 0;
+                    et = false;
+                    startX = 0;
+                    startY = 0;
+                    stopX = 0;
+                    stopY = 0;
+                }else {
+                    if (startX > stopX && startY > stopY) {
+                        setXY = new Rect(stopX, stopY, startX, startY);
+                    } else if (startX > stopX) {
+                        setXY = new Rect(stopX, startY, startX, stopY);
+                    } else if (startY > stopY) {
+                        setXY = new Rect(startX, stopY, stopX, startY);
+                    } else {
+                        setXY = new Rect(startX, startY, stopX, stopY);
+                    }
+
+                    bitmap = WhiteboardActivity.bitmap;
+                    int nh = (int) (bitmap.getHeight() * (1024.0 / bitmap.getWidth()));
+                    Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 1024, nh, true);
+                    canvas.drawBitmap(scaled, null, setXY, null);
+                    scaled.recycle();
+                }
+                break;
+            case 4:
+
+
+                if(canvasBitmap != null){
+                    canvas.drawBitmap(canvasBitmap, 0, 0, null);
+                }
+                break;
+            default:
+                break;
+        }
+    }
     public boolean onTouchEvent(MotionEvent event) {
         switch (WhiteboardActivity.type) {
             case 1:
@@ -92,6 +153,38 @@ public class Drawing extends View {
                 }
                 break;
             case 4:
+
+                int X = (int) event.getX();
+                int Y = (int) event.getY();
+
+                edt = new EditText(cnxt);
+                edt.setText("SUCCESS");
+                edt.setBackgroundResource(R.drawable.postit2);
+
+                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                );
+
+                edt.setLayoutParams(lp);
+                ((RelativeLayout) this.getParent()).addView(edt);
+
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+
+                    oldx = X;
+                    oldy = Y;
+
+                    edt.setX(event.getX());
+                    edt.setY(event.getY());
+
+                } else if(event.getAction() == MotionEvent.ACTION_UP){
+                    if(oldx !=  -1){
+                        invalidate();
+                    }
+                    oldx = -1;
+                    oldy = -1;
+
+                }
                 break;
             default:
                 break;
@@ -122,55 +215,6 @@ public class Drawing extends View {
         invalidate();
     }
 
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        switch (WhiteboardActivity.type) {
-            case 1:
-                break;
-            case 2:
-                canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
-                canvas.drawPath(drawPath, drawPaint);
-                break;
-            case 3:
-                Bitmap bitmap = null;
-                for (int i = 0; i < pictures.size(); i++) {
-                    Pictures picture = pictures.get(i);
-                    int nh = (int) (picture.bitmap.getHeight() * (1024.0 / picture.bitmap.getWidth()));
-                    Bitmap scaled = Bitmap.createScaledBitmap(picture.bitmap, 1024, nh, true);
-                    canvas.drawBitmap(scaled, null, picture.setXY, null);
-                    scaled.recycle();
-                }
-                if (et == true) {
-                    WhiteboardActivity.type = 0;
-                    et = false;
-                    startX = 0;
-                    startY = 0;
-                    stopX = 0;
-                    stopY = 0;
-                }else {
-                    if (startX > stopX && startY > stopY) {
-                        setXY = new Rect(stopX, stopY, startX, startY);
-                    } else if (startX > stopX) {
-                        setXY = new Rect(stopX, startY, startX, stopY);
-                    } else if (startY > stopY) {
-                        setXY = new Rect(startX, stopY, stopX, startY);
-                    } else {
-                        setXY = new Rect(startX, startY, stopX, stopY);
-                    }
-
-                    bitmap = WhiteboardActivity.bitmap;
-                    int nh = (int) (bitmap.getHeight() * (1024.0 / bitmap.getWidth()));
-                    Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 1024, nh, true);
-                    canvas.drawBitmap(scaled, null, setXY, null);
-                    scaled.recycle();
-                }
-                break;
-            case 4:
-                break;
-            default:
-                break;
-        }
-    }
 
     private static class Pictures {
         Rect setXY = new Rect(0, 0, 0, 0);

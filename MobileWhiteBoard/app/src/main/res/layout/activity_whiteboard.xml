@@ -57,6 +57,7 @@
             android:src="@drawable/picture" />
 
         <ImageButton
+            android:id="@+id/Ib_postit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
@@ -67,13 +68,13 @@
             android:src="@drawable/postit" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="0dip"
         android:layout_height="fill_parent"
         android:orientation="vertical"
         android:layout_weight="0.83">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/DrawTool"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -118,13 +119,13 @@
                 android:scaleType="fitXY"
                 android:src="@drawable/save"
                 android:layout_gravity="right" />
-        </LinearLayout>
+        </RelativeLayout>
 
         <project14_1.cookandroid.com.mobilewhiteboard.Drawing
             android:id="@+id/Drawing"
             android:background="@color/colorWhite"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

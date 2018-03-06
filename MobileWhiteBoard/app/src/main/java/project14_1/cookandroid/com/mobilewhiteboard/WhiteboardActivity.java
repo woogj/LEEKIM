@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public class WhiteboardActivity extends AppCompatActivity {
 
-    ImageButton Ib_picture, btn_drawing, btnClear, btnEraser, btnPen;
+    ImageButton Ib_picture, btn_drawing, btnClear, btnEraser, btnPen, Ib_postit;
     View drawTool;
 
     static int type = 0;
@@ -37,6 +38,7 @@ public class WhiteboardActivity extends AppCompatActivity {
         super.onCreate(savedIntanteState);
         setContentView(R.layout.activity_whiteboard);
 
+        Ib_postit = (ImageButton) findViewById(R.id.Ib_postit);
         Ib_picture = (ImageButton) findViewById(R.id.Ib_picture);
         btn_drawing = (ImageButton) findViewById(R.id.btnDrawing);
         btnClear = (ImageButton)findViewById(R.id.btnClear);
@@ -121,6 +123,13 @@ public class WhiteboardActivity extends AppCompatActivity {
                 color.create().show();
                 //Drawing.drawPaint.setColor(Color.BLACK);
                 Drawing.drawPaint.setStrokeWidth(20);
+            }
+        });
+
+        Ib_postit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                type = 4;
             }
         });
     }
