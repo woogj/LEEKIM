@@ -18,12 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Drawing extends View {
-    int startX = -1, startY = -1, stopX = -1, stopY = -1;
-    int oldx = -1, oldy = -1;
-    EditText edt;
-    WhiteboardActivity cnxt;
-    Rect setXY = new Rect(0, 0, 0, 0);
-    boolean et = false; //et는 end trigger를 줄인것
+    int startX = -1, startY = -1, stopX = -1, stopY = -1; // 터치 좌표
+    int oldx = -1, oldy = -1; //터치 좌표
+    EditText edt; // 동적 생성될 EditText
+    WhiteboardActivity cnxt; //화이트보드 context
+    Rect setXY = new Rect(0, 0, 0, 0); // 터치좌표
+    boolean et = false; //et는 end trigger를 줄인것. 그림을 그린 후 다시 그려지는 것 방지
 
     private Path drawPath;
     public static Paint drawPaint, canvasPaint;
@@ -31,24 +31,19 @@ public class Drawing extends View {
     private Canvas drawCanvas;
     public static Bitmap canvasBitmap;
 
-    static List<Pictures> pictures = new ArrayList<Pictures>();
+    static List<Pictures> pictures = new ArrayList<Pictures>(); //그림을 저장하는 배열
 
     public Drawing(Context context, AttributeSet attrs) {
         super(context, attrs);
-        cnxt = (WhiteboardActivity) context;
+        cnxt = (WhiteboardActivity) context; // EditText 동적 생성을 위한 context 선언
         setupDrawing();
     }
 
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        switch (WhiteboardActivity.type) {
-            case 1:
-                break;
-            case 2:
+                                                                                       // 손글씨 그리기
                 canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
                 canvas.drawPath(drawPath, drawPaint);
-                break;
-            case 3:
                 Bitmap bitmap = null;
                 for (int i = 0; i < pictures.size(); i++) {
                     Pictures picture = pictures.get(i);
@@ -75,23 +70,14 @@ public class Drawing extends View {
                         setXY = new Rect(startX, startY, stopX, stopY);
                     }
 
-                    bitmap = WhiteboardActivity.bitmap;
-                    int nh = (int) (bitmap.getHeight() * (1024.0 / bitmap.getWidth()));
+                   /* bitmap = WhiteboardActivity.bitmap;
+                    int nh = (int) (bitmap.getHeight() * (1024.0 / bitmap.getWidth())); //********************************
                     Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 1024, nh, true);
                     canvas.drawBitmap(scaled, null, setXY, null);
-                    scaled.recycle();
+                    scaled.recycle();*/
                 }
-                break;
-            case 4:
 
 
-                if(canvasBitmap != null){
-                    canvas.drawBitmap(canvasBitmap, 0, 0, null);
-                }
-                break;
-            default:
-                break;
-        }
     }
     public boolean onTouchEvent(MotionEvent event) {
         switch (WhiteboardActivity.type) {
@@ -117,7 +103,7 @@ public class Drawing extends View {
                     default:
                         return false;
                 }
-                invalidate();
+
                 break;
             case 3:
                 switch (event.getAction()) {
@@ -130,7 +116,6 @@ public class Drawing extends View {
                         stopX = (int) event.getX();
                         stopY = (int) event.getY();
                         et = false;
-                        this.invalidate();
                         break;
                     case MotionEvent.ACTION_UP:
                         if (startX > stopX && startY > stopY) {
@@ -148,7 +133,7 @@ public class Drawing extends View {
                         picture.bitmap = WhiteboardActivity.bitmap;
                         pictures.add(picture);
                         et = true;
-                        this.invalidate();
+
                         break;
                 }
                 break;
@@ -189,6 +174,7 @@ public class Drawing extends View {
             default:
                 break;
         }
+        invalidate();
         return true;
     }
 
