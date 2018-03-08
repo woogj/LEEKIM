@@ -30,6 +30,7 @@ public class Drawing extends View {
     public static int paintColor = 0xFF000000;
     private Canvas drawCanvas;
     public static Bitmap canvasBitmap;
+    Bitmap bitmap = null;
 
     static List<Pictures> pictures = new ArrayList<Pictures>(); //그림을 저장하는 배열
 
@@ -41,43 +42,43 @@ public class Drawing extends View {
 
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-                                                                                       // 손글씨 그리기
-                canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
-                canvas.drawPath(drawPath, drawPaint);
-                Bitmap bitmap = null;
-                for (int i = 0; i < pictures.size(); i++) {
-                    Pictures picture = pictures.get(i);
-                    int nh = (int) (picture.bitmap.getHeight() * (1024.0 / picture.bitmap.getWidth()));
-                    Bitmap scaled = Bitmap.createScaledBitmap(picture.bitmap, 1024, nh, true);
-                    canvas.drawBitmap(scaled, null, picture.setXY, null);
-                    scaled.recycle();
-                }
-                if (et == true) {
-                    WhiteboardActivity.type = 0;
-                    et = false;
-                    startX = 0;
-                    startY = 0;
-                    stopX = 0;
-                    stopY = 0;
-                }else {
-                    if (startX > stopX && startY > stopY) {
-                        setXY = new Rect(stopX, stopY, startX, startY);
-                    } else if (startX > stopX) {
-                        setXY = new Rect(stopX, startY, startX, stopY);
-                    } else if (startY > stopY) {
-                        setXY = new Rect(startX, stopY, stopX, startY);
-                    } else {
-                        setXY = new Rect(startX, startY, stopX, stopY);
-                    }
+        // 손글씨 그리기
+        canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
+        canvas.drawPath(drawPath, drawPaint);
+        // 사진 그리기
+        for (int i = 0; i < pictures.size(); i++) {
+            Pictures picture = pictures.get(i);
+            int nh = (int) (picture.bitmap.getHeight() * (1024.0 / picture.bitmap.getWidth()));
+            Bitmap scaled = Bitmap.createScaledBitmap(picture.bitmap, 1024, nh, true);
+            canvas.drawBitmap(scaled, null, picture.setXY, null);
+            scaled.recycle();
+        }
+        if (et == true) {
+            WhiteboardActivity.type = 0;
+            et = false;
+            startX = 0;
+            startY = 0;
+            stopX = 0;
+            stopY = 0;
+        }else {
+            if (startX > stopX && startY > stopY) {
+                setXY = new Rect(stopX, stopY, startX, startY);
+            } else if (startX > stopX) {
+                setXY = new Rect(stopX, startY, startX, stopY);
+            } else if (startY > stopY) {
+                setXY = new Rect(startX, stopY, stopX, startY);
+            } else {
+                setXY = new Rect(startX, startY, stopX, stopY);
+            }
 
-                   /* bitmap = WhiteboardActivity.bitmap;
-                    int nh = (int) (bitmap.getHeight() * (1024.0 / bitmap.getWidth())); //********************************
-                    Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 1024, nh, true);
-                    canvas.drawBitmap(scaled, null, setXY, null);
-                    scaled.recycle();*/
-                }
-
-
+            bitmap = WhiteboardActivity.bitmap;
+            if (bitmap != null) {
+                int nh = (int) (bitmap.getHeight() * (1024.0 / bitmap.getWidth()));
+                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 1024, nh, true);
+                canvas.drawBitmap(scaled, null, setXY, null);
+                scaled.recycle();
+            }
+        }
     }
     public boolean onTouchEvent(MotionEvent event) {
         switch (WhiteboardActivity.type) {
@@ -133,12 +134,10 @@ public class Drawing extends View {
                         picture.bitmap = WhiteboardActivity.bitmap;
                         pictures.add(picture);
                         et = true;
-
                         break;
                 }
                 break;
             case 4:
-
                 int X = (int) event.getX();
                 int Y = (int) event.getY();
 
