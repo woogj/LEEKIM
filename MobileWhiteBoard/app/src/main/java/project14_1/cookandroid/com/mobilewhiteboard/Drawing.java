@@ -10,6 +10,11 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.graphics.Path;
+import android.os.Bundle;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
+import android.graphics.Path;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -22,6 +27,7 @@ public class Drawing extends View {
     int oldx = -1, oldy = -1; //터치 좌표
     EditText edt; // 동적 생성될 EditText
     WhiteboardActivity cnxt; //화이트보드 context
+    WhiteboardActivity test;
     Rect setXY = new Rect(0, 0, 0, 0); // 터치좌표
     boolean et = false; //et는 end trigger를 줄인것. 그림을 그린 후 다시 그려지는 것 방지
 
@@ -36,6 +42,7 @@ public class Drawing extends View {
     public Drawing(Context context, AttributeSet attrs) {
         super(context, attrs);
         cnxt = (WhiteboardActivity) context; // EditText 동적 생성을 위한 context 선언
+        test = (WhiteboardActivity) context;
         setupDrawing();
     }
 
@@ -79,11 +86,12 @@ public class Drawing extends View {
 
 
     }
+
     public boolean onTouchEvent(MotionEvent event) {
         switch (WhiteboardActivity.type) {
             case 1:
-                break;
             case 2:
+
                 float touchX = event.getX();
                 float touchY = event.getY();
 
@@ -103,7 +111,6 @@ public class Drawing extends View {
                     default:
                         return false;
                 }
-
                 break;
             case 3:
                 switch (event.getAction()) {
@@ -133,12 +140,10 @@ public class Drawing extends View {
                         picture.bitmap = WhiteboardActivity.bitmap;
                         pictures.add(picture);
                         et = true;
-
                         break;
                 }
                 break;
             case 4:
-
                 int X = (int) event.getX();
                 int Y = (int) event.getY();
 
@@ -150,7 +155,6 @@ public class Drawing extends View {
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT
                 );
-
                 edt.setLayoutParams(lp);
                 ((RelativeLayout) this.getParent()).addView(edt);
 
@@ -200,7 +204,6 @@ public class Drawing extends View {
         canvasBitmap.eraseColor(Color.WHITE);
         invalidate();
     }
-
 
     private static class Pictures {
         Rect setXY = new Rect(0, 0, 0, 0);

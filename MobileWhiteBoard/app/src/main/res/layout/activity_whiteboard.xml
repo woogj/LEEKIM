@@ -8,11 +8,12 @@
     <LinearLayout
         android:layout_width="0dip"
         android:layout_height="fill_parent"
-        android:layout_weight="0.17"
+        android:layout_weight="0.18"
         android:background="@drawable/border"
         android:orientation="vertical">
 
         <ImageButton
+            android:id="@+id/lb_return"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
@@ -69,63 +70,69 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/baseView"
+        android:background="@color/colorWhite"
         android:layout_width="0dip"
         android:layout_height="fill_parent"
-        android:orientation="vertical"
-        android:layout_weight="0.83">
-
+        android:layout_weight="0.82"
+        android:orientation="vertical">
         <RelativeLayout
             android:id="@+id/DrawTool"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:orientation="horizontal"
-            android:gravity="right">
+            android:visibility="invisible">
             <ImageButton
                 android:id="@+id/btnPen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/btnEraser"
+                android:layout_toLeftOf="@id/btnEraser"
                 android:background="@null"
                 android:padding="5dp"
                 android:scaleType="fitXY"
-                android:layout_gravity="right"
                 android:src="@drawable/pen"
                 tools:ignore="DuplicateIds" />
+
             <ImageButton
                 android:id="@+id/btnEraser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@null"
+                android:layout_alignBaseline="@id/btnClear"
                 android:layout_marginRight="5px"
+                android:layout_toLeftOf="@id/btnClear"
+                android:background="@null"
                 android:padding="5sp"
                 android:scaleType="fitXY"
-                android:src="@drawable/icon_eraser"
-                android:layout_gravity="right" />
+                android:src="@drawable/icon_eraser" />
+
             <ImageButton
                 android:id="@+id/btnClear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/btnSave"
+                android:layout_toLeftOf="@id/btnSave"
                 android:background="@null"
                 android:padding="5sp"
                 android:scaleType="fitXY"
-                android:src="@drawable/clean"
-                android:layout_gravity="right" />
+                android:src="@drawable/clean" />
+
             <ImageButton
                 android:id="@+id/btnSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:background="@null"
                 android:padding="10sp"
                 android:scaleType="fitXY"
-                android:src="@drawable/save"
-                android:layout_gravity="right" />
+                android:src="@drawable/save" />
         </RelativeLayout>
 
         <project14_1.cookandroid.com.mobilewhiteboard.Drawing
             android:id="@+id/Drawing"
-            android:background="@color/colorWhite"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </RelativeLayout>
+            android:layout_height="match_parent"
+            android:layout_below="@+id/DrawTool"
+            android:background="@color/colorWhite" />
 
+    </RelativeLayout>
 </LinearLayout>
