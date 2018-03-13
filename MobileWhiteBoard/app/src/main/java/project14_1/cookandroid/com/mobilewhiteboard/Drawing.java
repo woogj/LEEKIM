@@ -10,17 +10,15 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.graphics.Path;
-import android.os.Bundle;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
-import android.graphics.Path;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
-import java.util.List;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.widget.Toast;
 
 public class Drawing extends View {
     int startX = -1, startY = -1, stopX = -1, stopY = -1; // 터치 좌표
@@ -38,7 +36,11 @@ public class Drawing extends View {
     public static Bitmap canvasBitmap;
     Bitmap bitmap = null;
 
-    static List<Pictures> pictures = new ArrayList<Pictures>(); //그림을 저장하는 배열
+    int dragCount = 0;
+    int index = -1;
+
+    public static ArrayList<Pictures> pictures = new ArrayList<>(); //그림을 저장하는 배열
+    public static ArrayList<TextHistory> textHistories = new ArrayList<>();
 
     public Drawing(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -49,9 +51,6 @@ public class Drawing extends View {
 
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        // 손글씨 그리기
-        canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
-        canvas.drawPath(drawPath, drawPaint);
         // 사진 그리기
         for (int i = 0; i < pictures.size(); i++) {
             Pictures picture = pictures.get(i);
@@ -86,11 +85,63 @@ public class Drawing extends View {
                 scaled.recycle();
             }
         }else { }
+        // 글 쓰기
+        for(TextHistory textHistory : textHistories) {
+            textHistory.drawCanvas(canvas);
+        }
+        // 손글씨 그리기
+        canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
+        canvas.drawPath(drawPath, drawPaint);
     }
 
     public boolean onTouchEvent(MotionEvent event) {
         switch (WhiteboardActivity.type) {
             case 1:
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // 터치한 영역에 있는 텍스트박스를 찾는다
+                        index = -1;
+                        dragCount = 0;
+                        for(int i=0; i<textHistories.size(); i++){
+                            if(textHistories.get(i).isClicked(event.getX(), event.getY())){
+                                index = i;
+                                break;
+                            }
+                        }
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        if(dragCount>10 && index != -1){
+                            // 10번 이상 move가 찍히면 드래그였다고 판단하고 처음 터치한 영역에 있는 텍스트를 현재 좌표로 이동시킨다.
+                            textHistories.get(index).setPosition(event.getX(), event.getY());
+                            invalidate();
+                        }else{
+                            dragCount++;
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if(index == -1){
+                            Toast.makeText(this.getContext(), "선택한 영역에 텍스트박스가 없습니다.", Toast.LENGTH_SHORT).show();
+                        } else if(dragCount<=10){
+                            // 텍스트의 내용을 수정시킨다.
+                            final WhiteboardActivity activity = (WhiteboardActivity) this.getContext();
+                            AlertDialog.Builder alert = new AlertDialog.Builder(activity);
+                            alert.setTitle("텍스트 수정");
+                            // Create TextView
+                            final EditText input = new EditText(activity);
+                            input.setText(textHistories.get(index).getText().toString());
+                            alert.setView(input);
+                            alert.setPositiveButton("입력", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    textHistories.get(index).editText(input.getText().toString());
+                                    invalidate();
+                                    //activity.drawing.invalidate();
+                                }
+                            });
+                            alert.show();
+                        }
+                        break;
+                }
+                break;
             case 2:
                 float touchX = event.getX();
                 float touchY = event.getY();
@@ -183,6 +234,15 @@ public class Drawing extends View {
     }
 
     private void setupDrawing(){
+        this.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Drawing.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                canvasBitmap = Bitmap.createBitmap(Drawing.this.getWidth(), Drawing.this.getHeight(), Bitmap.Config.ARGB_8888);
+                drawCanvas = new Canvas(canvasBitmap);
+            }
+        });
+
         drawPath = new Path();
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
@@ -193,12 +253,13 @@ public class Drawing extends View {
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
-
+    /*
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged( w, h, oldw, oldh);
         canvasBitmap = Bitmap.createBitmap( w, h, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
     }
+    */
 
     public void clear() {
         canvasBitmap.eraseColor(Color.WHITE);

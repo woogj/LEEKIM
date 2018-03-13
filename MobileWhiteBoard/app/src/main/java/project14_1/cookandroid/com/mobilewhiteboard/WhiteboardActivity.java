@@ -1,23 +1,23 @@
 package project14_1.cookandroid.com.mobilewhiteboard;
 
-
-import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.Manifest;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.content.pm.PackageManager;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
-import android.graphics.Color;
-import android.support.v7.app.AlertDialog;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -27,20 +27,21 @@ import java.io.FileOutputStream;
  */
 public class WhiteboardActivity extends AppCompatActivity {
     View drawTool, baseView;
-    ImageButton ib_image, Ib_picture, btn_drawing, btnClear, btnEraser, btnPen, btnSave, Ib_postit;
+    ImageButton ib_image, Ib_picture, btn_drawing, btnClear, btnEraser, btnPen, btnSave, Ib_postit, btnTxt;
+    //Drawing drawing;
+
     static int type = 0;
     static Uri rsrc = null;
     static Bitmap bitmap = null;
 
     private String[] items = {"Black", "Red", "Blue", "Yellow", "Green"};
 
-
     @Override
-
     protected void onCreate(Bundle savedIntanteState){
         super.onCreate(savedIntanteState);
         setContentView(R.layout.activity_whiteboard);
         checkDangerousPermissions();
+        btnTxt = (ImageButton) findViewById(R.id.Ib_text);
         btn_drawing = (ImageButton) findViewById(R.id.btnDrawing);
         btnClear = (ImageButton)findViewById(R.id.btnClear);
         btnEraser = (ImageButton)findViewById(R.id.btnEraser);
@@ -64,6 +65,35 @@ public class WhiteboardActivity extends AppCompatActivity {
             }
         });
 */
+        btnTxt.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(final View v){
+                drawTool.setVisibility(View.GONE);
+                type = 1;
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(WhiteboardActivity.this);
+                alert.setTitle("텍스트 입력");
+                // Create TextView
+                final EditText input = new EditText(WhiteboardActivity.this);
+                alert.setView(input);
+
+                alert.setPositiveButton("입력", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Drawing.textHistories.add(new TextHistory(input.getText().toString(), 500, 500));
+                        v.invalidate();
+                        //drawing.invalidate();
+                    }
+                });
+
+                alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Canceled.
+                    }
+                });
+                alert.show();
+            }
+        });
+
         btn_drawing.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -75,6 +105,8 @@ public class WhiteboardActivity extends AppCompatActivity {
         Ib_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                drawTool.setVisibility(View.GONE);
+                type = 3;
                 AlertDialog.Builder dlg = new AlertDialog.Builder(WhiteboardActivity.this);
                 dlg.setTitle("사진 업로드 옵션");
                 dlg.setMessage("사진을 불러올 앱을 선택해주세요.");
@@ -93,8 +125,6 @@ public class WhiteboardActivity extends AppCompatActivity {
                     }
                 });
                 dlg.show();
-                type = 3;
-                drawTool.setVisibility(View.GONE);
                 /*
                 View drawing = (View) findViewById(R.id.Drawing);
                 //View drawTool = (View) findViewById(R.id.DrawTool);
@@ -137,7 +167,6 @@ public class WhiteboardActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-
             }
         });
 
