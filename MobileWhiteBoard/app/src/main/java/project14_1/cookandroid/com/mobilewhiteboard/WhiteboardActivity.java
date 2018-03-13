@@ -1,6 +1,7 @@
 package project14_1.cookandroid.com.mobilewhiteboard;
 
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,6 +9,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
@@ -17,6 +26,11 @@ import android.support.v7.app.AlertDialog;
 import android.text.Layout;
 import android.widget.LinearLayout;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,20 +38,27 @@ import java.util.List;
  * Created by com on 2018-01-21.
  */
 public class WhiteboardActivity extends AppCompatActivity {
-
-    ImageButton Ib_picture, btn_drawing, btnClear, btnEraser, btnPen, Ib_postit;
-    View drawTool;
-
+    View drawTool, baseView;
+    ImageButton ib_image, Ib_picture, btn_drawing, btnClear, btnEraser, btnPen, btnSave, Ib_postit;
     static int type = 0;
     static Uri rsrc = null;
     static Bitmap bitmap = null;
 
     private String[] items = {"Black", "Red", "Blue", "Yellow", "Green"};
 
+
+    @Override
+
     protected void onCreate(Bundle savedIntanteState){
         super.onCreate(savedIntanteState);
         setContentView(R.layout.activity_whiteboard);
-
+        checkDangerousPermissions();
+        btn_drawing = (ImageButton) findViewById(R.id.btnDrawing);
+        btnClear = (ImageButton)findViewById(R.id.btnClear);
+        btnEraser = (ImageButton)findViewById(R.id.btnEraser);
+        btnPen = (ImageButton)findViewById(R.id.btnPen);
+        btnSave = (ImageButton)findViewById(R.id.btnSave);
+        baseView = (View)findViewById(R.id.baseView);
         Ib_postit = (ImageButton) findViewById(R.id.Ib_postit);
         Ib_picture = (ImageButton) findViewById(R.id.Ib_picture);
         btn_drawing = (ImageButton) findViewById(R.id.btnDrawing);
@@ -45,7 +66,16 @@ public class WhiteboardActivity extends AppCompatActivity {
         btnEraser = (ImageButton)findViewById(R.id.btnEraser);
         btnPen = (ImageButton)findViewById(R.id.btnPen);
         drawTool = (View) findViewById(R.id.DrawTool);
-
+        /*ib_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(Intent.createChooser(intent, "사진 선택"), 1);
+                type = 3;
+            }
+        });
+*/
         btn_drawing.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -77,6 +107,11 @@ public class WhiteboardActivity extends AppCompatActivity {
                 dlg.show();
                 type = 3;
                 drawTool.setVisibility(View.GONE);
+                View drawing = (View) findViewById(R.id.Drawing);
+                //View drawTool = (View) findViewById(R.id.DrawTool);
+                drawing.setVisibility(View.VISIBLE);
+                //drawTool.setVisibility(View.VISIBLE);
+                type = 2;
             }
         });
 
@@ -95,6 +130,28 @@ public class WhiteboardActivity extends AppCompatActivity {
                 view.invalidate();
             }
         });
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(view.getId() == R.id.btnSave)
+                {
+                    View drawing = (View) findViewById(R.id.Drawing);
+                    drawing.buildDrawingCache();
+                    Bitmap captureView = drawing.getDrawingCache();
+                    FileOutputStream fos;
+                    try {
+                        fos = new FileOutputStream(Environment.getExternalStorageDirectory().toString()+"/capture2.png");
+                        captureView.compress(Bitmap.CompressFormat.PNG,100, fos);
+                        Toast.makeText(getApplicationContext(), "Image Captured!", Toast.LENGTH_LONG).show();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        });
+
         btnPen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -130,6 +187,7 @@ public class WhiteboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 type = 4;
+                drawTool.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -147,6 +205,43 @@ public class WhiteboardActivity extends AppCompatActivity {
         } catch (Exception e) {
             Toast.makeText(this, "오류 발생", Toast.LENGTH_LONG).show();
             e.printStackTrace();
+        }
+    }
+
+    private void checkDangerousPermissions() {
+        String[] permissions = {
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        };
+
+        int permissionCheck = PackageManager.PERMISSION_GRANTED;
+        for (int i = 0; i < permissions.length; i++) {
+            permissionCheck = ContextCompat.checkSelfPermission(this, permissions[i]);
+            if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+                break;
+            }
+        }
+
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
+                Toast.makeText(this, "권한 설명 필요함.", Toast.LENGTH_SHORT).show();
+            } else {
+                ActivityCompat.requestPermissions(this, permissions, 1);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == 1) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, permissions[i] + " 권한이 승인됨.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, permissions[i] + " 권한이 승인되지 않음.", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 
