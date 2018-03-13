@@ -7,14 +7,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,16 +18,9 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
-import android.text.Layout;
-import android.widget.LinearLayout;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by com on 2018-01-21.
@@ -107,11 +95,13 @@ public class WhiteboardActivity extends AppCompatActivity {
                 dlg.show();
                 type = 3;
                 drawTool.setVisibility(View.GONE);
+                /*
                 View drawing = (View) findViewById(R.id.Drawing);
                 //View drawTool = (View) findViewById(R.id.DrawTool);
                 drawing.setVisibility(View.VISIBLE);
                 //drawTool.setVisibility(View.VISIBLE);
                 type = 2;
+                */
             }
         });
 
@@ -133,7 +123,6 @@ public class WhiteboardActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if(view.getId() == R.id.btnSave)
                 {
                     View drawing = (View) findViewById(R.id.Drawing);
@@ -187,7 +176,7 @@ public class WhiteboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 type = 4;
-                drawTool.setVisibility(View.INVISIBLE);
+                drawTool.setVisibility(View.GONE);
             }
         });
     }

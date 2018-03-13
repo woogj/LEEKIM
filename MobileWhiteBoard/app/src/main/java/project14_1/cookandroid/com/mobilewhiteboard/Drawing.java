@@ -63,11 +63,11 @@ public class Drawing extends View {
         if (et == true) {
             WhiteboardActivity.type = 0;
             et = false;
-            startX = 0;
-            startY = 0;
-            stopX = 0;
-            stopY = 0;
-        }else {
+            startX = -1;
+            startY = -1;
+            stopX = -1;
+            stopY = -1;
+        }else if (et == false && (stopX >= 0 && stopY >= 0)){
             if (startX > stopX && startY > stopY) {
                 setXY = new Rect(stopX, stopY, startX, startY);
             } else if (startX > stopX) {
@@ -85,14 +85,13 @@ public class Drawing extends View {
                 canvas.drawBitmap(scaled, null, setXY, null);
                 scaled.recycle();
             }
-        }
+        }else { }
     }
 
     public boolean onTouchEvent(MotionEvent event) {
         switch (WhiteboardActivity.type) {
             case 1:
             case 2:
-
                 float touchX = event.getX();
                 float touchY = event.getY();
 
