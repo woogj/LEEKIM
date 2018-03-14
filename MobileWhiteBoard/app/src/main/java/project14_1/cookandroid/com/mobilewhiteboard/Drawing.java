@@ -16,13 +16,15 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
 public class Drawing extends View {
     int startX = -1, startY = -1, stopX = -1, stopY = -1; // 터치 좌표
-    int oldx = -1, oldy = -1; //터치 좌표
+    int oldx = -1, oldy = -1, i=0;//터치 좌표
     EditText edt; // 동적 생성될 EditText
     WhiteboardActivity cnxt; //화이트보드 context
     WhiteboardActivity test;
@@ -41,6 +43,7 @@ public class Drawing extends View {
 
     public static ArrayList<Pictures> pictures = new ArrayList<>(); //그림을 저장하는 배열
     public static ArrayList<TextHistory> textHistories = new ArrayList<>();
+    public static HashMap<EditText,Integer> postIt_hashTable = new HashMap<EditText, Integer>();
 
     public Drawing(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -195,31 +198,46 @@ public class Drawing extends View {
                 }
                 break;
             case 4:
+
+                String test ="";
                 int X = (int) event.getX();
                 int Y = (int) event.getY();
 
-                edt = new EditText(cnxt);
-                edt.setText("SUCCESS");
-                edt.setBackgroundResource(R.drawable.postit2);
 
-                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                );
-                edt.setLayoutParams(lp);
-                ((RelativeLayout) this.getParent()).addView(edt);
 
                 if(event.getAction() == MotionEvent.ACTION_DOWN){
 
                     oldx = X;
                     oldy = Y;
 
-                    edt.setX(event.getX());
-                    edt.setY(event.getY());
+
 
                 } else if(event.getAction() == MotionEvent.ACTION_UP){
                     if(oldx !=  -1){
-                        invalidate();
+
+                        edt = new EditText(cnxt);
+                        edt.setId(i+1);
+                        postIt_hashTable.put(edt,edt.getId());
+                        i++;
+
+                       // test = Integer.toString(edt.getId());
+                        edt.setText(test);
+                        edt.setBackgroundResource(R.drawable.postit2);
+
+                        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                        );
+                        edt.setLayoutParams(lp);
+                        ((RelativeLayout) this.getParent()).addView(edt);
+
+                        edt.setHint("  내용을 입력하시오.");
+                        edt.setTextAlignment(getTop());
+                        edt.setScaleX(0.6f);
+                        edt.setScaleY(0.6f);
+                        edt.setX(event.getX());
+                        edt.setY(event.getY());
+
                     }
                     oldx = -1;
                     oldy = -1;
