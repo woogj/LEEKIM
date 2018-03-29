@@ -9,7 +9,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    private long lastTimeBackPressed;
+    private static final long   DURATION_TIME = 2000L;
+    private long prevPressTime = 0L;
     EditText edt_login_ID, edt_login_PW;
 
     @Override
@@ -64,11 +65,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(System.currentTimeMillis() - lastTimeBackPressed < 2000) {
+        if(System.currentTimeMillis() - prevPressTime <= DURATION_TIME) {
+            moveTaskToBack(true);
             finish();
-            return;
+            android.os.Process.killProcess(android.os.Process.myPid());
+        }else{
+            prevPressTime = System.currentTimeMillis();
+            Toast.makeText(this, "'뒤로' 버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
         }
-        Toast.makeText(this, "'뒤로' 버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
-        lastTimeBackPressed = System.currentTimeMillis();
+
+
     }
 }
