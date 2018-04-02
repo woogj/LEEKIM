@@ -1,15 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
+    android:background="@color/colorWhite"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="0dip"
-        android:layout_height="fill_parent"
+        android:id="@+id/baseView"
+        android:background="@color/colorWhite"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:id="@+id/DrawTool"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:visibility="invisible">
+            <ImageButton
+                android:id="@+id/btnPen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/btnEraser"
+                android:layout_toLeftOf="@id/btnEraser"
+                android:background="@null"
+                android:padding="5dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/pen"
+                tools:ignore="DuplicateIds" />
+
+            <ImageButton
+                android:id="@+id/btnEraser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/btnClear"
+                android:layout_marginRight="5px"
+                android:layout_toLeftOf="@id/btnClear"
+                android:background="@null"
+                android:padding="5sp"
+                android:scaleType="fitXY"
+                android:src="@drawable/icon_eraser" />
+
+            <ImageButton
+                android:id="@+id/btnClear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/btnSave"
+                android:layout_toLeftOf="@id/btnSave"
+                android:background="@null"
+                android:padding="5sp"
+                android:scaleType="fitXY"
+                android:src="@drawable/clean" />
+
+            <ImageButton
+                android:id="@+id/btnSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="@null"
+                android:padding="10sp"
+                android:scaleType="fitXY"
+                android:src="@drawable/save" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/DrawTool">
+            <project14_1.cookandroid.com.mobilewhiteboard.Drawing
+                android:id="@+id/Drawing"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorWhite" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/slidingPage01"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
         android:layout_weight="0.18"
+        android:layout_gravity="right"
         android:background="@drawable/border"
+        android:visibility="gone"
         android:orientation="vertical">
 
         <ImageButton
@@ -68,71 +140,24 @@
             android:scaleType="fitXY"
             android:src="@drawable/postit" />
     </LinearLayout>
-
     <RelativeLayout
-        android:id="@+id/baseView"
-        android:background="@color/colorWhite"
-        android:layout_width="0dip"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.82"
-        android:orientation="vertical">
-        <RelativeLayout
-            android:id="@+id/DrawTool"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="invisible">
-            <ImageButton
-                android:id="@+id/btnPen"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/btnEraser"
-                android:layout_toLeftOf="@id/btnEraser"
-                android:background="@null"
-                android:padding="5dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/pen"
-                tools:ignore="DuplicateIds" />
-
-            <ImageButton
-                android:id="@+id/btnEraser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/btnClear"
-                android:layout_marginRight="5px"
-                android:layout_toLeftOf="@id/btnClear"
-                android:background="@null"
-                android:padding="5sp"
-                android:scaleType="fitXY"
-                android:src="@drawable/icon_eraser" />
-
-            <ImageButton
-                android:id="@+id/btnClear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/btnSave"
-                android:layout_toLeftOf="@id/btnSave"
-                android:background="@null"
-                android:padding="5sp"
-                android:scaleType="fitXY"
-                android:src="@drawable/clean" />
-
-            <ImageButton
-                android:id="@+id/btnSave"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:background="@null"
-                android:padding="10sp"
-                android:scaleType="fitXY"
-                android:src="@drawable/save" />
-        </RelativeLayout>
-
-        <project14_1.cookandroid.com.mobilewhiteboard.Drawing
-            android:id="@+id/Drawing"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/DrawTool"
-            android:background="@color/colorWhite" />
-
+        android:orientation="vertical"
+        android:layout_gravity="right|center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageButton
+            android:id="@+id/btnSliding"
+            android:src="@drawable/ic_left"
+            android:layout_width="20dp"
+            android:layout_height="50dp"
+            android:visibility="visible"
+            android:onClick="onButton1Clicked"/>
+        <ImageButton
+            android:id="@+id/btnSliding2"
+            android:src="@drawable/ic_right"
+            android:layout_width="20dp"
+            android:layout_height="50dp"
+            android:visibility="invisible"
+            android:onClick="onButton1Clicked"/>
     </RelativeLayout>
-</LinearLayout>
+</FrameLayout>

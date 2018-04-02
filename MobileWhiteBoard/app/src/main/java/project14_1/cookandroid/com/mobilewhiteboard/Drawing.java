@@ -3,7 +3,6 @@ package project14_1.cookandroid.com.mobilewhiteboard;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -14,10 +13,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
@@ -222,7 +219,7 @@ public class Drawing extends View {
 
                        // test = Integer.toString(edt.getId());
                         edt.setText(test);
-                        edt.setBackgroundResource(R.drawable.postit2);
+                        edt.setBackgroundResource(R.drawable.postit3);
 
                         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -278,11 +275,6 @@ public class Drawing extends View {
         drawCanvas = new Canvas(canvasBitmap);
     }
     */
-
-    public void clear() {
-        canvasBitmap.eraseColor(Color.WHITE);
-        invalidate();
-    }
 
     private static class Pictures {
         Rect setXY = new Rect(0, 0, 0, 0);

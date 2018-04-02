@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private long lastTimeBackPressed;
+    private static final long DURATION_TIME = 2000L;
+    private long prevPressTime = 0L;
     EditText edt_login_ID, edt_login_PW;
 
     @Override
@@ -61,14 +64,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+/*
     @Override
     public void onBackPressed() {
         if(System.currentTimeMillis() - lastTimeBackPressed < 2000) {
-            finish();
+            System.exit(0);
             return;
         }
         Toast.makeText(this, "'뒤로' 버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
         lastTimeBackPressed = System.currentTimeMillis();
+    }
+*/
+
+    @Override
+    public void onBackPressed() {
+        if(System.currentTimeMillis() - prevPressTime <= DURATION_TIME) {
+            moveTaskToBack(true);
+            finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
+        }else{
+            prevPressTime = System.currentTimeMillis();
+            Toast.makeText(this, "'뒤로' 버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 }

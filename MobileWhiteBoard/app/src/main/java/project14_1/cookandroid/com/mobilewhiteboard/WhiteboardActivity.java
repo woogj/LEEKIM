@@ -6,6 +6,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.Manifest;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,8 +18,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
@@ -27,8 +35,19 @@ import java.io.FileOutputStream;
  */
 public class WhiteboardActivity extends AppCompatActivity {
     View drawTool, baseView;
-    ImageButton ib_image, Ib_picture, btn_drawing, btnClear, btnEraser, btnPen, btnSave, Ib_postit, btnTxt;
+    ImageButton Ib_picture, btn_drawing, btnClear, btnEraser, btnPen, btnSave, Ib_postit, btnTxt;
+    LinearLayout menuTollbar;
     //Drawing drawing;
+    //슬라이드 열기/닫기 플래그
+    boolean isPageOpen = false;
+    //슬라이드 열기 애니메이션
+    Animation translateLeftAnim;
+    //슬라이드 닫기 애니메이션
+    Animation translateRightAnim;
+    //슬라이드 레이아웃
+    LinearLayout slidingPage01;
+    ImageButton btnSliding;
+    ImageButton btnSliding2;
 
     static int type = 0;
     static Uri rsrc = null;
@@ -40,21 +59,39 @@ public class WhiteboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedIntanteState){
         super.onCreate(savedIntanteState);
         setContentView(R.layout.activity_whiteboard);
+
         checkDangerousPermissions();
+
+        //UI
+        slidingPage01 = (LinearLayout)findViewById(R.id.slidingPage01);
+        btnSliding = (ImageButton)findViewById(R.id.btnSliding);
+        btnSliding2 = (ImageButton)findViewById(R.id.btnSliding2);
+
+        //애니메이션
+        translateLeftAnim = AnimationUtils.loadAnimation(this, R.anim.translate_left);
+        translateRightAnim = AnimationUtils.loadAnimation(this, R.anim.translate_right);
+
+        //애니메이션 리스너 설정
+        SlidingPageAnimationListener animationListener = new SlidingPageAnimationListener();
+        translateLeftAnim.setAnimationListener(animationListener);
+        translateRightAnim.setAnimationListener(animationListener);
+
+
+        //menuTollbar = (LinearLayout) findViewById(R.id.menuTollbar);
         btnTxt = (ImageButton) findViewById(R.id.Ib_text);
         btn_drawing = (ImageButton) findViewById(R.id.btnDrawing);
         btnClear = (ImageButton)findViewById(R.id.btnClear);
         btnEraser = (ImageButton)findViewById(R.id.btnEraser);
         btnPen = (ImageButton)findViewById(R.id.btnPen);
         btnSave = (ImageButton)findViewById(R.id.btnSave);
-        baseView = (View)findViewById(R.id.baseView);
+        baseView = findViewById(R.id.baseView);
         Ib_postit = (ImageButton) findViewById(R.id.Ib_postit);
         Ib_picture = (ImageButton) findViewById(R.id.Ib_picture);
         btn_drawing = (ImageButton) findViewById(R.id.btnDrawing);
         btnClear = (ImageButton)findViewById(R.id.btnClear);
         btnEraser = (ImageButton)findViewById(R.id.btnEraser);
         btnPen = (ImageButton)findViewById(R.id.btnPen);
-        drawTool = (View) findViewById(R.id.DrawTool);
+        drawTool = findViewById(R.id.DrawTool);
         /*ib_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,7 +105,15 @@ public class WhiteboardActivity extends AppCompatActivity {
         btnTxt.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(final View v){
-                drawTool.setVisibility(View.GONE);
+                if(isPageOpen){
+                    slidingPage01.setVisibility(View.INVISIBLE);
+                    btnSliding2.setVisibility(View.INVISIBLE);
+                    btnSliding.setVisibility(View.VISIBLE);
+
+
+                    isPageOpen = false;
+                }
+                drawTool.setVisibility(View.INVISIBLE);
                 type = 1;
 
                 AlertDialog.Builder alert = new AlertDialog.Builder(WhiteboardActivity.this);
@@ -97,6 +142,14 @@ public class WhiteboardActivity extends AppCompatActivity {
         btn_drawing.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                if(isPageOpen){
+                    slidingPage01.setVisibility(View.INVISIBLE);
+                    btnSliding2.setVisibility(View.INVISIBLE);
+                    btnSliding.setVisibility(View.VISIBLE);
+
+
+                    isPageOpen = false;
+                }
                 drawTool.setVisibility(View.VISIBLE);
                 type = 2;
             }
@@ -105,7 +158,15 @@ public class WhiteboardActivity extends AppCompatActivity {
         Ib_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                drawTool.setVisibility(View.GONE);
+                if(isPageOpen){
+                    slidingPage01.setVisibility(View.INVISIBLE);
+                    btnSliding2.setVisibility(View.INVISIBLE);
+                    btnSliding.setVisibility(View.VISIBLE);
+
+
+                    isPageOpen = false;
+                }
+                drawTool.setVisibility(View.INVISIBLE);
                 type = 3;
                 AlertDialog.Builder dlg = new AlertDialog.Builder(WhiteboardActivity.this);
                 dlg.setTitle("사진 업로드 옵션");
@@ -135,17 +196,34 @@ public class WhiteboardActivity extends AppCompatActivity {
             }
         });
 
+        Ib_postit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isPageOpen){
+                    slidingPage01.setVisibility(View.INVISIBLE);
+                    btnSliding2.setVisibility(View.INVISIBLE);
+                    btnSliding.setVisibility(View.VISIBLE);
+
+
+                    isPageOpen = false;
+                }
+                type = 4;
+                drawTool.setVisibility(View.INVISIBLE);
+            }
+        });
+
         btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Drawing.canvasBitmap.eraseColor(Color.WHITE);
+                Drawing.canvasBitmap.eraseColor(Color.TRANSPARENT);
                 view.invalidate();
             }
         });
         btnEraser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Drawing.drawPaint.setColor(Color.WHITE);
+                Drawing.drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+                //Drawing.drawPaint.setColor(Color.WHITE);
                 Drawing.drawPaint.setStrokeWidth(200);
                 view.invalidate();
             }
@@ -173,6 +251,7 @@ public class WhiteboardActivity extends AppCompatActivity {
         btnPen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((Paint)Drawing.drawPaint).setXfermode(new PorterDuffXfermode(PorterDuff.Mode.ADD));
                 AlertDialog.Builder color = new AlertDialog.Builder(WhiteboardActivity.this);
                 color.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
@@ -201,14 +280,52 @@ public class WhiteboardActivity extends AppCompatActivity {
             }
         });
 
-        Ib_postit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                type = 4;
-                drawTool.setVisibility(View.GONE);
-            }
-        });
+
     }
+    //버튼
+    public void onButton1Clicked(View v){
+        //닫기
+        if(isPageOpen){
+            //애니메이션 시작
+            slidingPage01.startAnimation(translateRightAnim);
+            btnSliding2.setVisibility(View.INVISIBLE);
+            btnSliding.setVisibility(View.VISIBLE);
+        }
+        //열기
+        else{
+            slidingPage01.setVisibility(View.VISIBLE);
+            slidingPage01.startAnimation(translateLeftAnim);
+            btnSliding.setVisibility(View.INVISIBLE);
+            btnSliding2.setVisibility(View.VISIBLE);
+        }
+    }
+
+    //애니메이션 리스너
+    private class SlidingPageAnimationListener implements Animation.AnimationListener {
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            //슬라이드 열기->닫기
+            if(isPageOpen){
+                slidingPage01.setVisibility(View.INVISIBLE);
+
+                isPageOpen = false;
+            }
+            //슬라이드 닫기->열기
+            else{
+
+                isPageOpen = true;
+            }
+        }
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+        @Override
+        public void onAnimationStart(Animation animation) {
+
+        }
+    }
+
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
