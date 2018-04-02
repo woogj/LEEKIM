@@ -36,6 +36,7 @@ import java.io.FileOutputStream;
 public class WhiteboardActivity extends AppCompatActivity {
     View drawTool, baseView;
     ImageButton Ib_picture, btn_drawing, btnClear, btnEraser, btnPen, btnSave, Ib_postit, btnTxt;
+    LinearLayout menuTollbar;
     //Drawing drawing;
     //슬라이드 열기/닫기 플래그
     boolean isPageOpen = false;
@@ -45,8 +46,10 @@ public class WhiteboardActivity extends AppCompatActivity {
     Animation translateRightAnim;
     //슬라이드 레이아웃
     LinearLayout slidingMenu;
+    LinearLayout slidingColor;
     ImageButton btnSliding;
     ImageButton btnSliding2;
+    ImageButton btn_red;
 
 
     static int type = 0;
