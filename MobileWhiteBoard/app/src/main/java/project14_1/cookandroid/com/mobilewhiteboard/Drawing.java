@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,12 +20,12 @@ import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
 public class Drawing extends View {
-    int startX = -1, startY = -1, stopX = -1, stopY = -1; // 터치 좌표
+    float startX = -1, startY = -1, stopX = -1, stopY = -1; // 터치 좌표
     int oldx = -1, oldy = -1, i=0;//터치 좌표
     EditText edt; // 동적 생성될 EditText
     WhiteboardActivity cnxt; //화이트보드 context
     WhiteboardActivity test;
-    Rect setXY = new Rect(0, 0, 0, 0); // 터치좌표
+    RectF setXY = new RectF(0, 0, 0, 0); // 터치좌표
     boolean et = false; //et는 end trigger를 줄인것. 그림을 그린 후 다시 그려지는 것 방지
 
     private Path drawPath;
@@ -38,7 +38,7 @@ public class Drawing extends View {
     int dragCount = 0;
     int index = -1;
 
-    public static ArrayList<Pictures> pictures = new ArrayList<>(); //그림을 저장하는 배열
+    public static ArrayList<PictureHistory> pictures = new ArrayList<>(); //그림을 저장하는 배열
     public static ArrayList<TextHistory> textHistories = new ArrayList<>();
     public static HashMap<EditText,Integer> postIt_hashTable = new HashMap<EditText, Integer>();
 
@@ -53,10 +53,10 @@ public class Drawing extends View {
         super.onDraw(canvas);
         // 사진 그리기
         for (int i = 0; i < pictures.size(); i++) {
-            Pictures picture = pictures.get(i);
-            int nh = (int) (picture.bitmap.getHeight() * (1024.0 / picture.bitmap.getWidth()));
-            Bitmap scaled = Bitmap.createScaledBitmap(picture.bitmap, 1024, nh, true);
-            canvas.drawBitmap(scaled, null, picture.setXY, null);
+            PictureHistory picture = pictures.get(i);
+            int nh = (int) (picture.getBitmap().getHeight() * (1024.0 / picture.getBitmap().getWidth()));
+            Bitmap scaled = Bitmap.createScaledBitmap(picture.getBitmap(), 1024, nh, true);
+            canvas.drawBitmap(scaled, null, picture.getSetXY(), null);
             scaled.recycle();
         }
         if (et == true) {
@@ -67,15 +67,8 @@ public class Drawing extends View {
             stopX = -1;
             stopY = -1;
         }else if (et == false && (stopX >= 0 && stopY >= 0)){
-            if (startX > stopX && startY > stopY) {
-                setXY = new Rect(stopX, stopY, startX, startY);
-            } else if (startX > stopX) {
-                setXY = new Rect(stopX, startY, startX, stopY);
-            } else if (startY > stopY) {
-                setXY = new Rect(startX, stopY, stopX, startY);
-            } else {
-                setXY = new Rect(startX, startY, stopX, stopY);
-            }
+            setXY = new RectF(stopX, stopY, startX, startY);
+            setXY.sort();
 
             bitmap = WhiteboardActivity.bitmap;
             if (bitmap != null) {
@@ -176,20 +169,9 @@ public class Drawing extends View {
                         et = false;
                         break;
                     case MotionEvent.ACTION_UP:
-                        if (startX > stopX && startY > stopY) {
-                            setXY = new Rect(stopX, stopY, startX, startY);
-                        } else if (startX > stopX) {
-                            setXY = new Rect(stopX, startY, startX, stopY);
-                        } else if (startY > stopY) {
-                            setXY = new Rect(startX, stopY, stopX, startY);
-                        } else {
-                            setXY = new Rect(startX, startY, stopX, stopY);
-                        }
-
-                        Pictures picture = new Pictures();
-                        picture.setXY = setXY;
-                        picture.bitmap = WhiteboardActivity.bitmap;
+                        PictureHistory picture = new PictureHistory(WhiteboardActivity.bitmap, startX, startY, stopX, stopY);
                         pictures.add(picture);
+
                         et = true;
                         break;
                 }
@@ -242,6 +224,31 @@ public class Drawing extends View {
                 }
                 break;
             default:
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // 터치한 영역에 있는 사진을 찾는다
+                        index = -1;
+                        dragCount = 0;
+                        for(int i=0; i<pictures.size(); i++){
+                            if(pictures.get(i).isClicked(event.getX(), event.getY())){
+                                index = i;
+                                pictures.get(i).makeGapX(event.getX());
+                                pictures.get(i).makeGapY(event.getY());
+                                break;
+                            }
+                        }
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        if (dragCount > 5 && index != -1) {
+                            pictures.get(index).setPosition(event.getX(), event.getY());
+                            invalidate();
+                        } else {
+                            dragCount++;
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        break;
+                }
                 break;
         }
         invalidate();
@@ -275,9 +282,4 @@ public class Drawing extends View {
         drawCanvas = new Canvas(canvasBitmap);
     }
     */
-
-    private static class Pictures {
-        Rect setXY = new Rect(0, 0, 0, 0);
-        Bitmap bitmap;
-    }
 }
