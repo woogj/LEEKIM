@@ -103,6 +103,7 @@ public class WhiteboardActivity extends AppCompatActivity {
             }
         });
 */
+        //
         btnTxt.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(final View v){
