@@ -1,6 +1,8 @@
 package project14_1.cookandroid.com.mobilewhiteboard;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,11 +10,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class MainActivity extends AppCompatActivity {
     private static final long   DURATION_TIME = 2000L;
     private long prevPressTime = 0L;
     EditText edt_login_ID, edt_login_PW;
-
+    String id, pw, result;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,23 +40,31 @@ public class MainActivity extends AppCompatActivity {
         btn_sign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(getApplication(), SignupActivity.class);
+                Intent intent = new Intent(getApplication(), WhiteboardActivity.class);
+                // Intent intent = new Intent(getApplication(), SignupActivity.class);
                 startActivity(intent);
                 finish();
 
             }
         });
-
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (edt_login_ID.getText().toString().equals("")) {
+                id = edt_login_ID.getText().toString().trim();
+                pw = edt_login_PW.getText().toString().trim();
+
+                if (id.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "ID를 입력해주세요.", Toast.LENGTH_SHORT).show();
-                } else if (edt_login_PW.getText().toString().equals("")) {
+                }else if (pw.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Password를 입력해주세요.", Toast.LENGTH_SHORT).show();
                 }else {
-                    /*
+                    Intent intent1 = new Intent(getApplication(), MainViewActivity.class);
+                    startActivity(intent1);
+                    finish();
+                }
+            }
+        });
+        /*
                         if(parsedData[0][0].equals("succed")) {
                             Intent intent = new Intent(this, MainviewActivity.class);
                             startActivity(intent);
@@ -55,12 +76,6 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "오류", Toast.LENGTH_SHORT).show();
                         }
                     */
-                    Intent intent1 = new Intent(getApplication(), MainViewActivity.class);
-                    startActivity(intent1);
-                    finish();
-                }
-            }
-        });
     }
 
     @Override
@@ -73,7 +88,9 @@ public class MainActivity extends AppCompatActivity {
             prevPressTime = System.currentTimeMillis();
             Toast.makeText(this, "'뒤로' 버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
         }
-
-
     }
+
+    /** 집     : 192.168.219.196
+     *  핫스팟 :
+     *  학교   : 172.16.105.124 */
 }

@@ -27,6 +27,7 @@ public class Drawing extends View {
     WhiteboardActivity test;
     RectF setXY = new RectF(0, 0, 0, 0); // 터치좌표
     boolean et = false; //et는 end trigger를 줄인것. 그림을 그린 후 다시 그려지는 것 방지
+    long PressTime;
 
     private Path drawPath;
     public static Paint drawPaint, canvasPaint;
@@ -159,13 +160,13 @@ public class Drawing extends View {
             case 3:
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        startX = (int) event.getX();
-                        startY = (int) event.getY();
+                        startX = event.getX();
+                        startY = event.getY();
                         et = false;
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        stopX = (int) event.getX();
-                        stopY = (int) event.getY();
+                        stopX = event.getX();
+                        stopY = event.getY();
                         et = false;
                         break;
                     case MotionEvent.ACTION_UP:
@@ -177,20 +178,13 @@ public class Drawing extends View {
                 }
                 break;
             case 4:
-
                 String test ="";
                 int X = (int) event.getX();
                 int Y = (int) event.getY();
 
-
-
                 if(event.getAction() == MotionEvent.ACTION_DOWN){
-
                     oldx = X;
                     oldy = Y;
-
-
-
                 } else if(event.getAction() == MotionEvent.ACTION_UP){
                     if(oldx !=  -1){
 
@@ -234,6 +228,7 @@ public class Drawing extends View {
                                 index = i;
                                 pictures.get(i).makeGapX(event.getX());
                                 pictures.get(i).makeGapY(event.getY());
+                                PressTime = System.currentTimeMillis();
                                 break;
                             }
                         }
@@ -247,6 +242,27 @@ public class Drawing extends View {
                         }
                         break;
                     case MotionEvent.ACTION_UP:
+                        if(index == -1){
+                            Toast.makeText(this.getContext(), "선택한 영역에 사진이 없습니다.", Toast.LENGTH_SHORT).show();
+                        } else if((System.currentTimeMillis() <= PressTime + 1000) && (dragCount <= 5)) {
+                            final WhiteboardActivity activity = (WhiteboardActivity) this.getContext();
+                            AlertDialog.Builder alert = new AlertDialog.Builder(activity);
+                            alert.setTitle("사진 삭제");
+                            // Create TextView
+                            alert.setMessage("사진을 삭제 하시겠습니까?");
+                            alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    Toast.makeText(activity,"취소 되었습니다.",Toast.LENGTH_LONG).show();
+                                }
+                            });
+                            alert.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    pictures.remove((index));
+                                    invalidate();
+                                }
+                            });
+                            alert.show();
+                        }
                         break;
                 }
                 break;
