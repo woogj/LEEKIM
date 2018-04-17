@@ -117,6 +117,15 @@ public class MainActivity extends AppCompatActivity {
             String searchKeyword1 = params[0];
             String searchKeyword2 = params[1];
             String serverURL = "http://192.168.43.242:81/android_db_api/Ulogin.php";
+            /** http://ip주소:포트번호/파일경로
+             * ip주소   : cmd창에서 ipconfig로 IPv4의 주소를 찾아서 넣는다.
+             * 포트번호 : 기본은 80번 포트이고 안적어도 된다. 포트번호가 다를 경우 적어야한다.
+             *            예시1. 80번 포트 사용시 http://ip주소/파일경로
+             *            예시2. 81번 포트 사용시 http://ip주소:81/파일경로
+             *            참고1. localhost 사용시 오류가 생김
+             * 파일경로 : 서버 내에서 php파일이 있는 경로를 적어야한다.
+             *            참고1. apache의 경우는 htdocs 이후의 경로부터 쓰면 된다.
+             */
             String postParameters = "userID=" + searchKeyword1 +"&userPW=" + searchKeyword2;
 
             try {
