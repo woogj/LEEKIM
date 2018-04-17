@@ -237,14 +237,19 @@ public class Drawing extends View {
                         if (dragCount > 5 && index != -1) {
                             pictures.get(index).setPosition(event.getX(), event.getY());
                             invalidate();
-                        } else {
+                        }else {
                             dragCount++;
                         }
                         break;
                     case MotionEvent.ACTION_UP:
-                        if(index == -1){
-                            Toast.makeText(this.getContext(), "선택한 영역에 사진이 없습니다.", Toast.LENGTH_SHORT).show();
-                        } else if((System.currentTimeMillis() <= PressTime + 1000) && (dragCount <= 5)) {
+                        if(!(index == -1)){
+                            Toast.makeText(this.getContext(), "선택한 영역에 사진이 있습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+
+                    /*
+                    case MotionEvent.?
+                        if(index != -1 && System.currentTimeMillis() >= PressTime + 1000) {
                             final WhiteboardActivity activity = (WhiteboardActivity) this.getContext();
                             AlertDialog.Builder alert = new AlertDialog.Builder(activity);
                             alert.setTitle("사진 삭제");
@@ -252,7 +257,7 @@ public class Drawing extends View {
                             alert.setMessage("사진을 삭제 하시겠습니까?");
                             alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    Toast.makeText(activity,"취소 되었습니다.",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(activity, "취소 되었습니다.", Toast.LENGTH_LONG).show();
                                 }
                             });
                             alert.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
@@ -264,6 +269,7 @@ public class Drawing extends View {
                             alert.show();
                         }
                         break;
+                    */
                 }
                 break;
         }
