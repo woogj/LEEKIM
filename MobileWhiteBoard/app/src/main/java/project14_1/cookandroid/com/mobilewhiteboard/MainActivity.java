@@ -3,25 +3,24 @@ package project14_1.cookandroid.com.mobilewhiteboard;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
     private static final long   DURATION_TIME = 2000L;
@@ -71,18 +70,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        /*
-                        if(parsedData[0][0].equals("succed")) {
-                            Intent intent = new Intent(this, MainviewActivity.class);
-                            startActivity(intent);
-                        }else if (parsedData[0][0].equals("wrong")){
-                            Toast.makeText(MainActivity.this, "아이디와 비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
-                        }else if (parsedData[0][0].equals("non")){
-                            Toast.makeText(MainActivity.this, "존재하지 않는 회원입니다.", Toast.LENGTH_SHORT).show();
-                        }else{
-                            Toast.makeText(MainActivity.this, "오류", Toast.LENGTH_SHORT).show();
-                        }
-                    */
     }
 
     private class GetData extends AsyncTask<String, Void, String>{
@@ -103,10 +90,11 @@ public class MainActivity extends AppCompatActivity {
 
             if (result == null){
                 Toast.makeText(MainActivity.this, errorString, Toast.LENGTH_LONG).show();
-            }else if (result.equals("FAIL")){
-                Toast.makeText(MainActivity.this, "로그인 실패", Toast.LENGTH_LONG).show();
-                //FAIL의 이유 세분화해서 받아오는 것으로 바꿀 예정
-            }else {
+            }else if (result.equals("WrongID")){
+                Toast.makeText(MainActivity.this, "존재하지 않는 회원 입니다.", Toast.LENGTH_LONG).show();
+            }else if (result.equals("WrongPW")){
+                Toast.makeText(MainActivity.this, "아이디와 비밀번호가 일치하지 않습니다.", Toast.LENGTH_LONG).show();
+            }else{
                 mJsonString = result;
                 showResult();
             }
@@ -116,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             String searchKeyword1 = params[0];
             String searchKeyword2 = params[1];
-            String serverURL = "http://192.168.43.242:81/android_db_api/Ulogin.php";
+            String serverURL = "http://192.168.219.196:81/android_db_api/login.php";
             /** http://ip주소:포트번호/파일경로
              * ip주소   : cmd창에서 ipconfig로 IPv4의 주소를 찾아서 넣는다.
              * 포트번호 : 기본은 80번 포트이고 안적어도 된다. 포트번호가 다를 경우 적어야한다.
