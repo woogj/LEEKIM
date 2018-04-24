@@ -22,11 +22,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import project14_1.cookandroid.com.mobilewhiteboard.Whiteboard.WhiteboardActivity;
+
 public class MainActivity extends AppCompatActivity {
     private static final long   DURATION_TIME = 2000L;
     private long prevPressTime = 0L;
-    EditText edt_login_ID, edt_login_PW;
-    Button btn_sign, btn_login;
+    EditText edtLoginID, edtLoginPW;
+    Button btnSign, btnLogin;
     String id, pw, name, mJsonString;
 
     private static String TAG = "test";
@@ -39,13 +41,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        edt_login_ID = (EditText) findViewById(R.id.edt_login_ID);
-        edt_login_PW = (EditText) findViewById(R.id.edt_login_PW);
+        edtLoginID = (EditText) findViewById(R.id.edtLoginID);
+        edtLoginPW = (EditText) findViewById(R.id.edtLoginPW);
 
-        btn_sign = (Button) findViewById(R.id.btn_sign);
-        btn_login = (Button) findViewById(R.id.btn_login);
+        btnSign = (Button) findViewById(R.id.btnSign);
+        btnLogin = (Button) findViewById(R.id.btnLogin);
 
-        btn_sign.setOnClickListener(new View.OnClickListener() {
+        btnSign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplication(), WhiteboardActivity.class);
@@ -54,11 +56,11 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
-        btn_login.setOnClickListener(new View.OnClickListener() {
+        btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                id = edt_login_ID.getText().toString().trim();
-                pw = edt_login_PW.getText().toString().trim();
+                id = edtLoginID.getText().toString().trim();
+                pw = edtLoginPW.getText().toString().trim();
 
                 if (id.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "ID를 입력해주세요.", Toast.LENGTH_SHORT).show();
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             String searchKeyword1 = params[0];
             String searchKeyword2 = params[1];
-            String serverURL = "http://192.168.219.196:81/android_db_api/login.php";
+            String serverURL = "http://192.168.43.185:81/android_db_api/login.php";
             /** http://ip주소:포트번호/파일경로
              * ip주소   : cmd창에서 ipconfig로 IPv4의 주소를 찾아서 넣는다.
              * 포트번호 : 기본은 80번 포트이고 안적어도 된다. 포트번호가 다를 경우 적어야한다.

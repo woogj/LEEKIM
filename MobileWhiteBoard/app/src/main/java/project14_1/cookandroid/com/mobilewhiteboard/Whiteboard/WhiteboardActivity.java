@@ -1,4 +1,4 @@
-package project14_1.cookandroid.com.mobilewhiteboard;
+package project14_1.cookandroid.com.mobilewhiteboard.Whiteboard;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,22 +20,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+
+import project14_1.cookandroid.com.mobilewhiteboard.R;
+import project14_1.cookandroid.com.mobilewhiteboard.TeamChoiceActivity;
+import project14_1.cookandroid.com.mobilewhiteboard.Whiteboard.TextHistory;
 
 /**
  * Created by com on 2018-01-21.
  */
 public class WhiteboardActivity extends AppCompatActivity {
     View drawTool, baseView;
-    ImageButton Ib_picture, btn_drawing, btnClear, btnEraser, btnPen, btnSave, Ib_postit, btnTxt;
+    ImageButton ibPicture, ibDrawing, ibClear, ibEraser, ibPen, ibSave, ibPostit, ibTxt;
     LinearLayout menuTollbar;
     //Drawing drawing;
     //슬라이드 열기/닫기 플래그
@@ -47,9 +49,9 @@ public class WhiteboardActivity extends AppCompatActivity {
     //슬라이드 레이아웃
     LinearLayout slidingMenu;
     LinearLayout slidingColor;
-    ImageButton btnSliding;
-    ImageButton btnSliding2;
-    ImageButton btn_red;
+    ImageButton ibSliding;
+    ImageButton ibSliding2;
+    ImageButton ib_red;
 
 
     static int type = 0;
@@ -67,8 +69,8 @@ public class WhiteboardActivity extends AppCompatActivity {
 
         //UI
         slidingMenu = (LinearLayout)findViewById(R.id.slidingMenu);
-        btnSliding = (ImageButton)findViewById(R.id.btnSliding);
-        btnSliding2 = (ImageButton)findViewById(R.id.btnSliding2);
+        ibSliding = (ImageButton)findViewById(R.id.ibSliding);
+        ibSliding2 = (ImageButton)findViewById(R.id.ibSliding2);
 
         //애니메이션
         translateLeftAnim = AnimationUtils.loadAnimation(this, R.anim.translate_left);
@@ -79,19 +81,18 @@ public class WhiteboardActivity extends AppCompatActivity {
 
         translateLeftAnim.setAnimationListener(animationListener);
         translateRightAnim.setAnimationListener(animationListener);
-        btnTxt = (ImageButton) findViewById(R.id.Ib_text);
-        btn_drawing = (ImageButton) findViewById(R.id.btnDrawing);
-        btnClear = (ImageButton)findViewById(R.id.btnClear);
-        btnEraser = (ImageButton)findViewById(R.id.btnEraser);
-        btnPen = (ImageButton)findViewById(R.id.btnPen);
-        btnSave = (ImageButton)findViewById(R.id.btnSave);
+        ibTxt = (ImageButton) findViewById(R.id.Ib_text);
+        ibClear = (ImageButton)findViewById(R.id.ibClear);
+        ibEraser = (ImageButton)findViewById(R.id.ibEraser);
+        ibPen = (ImageButton)findViewById(R.id.ibPen);
+        ibSave = (ImageButton)findViewById(R.id.ibSave);
         baseView = findViewById(R.id.baseView);
-        Ib_postit = (ImageButton) findViewById(R.id.Ib_postit);
-        Ib_picture = (ImageButton) findViewById(R.id.Ib_picture);
-        btn_drawing = (ImageButton) findViewById(R.id.btnDrawing);
-        btnClear = (ImageButton)findViewById(R.id.btnClear);
-        btnEraser = (ImageButton)findViewById(R.id.btnEraser);
-        btnPen = (ImageButton)findViewById(R.id.btnPen);
+        ibPostit = (ImageButton) findViewById(R.id.ibPostit);
+        ibPicture = (ImageButton) findViewById(R.id.ibPicture);
+        ibDrawing = (ImageButton) findViewById(R.id.ibDrawing);
+        ibClear = (ImageButton)findViewById(R.id.ibClear);
+        ibEraser = (ImageButton)findViewById(R.id.ibEraser);
+        ibPen = (ImageButton)findViewById(R.id.ibPen);
         drawTool = findViewById(R.id.DrawTool);
         /*ib_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,13 +105,13 @@ public class WhiteboardActivity extends AppCompatActivity {
         });
 */
         //
-        btnTxt.setOnClickListener(new View.OnClickListener(){
+        ibTxt.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(final View v){
                 if(isPageOpen){
                     slidingMenu.setVisibility(View.INVISIBLE);
-                    btnSliding2.setVisibility(View.INVISIBLE);
-                    btnSliding.setVisibility(View.VISIBLE);
+                    ibSliding2.setVisibility(View.INVISIBLE);
+                    ibSliding.setVisibility(View.VISIBLE);
 
 
                     isPageOpen = false;
@@ -141,13 +142,13 @@ public class WhiteboardActivity extends AppCompatActivity {
             }
         });
 
-        btn_drawing.setOnClickListener(new View.OnClickListener(){
+        ibDrawing.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 if(isPageOpen){
                     slidingMenu.setVisibility(View.INVISIBLE);
-                    btnSliding2.setVisibility(View.INVISIBLE);
-                    btnSliding.setVisibility(View.VISIBLE);
+                    ibSliding2.setVisibility(View.INVISIBLE);
+                    ibSliding.setVisibility(View.VISIBLE);
 
 
                     isPageOpen = false;
@@ -157,13 +158,13 @@ public class WhiteboardActivity extends AppCompatActivity {
             }
         });
 
-        Ib_picture.setOnClickListener(new View.OnClickListener() {
+        ibPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(isPageOpen){
                     slidingMenu.setVisibility(View.INVISIBLE);
-                    btnSliding2.setVisibility(View.INVISIBLE);
-                    btnSliding.setVisibility(View.VISIBLE);
+                    ibSliding2.setVisibility(View.INVISIBLE);
+                    ibSliding.setVisibility(View.VISIBLE);
 
 
                     isPageOpen = false;
@@ -198,13 +199,13 @@ public class WhiteboardActivity extends AppCompatActivity {
             }
         });
 
-        Ib_postit.setOnClickListener(new View.OnClickListener() {
+        ibPostit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(isPageOpen){
                     slidingMenu.setVisibility(View.INVISIBLE);
-                    btnSliding2.setVisibility(View.INVISIBLE);
-                    btnSliding.setVisibility(View.VISIBLE);
+                    ibSliding2.setVisibility(View.INVISIBLE);
+                    ibSliding.setVisibility(View.VISIBLE);
 
 
                     isPageOpen = false;
@@ -215,14 +216,14 @@ public class WhiteboardActivity extends AppCompatActivity {
             }
         });
 
-        btnClear.setOnClickListener(new View.OnClickListener() {
+        ibClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Drawing.canvasBitmap.eraseColor(Color.TRANSPARENT);
                 view.invalidate();
             }
         });
-        btnEraser.setOnClickListener(new View.OnClickListener() {
+        ibEraser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Drawing.drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
@@ -231,10 +232,10 @@ public class WhiteboardActivity extends AppCompatActivity {
                 view.invalidate();
             }
         });
-        btnSave.setOnClickListener(new View.OnClickListener() {
+        ibSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(view.getId() == R.id.btnSave)
+                if(view.getId() == R.id.ibSave)
                 {
                     View drawing = (View) findViewById(R.id.Drawing);
                     drawing.buildDrawingCache();
@@ -251,7 +252,7 @@ public class WhiteboardActivity extends AppCompatActivity {
             }
         });
 
-        btnPen.setOnClickListener(new View.OnClickListener() {
+        ibPen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((Paint)Drawing.drawPaint).setXfermode(new PorterDuffXfermode(PorterDuff.Mode.ADD));
@@ -291,15 +292,15 @@ public class WhiteboardActivity extends AppCompatActivity {
         if(isPageOpen){
             //애니메이션 시작
             slidingMenu.startAnimation(translateRightAnim);
-            btnSliding2.setVisibility(View.INVISIBLE);
-            btnSliding.setVisibility(View.VISIBLE);
+            ibSliding2.setVisibility(View.INVISIBLE);
+            ibSliding.setVisibility(View.VISIBLE);
         }
         //열기
         else{
             slidingMenu.setVisibility(View.VISIBLE);
             slidingMenu.startAnimation(translateLeftAnim);
-            btnSliding.setVisibility(View.INVISIBLE);
-            btnSliding2.setVisibility(View.VISIBLE);
+            ibSliding.setVisibility(View.INVISIBLE);
+            ibSliding2.setVisibility(View.VISIBLE);
         }
     }
 

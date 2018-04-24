@@ -18,11 +18,11 @@
             android:gravity="left"
             android:visibility="invisible">
             <ImageButton
-                android:id="@+id/btnPen"
+                android:id="@+id/ibPen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/btnEraser"
-                android:layout_toLeftOf="@id/btnEraser"
+                android:layout_alignBaseline="@id/ibEraser"
+                android:layout_toLeftOf="@id/ibEraser"
                 android:background="@null"
                 android:padding="5dp"
                 android:scaleType="fitXY"
@@ -30,30 +30,30 @@
                 tools:ignore="DuplicateIds" />
 
             <ImageButton
-                android:id="@+id/btnEraser"
+                android:id="@+id/ibEraser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/btnClear"
+                android:layout_alignBaseline="@id/ibClear"
                 android:layout_marginRight="5px"
-                android:layout_toLeftOf="@id/btnClear"
+                android:layout_toLeftOf="@id/ibClear"
                 android:background="@null"
                 android:padding="5sp"
                 android:scaleType="fitXY"
                 android:src="@drawable/icon_eraser" />
 
             <ImageButton
-                android:id="@+id/btnClear"
+                android:id="@+id/ibClear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/btnSave"
-                android:layout_toLeftOf="@id/btnSave"
+                android:layout_alignBaseline="@id/ibSave"
+                android:layout_toLeftOf="@id/ibSave"
                 android:background="@null"
                 android:padding="5sp"
                 android:scaleType="fitXY"
                 android:src="@drawable/clean" />
 
             <ImageButton
-                android:id="@+id/btnSave"
+                android:id="@+id/ibSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/DrawTool">
-            <project14_1.cookandroid.com.mobilewhiteboard.Drawing
+            <project14_1.cookandroid.com.mobilewhiteboard.Whiteboard.Drawing
                 android:id="@+id/Drawing"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -96,7 +96,7 @@
             android:src="@drawable/ic_return" />
 
         <ImageButton
-            android:id="@+id/Ib_text"
+            android:id="@+id/ibtext"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
@@ -107,7 +107,7 @@
             android:src="@drawable/text" />
 
         <ImageButton
-            android:id="@+id/btnDrawing"
+            android:id="@+id/ibDrawing"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
@@ -119,7 +119,7 @@
             android:onClick="onClick"/>
 
         <ImageButton
-            android:id="@+id/Ib_picture"
+            android:id="@+id/ibPicture"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
@@ -130,7 +130,7 @@
             android:src="@drawable/picture" />
 
         <ImageButton
-            android:id="@+id/Ib_postit"
+            android:id="@+id/ibPostit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
@@ -147,14 +147,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <ImageButton
-            android:id="@+id/btnSliding"
+            android:id="@+id/ibSliding"
             android:src="@drawable/ic_left"
             android:layout_width="30dp"
             android:layout_height="60dp"
             android:visibility="visible"
             android:onClick="onButton1Clicked"/>
         <ImageButton
-            android:id="@+id/btnSliding2"
+            android:id="@+id/ibSliding2"
             android:src="@drawable/ic_right"
             android:layout_width="30dp"
             android:layout_height="60dp"

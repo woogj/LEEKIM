@@ -1,4 +1,4 @@
-package project14_1.cookandroid.com.mobilewhiteboard;
+package project14_1.cookandroid.com.mobilewhiteboard.Whiteboard;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -19,6 +19,8 @@ import java.util.HashMap;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
+
+import project14_1.cookandroid.com.mobilewhiteboard.R;
 
 public class Drawing extends View {
     float startX = -1, startY = -1, stopX = -1, stopY = -1; // 터치 좌표
