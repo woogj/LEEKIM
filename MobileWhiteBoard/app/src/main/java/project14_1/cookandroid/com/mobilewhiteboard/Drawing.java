@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.graphics.Path;
@@ -21,12 +22,15 @@ import android.widget.Toast;
 
 public class Drawing extends View {
     float startX = -1, startY = -1, stopX = -1, stopY = -1; // 터치 좌표
-    int oldx = -1, oldy = -1, i=0;//터치 좌표
+    float oldx = -1, oldy = -1, i=0;//터치 좌표
+    int id = -1, selectID =0;  //포스트잇 ID
+    String p_text; // 포스트잇 text를 저장하는 변수
     EditText edt; // 동적 생성될 EditText
     WhiteboardActivity cnxt; //화이트보드 context
     WhiteboardActivity test;
     RectF setXY = new RectF(0, 0, 0, 0); // 터치좌표
     boolean et = false; //et는 end trigger를 줄인것. 그림을 그린 후 다시 그려지는 것 방지
+    boolean addPostit = false; // 포스트잇 추가 여부 저장 변수
     long PressTime;
 
     private Path drawPath;
@@ -39,9 +43,15 @@ public class Drawing extends View {
     int dragCount = 0;
     int index = -1;
 
+    RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+    ); //포스트잇이 그려지는 Layout 선언
+
     public static ArrayList<PictureHistory> pictures = new ArrayList<>(); //그림을 저장하는 배열
     public static ArrayList<TextHistory> textHistories = new ArrayList<>();
     public static HashMap<EditText,Integer> postIt_hashTable = new HashMap<EditText, Integer>();
+    public static  ArrayList<EditText> edtList = new ArrayList<>(); //포스트잇의 EditText를 저장하는 배열
 
     public Drawing(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -82,6 +92,50 @@ public class Drawing extends View {
         // 글 쓰기
         for(TextHistory textHistory : textHistories) {
             textHistory.drawCanvas(canvas);
+        }
+
+        //포스트잇 그리기
+        if(addPostit == true){
+            for(int i=0; i<id+1; i++){
+
+                i = id;
+
+                Toast.makeText(this.getContext(), "test, id= "+id, Toast.LENGTH_SHORT).show();
+                edt = new EditText(cnxt);
+                edt.setId(id);
+                edt.setText(p_text); //ptet= ""
+
+
+                edtList.add(edt);
+
+                edt.setBackgroundResource(R.drawable.postit3);
+
+                edtList.get(id).setLayoutParams(lp);
+                ((RelativeLayout) this.getParent()).addView(edtList.get(id));
+
+
+
+                edt.setHint("내용을 입력하시오");
+                edt.setPadding(50,50,10,10);
+                edt.setScaleX(0.6f);
+                edt.setScaleY(0.6f);
+                edt.setGravity(10);
+                edt.setX(oldx);
+                edt.setY(oldy);
+                addPostit= false;
+                // edt.setOnLongClickListener(mLongClickListener);
+                int j=0;
+                for(int k= -1; k<id; k++){
+                    j = k;
+                    j++;
+
+                    //edtList.get(j).setOnLongClickListener(mLongClickListener);
+                    edtList.get(j).setOnTouchListener(mTouchListener);
+                }
+
+                edt.setFocusable(false);
+            }
+
         }
         // 손글씨 그리기
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
@@ -178,43 +232,52 @@ public class Drawing extends View {
                 }
                 break;
             case 4:
-                String test ="";
-                int X = (int) event.getX();
-                int Y = (int) event.getY();
+                String test;
 
-                if(event.getAction() == MotionEvent.ACTION_DOWN){
-                    oldx = X;
-                    oldy = Y;
-                } else if(event.getAction() == MotionEvent.ACTION_UP){
-                    if(oldx !=  -1){
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
 
-                        edt = new EditText(cnxt);
-                        edt.setId(i+1);
-                        postIt_hashTable.put(edt,edt.getId());
-                        i++;
+                        index = -1;
+                        float X = event.getX();
+                        float Y = event.getY();
+                        oldx = X;
+                        oldy = Y;
 
-                        // test = Integer.toString(edt.getId());
-                        edt.setText(test);
-                        edt.setBackgroundResource(R.drawable.postit3);
+                        break;
 
-                        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                                ViewGroup.LayoutParams.WRAP_CONTENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT
-                        );
-                        edt.setLayoutParams(lp);
-                        ((RelativeLayout) this.getParent()).addView(edt);
+                    case MotionEvent.ACTION_MOVE:
 
-                        edt.setHint("  내용을 입력하시오.");
-                        edt.setTextAlignment(getTop());
-                        edt.setScaleX(0.6f);
-                        edt.setScaleY(0.6f);
-                        edt.setX(event.getX());
-                        edt.setY(event.getY());
+                        break;
 
-                    }
-                    oldx = -1;
-                    oldy = -1;
+                    case MotionEvent.ACTION_UP:
 
+
+                        AlertDialog.Builder alert = new AlertDialog.Builder(cnxt);
+                        alert.setTitle("텍스트 입력");
+                        // Create TextView
+                        final EditText input = new EditText(cnxt);
+                        alert.setView(input);
+
+
+                        alert.setPositiveButton("입력", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                addPostit = true;
+                                p_text = input.getText().toString();
+                                invalidate();
+                                id++;
+                            }
+                        });
+
+                        alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // Canceled.
+                            }
+                        });
+
+                        alert.show();
+
+                        break;
                 }
                 break;
             default:
@@ -246,36 +309,87 @@ public class Drawing extends View {
                             Toast.makeText(this.getContext(), "선택한 영역에 사진이 있습니다.", Toast.LENGTH_SHORT).show();
                         }
                         break;
-
-                    /*
-                    case MotionEvent.?
-                        if(index != -1 && System.currentTimeMillis() >= PressTime + 1000) {
-                            final WhiteboardActivity activity = (WhiteboardActivity) this.getContext();
-                            AlertDialog.Builder alert = new AlertDialog.Builder(activity);
-                            alert.setTitle("사진 삭제");
-                            // Create TextView
-                            alert.setMessage("사진을 삭제 하시겠습니까?");
-                            alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    Toast.makeText(activity, "취소 되었습니다.", Toast.LENGTH_LONG).show();
-                                }
-                            });
-                            alert.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    pictures.remove((index));
-                                    invalidate();
-                                }
-                            });
-                            alert.show();
-                        }
-                        break;
-                    */
                 }
                 break;
         }
         invalidate();
         return true;
     }
+
+    View.OnTouchListener mTouchListener = new View.OnTouchListener(){
+        @Override
+        public boolean onTouch(View v, MotionEvent event){
+
+            float X = event.getX();
+            float Y = event.getY();
+
+            switch (event.getAction()){
+
+                case MotionEvent.ACTION_UP :
+
+                    if(dragCount <= 5){
+
+                        AlertDialog.Builder alert = new AlertDialog.Builder(cnxt);
+                        alert.setTitle("수정하시겠습니까?");
+                        final EditText input = new EditText(cnxt);
+                        alert.setView(input);
+                        // Create TextView
+
+                        alert.setPositiveButton("수정", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                p_text = input.getText().toString();
+                                edtList.get(selectID).setText(p_text);
+
+
+                            }
+                        });
+
+                        alert.setNegativeButton("삭제", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                ((RelativeLayout) getParent()).removeView(edtList.get(selectID));
+                            }
+                        });
+                        alert.show();
+                    }
+
+
+                    break;
+
+                case MotionEvent.ACTION_MOVE :
+
+                    Log.i("B1", "MOVE" + X + "," + Y+","+v.getId());
+                    //edtList.get(selectID).setX(X);
+                    //edtList.get(selectID).setY(Y);
+
+                    if (dragCount > 5 && selectID != -1) {
+
+                        edtList.get(selectID).setX(event.getX());
+                        edtList.get(selectID).setY(event.getY());
+
+                        invalidate();
+                    } else {
+
+                        dragCount++;
+                    }
+
+
+                    break;
+
+                case MotionEvent.ACTION_DOWN :
+
+                    selectID = v.getId();
+                    dragCount = 0;
+
+                    Log.i("C1", "DOWN" + X + "," + Y+","+v.getId());
+
+                    break;
+            }
+            return  false;
+
+        }
+    };
 
     private void setupDrawing(){
         this.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -297,11 +411,5 @@ public class Drawing extends View {
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
-    /*
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged( w, h, oldw, oldh);
-        canvasBitmap = Bitmap.createBitmap( w, h, Bitmap.Config.ARGB_8888);
-        drawCanvas = new Canvas(canvasBitmap);
-    }
-    */
+
 }

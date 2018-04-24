@@ -211,6 +211,7 @@ public class WhiteboardActivity extends AppCompatActivity {
                 }
                 type = 4;
                 drawTool.setVisibility(View.INVISIBLE);
+
             }
         });
 
