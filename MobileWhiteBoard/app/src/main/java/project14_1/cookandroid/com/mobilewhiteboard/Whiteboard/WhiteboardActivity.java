@@ -81,7 +81,7 @@ public class WhiteboardActivity extends AppCompatActivity {
 
         translateLeftAnim.setAnimationListener(animationListener);
         translateRightAnim.setAnimationListener(animationListener);
-        ibTxt = (ImageButton) findViewById(R.id.Ib_text);
+        ibTxt = (ImageButton) findViewById(R.id.ibText);
         ibClear = (ImageButton)findViewById(R.id.ibClear);
         ibEraser = (ImageButton)findViewById(R.id.ibEraser);
         ibPen = (ImageButton)findViewById(R.id.ibPen);
