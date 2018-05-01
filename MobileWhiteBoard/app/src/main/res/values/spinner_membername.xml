@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- array의 이름은 Member 입니다.-->
+
+    <string-array name="Member">
+        <item>김영준</item>
+        <item>이수빈</item>
+        <item>이지연</item>
+        <item>이현우</item>
+    </string-array>
+
+</resources>
