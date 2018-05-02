@@ -36,6 +36,14 @@ public class SignupActivity extends AppCompatActivity {
         edtPw = (EditText) findViewById(R.id.edtPw);
         edtRePw = (EditText) findViewById(R.id.edtRePw);
 
+
+       /* edtPw.setOnLongClickListener(mLongClickListener);
+        edtRePw.setOnLongClickListener(mLongClickListener);
+*/
+
+       edtPw.setOnTouchListener(mOnTouchListener);
+        edtRePw.setOnTouchListener(mOnTouchListener1);
+
         btnResister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,7 +68,7 @@ public class SignupActivity extends AppCompatActivity {
                 }
             }
         });
-
+        
         txtLoginGo.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -70,6 +78,49 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
     }
+
+    View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()){
+
+                case MotionEvent.ACTION_DOWN :
+
+                    edtPw.setInputType(0x00000001);
+                    break;
+
+                case MotionEvent.ACTION_UP :
+                    edtPw.setInputType(	0x00000081);
+                    break;
+            }
+
+            return false;
+        }
+    };
+
+    View.OnTouchListener mOnTouchListener1 = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()){
+
+                case MotionEvent.ACTION_DOWN :
+
+                    edtRePw.setInputType(0x00000001);
+
+
+                    break;
+
+                case MotionEvent.ACTION_UP :
+                    edtRePw.setInputType(	0x00000081);
+
+                    break;
+            }
+
+            return false;
+        }
+    };
+
+
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(getApplication(), MainActivity.class);
