@@ -318,9 +318,6 @@ public class Drawing extends View {
         return true;
     }
 
-<<<<<<< HEAD:MobileWhiteBoard/app/src/main/java/project14_1/cookandroid/com/mobilewhiteboard/Drawing.java
-    protected void setupDrawing(){
-=======
     View.OnTouchListener mTouchListener = new View.OnTouchListener(){
         @Override
         public boolean onTouch(View v, MotionEvent event){
@@ -397,7 +394,6 @@ public class Drawing extends View {
     };
 
     private void setupDrawing(){
->>>>>>> 8cd29e6b0490b08db00009126e2750d5d462b11c:MobileWhiteBoard/app/src/main/java/project14_1/cookandroid/com/mobilewhiteboard/Whiteboard/Drawing.java
         this.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
