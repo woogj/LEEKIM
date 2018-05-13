@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.Manifest;
 import android.graphics.Paint;
@@ -26,7 +27,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
@@ -36,7 +36,6 @@ import java.io.FileOutputStream;
 public class WhiteboardActivity extends AppCompatActivity {
     View drawTool, baseView;
     ImageButton Ib_picture, btn_drawing, btnClear, btnEraser, btnPen, btnSave, Ib_postit, btnTxt;
-    LinearLayout menuTollbar;
     //Drawing drawing;
     //슬라이드 열기/닫기 플래그
     boolean isPageOpen = false;
@@ -46,17 +45,13 @@ public class WhiteboardActivity extends AppCompatActivity {
     Animation translateRightAnim;
     //슬라이드 레이아웃
     LinearLayout slidingMenu;
-    LinearLayout slidingColor;
     ImageButton btnSliding;
     ImageButton btnSliding2;
-    ImageButton btn_red;
-
-
     static int type = 0;
     static Uri rsrc = null;
     static Bitmap bitmap = null;
-
-    private String[] items = {"Black", "Red", "Blue", "Yellow", "Green"};
+    //private String[] items = {"Black", "Red", "Blue", "Yellow", "Green"};
+    int mColor = 0xff000000;
 
     @Override
     protected void onCreate(Bundle savedIntanteState){
@@ -91,7 +86,6 @@ public class WhiteboardActivity extends AppCompatActivity {
         btn_drawing = (ImageButton) findViewById(R.id.btnDrawing);
         btnClear = (ImageButton)findViewById(R.id.btnClear);
         btnEraser = (ImageButton)findViewById(R.id.btnEraser);
-        btnPen = (ImageButton)findViewById(R.id.btnPen);
         drawTool = findViewById(R.id.DrawTool);
         /*ib_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,8 +142,6 @@ public class WhiteboardActivity extends AppCompatActivity {
                     slidingMenu.setVisibility(View.INVISIBLE);
                     btnSliding2.setVisibility(View.INVISIBLE);
                     btnSliding.setVisibility(View.VISIBLE);
-
-
                     isPageOpen = false;
                 }
                 drawTool.setVisibility(View.VISIBLE);
@@ -205,8 +197,6 @@ public class WhiteboardActivity extends AppCompatActivity {
                     slidingMenu.setVisibility(View.INVISIBLE);
                     btnSliding2.setVisibility(View.INVISIBLE);
                     btnSliding.setVisibility(View.VISIBLE);
-
-
                     isPageOpen = false;
                 }
                 type = 4;
@@ -218,18 +208,36 @@ public class WhiteboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Drawing.canvasBitmap.eraseColor(Color.TRANSPARENT);
+                Drawing.drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
                 view.invalidate();
             }
         });
+
         btnEraser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Drawing.drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-                //Drawing.drawPaint.setColor(Color.WHITE);
-                Drawing.drawPaint.setStrokeWidth(200);
-                view.invalidate();
+                Drawing.drawPaint.setStrokeWidth(150);
             }
         });
+
+        btnPen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ColorPaletteDialog.listener = new OnColorSelectedListener() {
+                    public void onColorSelected(int color) {
+                        Drawing.drawPaint.setXfermode(null);
+                        Drawing.drawPaint.setStrokeWidth(30);
+                        btnPen.setColorFilter(color);
+                        mColor = color;
+                        Drawing.drawPaint.setColor(mColor);
+                    }
+                };
+                Intent intent = new Intent(getApplicationContext(), ColorPaletteDialog.class);
+                startActivity(intent);
+            }
+        });
+
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -249,40 +257,6 @@ public class WhiteboardActivity extends AppCompatActivity {
                 }
             }
         });
-
-        btnPen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((Paint)Drawing.drawPaint).setXfermode(new PorterDuffXfermode(PorterDuff.Mode.ADD));
-                 AlertDialog.Builder color = new AlertDialog.Builder(WhiteboardActivity.this);
-                color.setItems(items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        switch (i) {
-                            case 0 :
-                                Drawing.drawPaint.setColor(Color.BLACK);
-                                break;
-                            case 1 :
-                                Drawing.drawPaint.setColor(Color.RED);
-                                break;
-                            case 2 :
-                                Drawing.drawPaint.setColor(Color.BLUE);
-                                break;
-                            case 3:
-                                Drawing.drawPaint.setColor(Color.YELLOW);
-                                break;
-                            default:
-                                Drawing.drawPaint.setColor(Color.GREEN);
-                        }
-                    }
-                });
-                color.create().show();
-                //Drawing.drawPaint.setColor(Color.BLACK);
-                Drawing.drawPaint.setStrokeWidth(20);
-            }
-        });
-
-
     }
     //버튼
     public void onButton1Clicked(View v){

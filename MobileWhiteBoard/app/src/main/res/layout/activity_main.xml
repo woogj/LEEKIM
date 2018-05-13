@@ -27,7 +27,7 @@
 
 
     <EditText
-        android:id="@+id/edt_login_ID"
+        android:id="@+id/edtLoginID"
         android:layout_width="180dp"
         android:layout_height="40dp"
         android:layout_marginBottom="20dp"
@@ -41,7 +41,7 @@
         android:lines="1"/>
 
     <EditText
-        android:id="@+id/edt_login_PW"
+        android:id="@+id/edtLoginPW"
         android:layout_width="180dp"
         android:layout_height="40dp"
         android:layout_marginLeft="100dp"
@@ -81,21 +81,17 @@
         android:layout_margin="10dp">
 
         <Button
-            android:id="@+id/btn_login"
+            android:id="@+id/btnLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="로그인"
             android:layout_marginBottom="30dp"
-            android:layout_marginRight="10dp"
-            android:onClick="login_btn"/>
+            android:layout_marginRight="10dp"/>
         <Button
-            android:id="@+id/btn_sign"
+            android:id="@+id/btnSign"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:text="회원가입"
-            android:onClick="join_btn"/>
-
+            android:text="회원가입"/>
     </LinearLayout>
 </LinearLayout>
-

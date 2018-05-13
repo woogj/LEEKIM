@@ -30,7 +30,7 @@ public class Drawing extends View {
 
     private Path drawPath;
     public static Paint drawPaint, canvasPaint;
-    public static int paintColor = 0xFF000000;
+    //public static int paintColor = 0xFF000000;
     private Canvas drawCanvas;
     public static Bitmap canvasBitmap;
     Bitmap bitmap = null;
@@ -255,7 +255,7 @@ public class Drawing extends View {
         return true;
     }
 
-    private void setupDrawing(){
+    protected void setupDrawing(){
         this.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -267,9 +267,9 @@ public class Drawing extends View {
 
         drawPath = new Path();
         drawPaint = new Paint();
-        drawPaint.setColor(paintColor);
+        //drawPaint.setColor(paintColor);
         drawPaint.setAntiAlias(true);
-        drawPaint.setStrokeWidth(20);
+        drawPaint.setStrokeWidth(30);
         drawPaint.setStyle(Paint.Style.STROKE);
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
