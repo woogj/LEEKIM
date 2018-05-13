@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="project14_1.cookandroid.com.mobilewhiteboard" >
+
     <uses-permission android:name="android.permission." />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<<<<<<< HEAD
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+=======
+    <uses-permission android:name="android.permission.INTERNET" />
+
+>>>>>>> 8cd29e6b0490b08db00009126e2750d5d462b11c
     <application
         android:allowBackup="true"
         android:icon="@drawable/whiteboard"
@@ -24,7 +30,7 @@
         <activity android:name=".MainViewActivity" > </activity>
         <activity android:name=".MemoActivity" > </activity>
         <activity android:name=".TeamChoiceActivity" > </activity>
-        <activity android:name=".WhiteboardActivity"
+        <activity android:name=".Whiteboard.WhiteboardActivity"
             android:screenOrientation="sensorLandscape"> </activity>
         <activity android:name=".TeamTaskActivity" > </activity>
         <activity android:name=".ColorPaletteDialog" android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"></activity>

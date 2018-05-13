@@ -1,4 +1,4 @@
-package project14_1.cookandroid.com.mobilewhiteboard;
+package project14_1.cookandroid.com.mobilewhiteboard.Whiteboard;
 
 import android.graphics.Bitmap;
 import android.graphics.RectF;

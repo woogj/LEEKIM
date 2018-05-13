@@ -1,11 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:layout_width="wrap_content"
+
+    <RelativeLayout
+        android:id="@+id/rlyTaskChoice"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:text="업무분담"/>
-</LinearLayout>
+        android:layout_marginTop="10dp"
+        android:layout_alignParentTop="true"
+        >
+        <TextView
+            android:id="@+id/tvTName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="25dp"
+            android:hint="Team Name"/>
+        <TextView
+            android:id="@+id/tvTSchedule"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="30dp"
+            android:hint="Team Schedule"
+            android:layout_below="@+id/tvTName"/>
+        <RadioGroup
+            android:id="@+id/rgTaskChoice"
+            android:layout_below="@+id/tvTSchedule"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/rbAllTask"
+                android:text="All Schedule"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:checked="true"/>
+            <RadioButton
+                android:id="@+id/rbPrivateTask"
+                android:text="Private"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+        </RadioGroup>
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/rlyTaskChoice">
+
+        <RelativeLayout
+            android:id="@+id/rlyTaskAdd"
+            android:layout_gravity="center"
+            android:background="@color/colorBaseBlue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="60dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:visibility="invisible">
+
+            <Spinner
+                android:id="@+id/spnMemberAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|top"></Spinner>
+
+            <Button
+                android:id="@+id/btnInputTask"
+                android:text="입력"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/tvTask"
+                android:text="할 일을 입력하시오."
+                android:layout_below="@+id/spnMemberAdd"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/edtTask"
+                android:layout_below="@+id/tvTask"
+                android:layout_margin="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlyALLTask"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            >
+
+            <Button
+                android:id="@+id/test2"
+                android:text="AllTask"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlyPrivateTask"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            >
+
+            <Spinner
+                android:id="@+id/spnMember"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></Spinner>
+            <Button
+                android:id="@+id/btnAddTask"
+                android:text="+"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RelativeLayout
+                android:id="@+id/rlyViewPrivate"
+                android:layout_below="@+id/spnMember"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <project14_1.cookandroid.com.mobilewhiteboard.TaskDrawing
+                    android:id="@+id/TaskDrawing"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorWhite" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+</RelativeLayout>

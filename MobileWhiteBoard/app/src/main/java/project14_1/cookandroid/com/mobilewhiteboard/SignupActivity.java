@@ -58,11 +58,6 @@ public class SignupActivity extends AppCompatActivity {
         edtEmail = (EditText) findViewById(R.id.edtEmail);
         edtPw = (EditText) findViewById(R.id.edtPw);
         edtRePw = (EditText) findViewById(R.id.edtRePw);
-
-       /* edtPw.setOnLongClickListener(mLongClickListener);
-        edtRePw.setOnLongClickListener(mLongClickListener);
-*/
-
         edtPw.setOnTouchListener(mOnTouchListener);
         edtRePw.setOnTouchListener(mOnTouchListener1);
 
@@ -97,7 +92,7 @@ public class SignupActivity extends AppCompatActivity {
 
             }
         });
-
+        
         txtLoginGo.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -120,6 +115,7 @@ public class SignupActivity extends AppCompatActivity {
 
                 case MotionEvent.ACTION_UP :
                     edtPw.setInputType(   0x00000081);
+
                     break;
             }
 
@@ -141,7 +137,6 @@ public class SignupActivity extends AppCompatActivity {
 
                 case MotionEvent.ACTION_UP :
                     edtRePw.setInputType(   0x00000081);
-
                     break;
             }
 
