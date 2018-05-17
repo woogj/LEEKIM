@@ -71,10 +71,11 @@ public class SignupActivity extends AppCompatActivity {
                 name = edtName.getText().toString().trim();
                 email = edtEmail.getText().toString().trim();
 
+
                 //String userID = edtID.getText().toString();
                 //String userPW = edtPw.getText().toString();
 
-                insertoToDatabase(userID, userPW, name);
+                insertoToDatabase(userID, userPW, name, email);
                 /*if (id.isEmpty() || name.isEmpty() || email.isEmpty() || repass.isEmpty()|| pass.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "정보를 모두 입력해주세요!", Toast.LENGTH_SHORT).show();
                 } else {
@@ -151,7 +152,7 @@ public class SignupActivity extends AppCompatActivity {
     }
     */
 
-    private void insertoToDatabase(String userID, String userPW, String name) {
+    private void insertoToDatabase(String userID, String userPW, String name, final String email) {
         class InsertData extends AsyncTask<String, Void, String> {
             ProgressDialog loading;
             @Override
@@ -173,10 +174,12 @@ public class SignupActivity extends AppCompatActivity {
                     String userPW = (String) params[1];
                     String name = (String) params[2];
 
-                    String link = "http://221.163.228.56/signup.php";
+                    String link = "http://1.1.1.1/signup.php";
                     String data = URLEncoder.encode("userID", "UTF-8") + "=" + URLEncoder.encode(userID, "UTF-8");
                     data += "&" + URLEncoder.encode("userPW", "UTF-8") + "=" + URLEncoder.encode(userPW, "UTF-8");
                     data += "&" + URLEncoder.encode("name", "UTF-8") + "=" + URLEncoder.encode(name, "UTF-8");
+                    data += "&" + URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
+
 
                     URL url = new URL(link);
                     URLConnection conn = url.openConnection();
@@ -204,7 +207,7 @@ public class SignupActivity extends AppCompatActivity {
             }
         }
         InsertData task = new InsertData();
-        task.execute(userID, userPW, name);
+        task.execute(userID, userPW, name, email);
     }
 
     @Override

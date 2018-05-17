@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
             String searchKeyword1 = params[0];
             String searchKeyword2 = params[1];
 
-            String serverURL = "http://192.168.0.6/android_db_api/login.php";
+            String serverURL = "http://1.1.1.1/login.php";
             /** http://ip주소:포트번호/파일경로
              * ip주소   : cmd창에서 ipconfig로 IPv4의 주소를 찾아서 넣는다.
              * 포트번호 : 기본은 80번 포트이고 안적어도 된다. 포트번호가 다를 경우 적어야한다.
