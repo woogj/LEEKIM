@@ -21,8 +21,7 @@ public class MainViewActivity extends AppCompatActivity {
         btn_personal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent1 = new Intent(getApplication(), MemoActivity.class);
+                Intent intent1 = new Intent(getApplication(), MemoListActivity.class);
                 startActivity(intent1);
                 finish();
 

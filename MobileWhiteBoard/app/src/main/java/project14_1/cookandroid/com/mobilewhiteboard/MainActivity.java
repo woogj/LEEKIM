@@ -23,18 +23,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-import project14_1.cookandroid.com.mobilewhiteboard.Whiteboard.WhiteboardActivity;
-
 public class MainActivity extends AppCompatActivity {
     private static final long   DURATION_TIME = 2000L;
     private long prevPressTime = 0L;
     EditText edtLoginID, edtLoginPW;
     Button btnSign, btnLogin;
-    String id, pw, name, mJsonString;
+    String id;
+    String pw;
+    static String name;
+    static String userID;
+    String mJsonString;
 
     private static String TAG = "test";
     private static final String TAG_JSON="data";
     private static final String TAG_NAME = "name";
+    private static final String TAG_ID = "userID";
 
 
     @Override
@@ -108,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             String searchKeyword1 = params[0];
             String searchKeyword2 = params[1];
 
-            String serverURL = "http://1.1.1.1/login.php";
+            String serverURL = "http://61.79.96.104/login.php";
             /** http://ip주소:포트번호/파일경로
              * ip주소   : cmd창에서 ipconfig로 IPv4의 주소를 찾아서 넣는다.
              * 포트번호 : 기본은 80번 포트이고 안적어도 된다. 포트번호가 다를 경우 적어야한다.
@@ -174,7 +177,9 @@ public class MainActivity extends AppCompatActivity {
             for(int i=0;i<jsonArray.length();i++){
                 JSONObject item = jsonArray.getJSONObject(i);
                 name = item.getString(TAG_NAME);
+                userID = item.getString(TAG_ID);
                 Toast.makeText(MainActivity.this, name + "님 환영합니다.", Toast.LENGTH_LONG).show();
+                test(userID);
                 Intent intent =  new Intent(getApplication(), MainViewActivity.class);
                 startActivity(intent);
                 finish();
@@ -182,6 +187,10 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             Log.d(TAG, "showResult : ", e);
         }
+    }
+
+    public void test(String userID) {
+        this.userID = userID;
     }
 
     @Override

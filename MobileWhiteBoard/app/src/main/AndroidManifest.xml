@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"
         android:icon="@drawable/whiteboard"
@@ -24,7 +23,9 @@
         </activity>
         <activity android:name=".SignupActivity" > </activity>
         <activity android:name=".MainViewActivity" > </activity>
+        <activity android:name=".MemoMainActivity" > </activity>
         <activity android:name=".MemoActivity" > </activity>
+        <activity android:name=".MemoListActivity" > </activity>
         <activity android:name=".TeamChoiceActivity" > </activity>
         <activity android:name=".Whiteboard.WhiteboardActivity"
             android:screenOrientation="sensorLandscape"> </activity>
