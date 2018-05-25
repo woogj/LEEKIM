@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -14,13 +15,23 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
+import project14_1.cookandroid.com.mobilewhiteboard.MainActivity;
 import project14_1.cookandroid.com.mobilewhiteboard.R;
+
+import static android.content.ContentValues.TAG;
 
 public class Drawing extends View {
     float startX = -1, startY = -1, stopX = -1, stopY = -1; // 터치 좌표
@@ -228,7 +239,8 @@ public class Drawing extends View {
                     case MotionEvent.ACTION_UP:
                         PictureHistory picture = new PictureHistory(WhiteboardActivity.bitmap, startX, startY, stopX, stopY);
                         pictures.add(picture);
-
+                        GetData task = new GetData();
+                        task.execute("Picture", Float.toString(startX) , Float.toString(startY));
                         et = true;
                         break;
                 }
@@ -238,7 +250,6 @@ public class Drawing extends View {
 
                 switch (event.getAction()){
                     case MotionEvent.ACTION_DOWN:
-
                         index = -1;
                         float X = event.getX();
                         float Y = event.getY();
@@ -248,18 +259,14 @@ public class Drawing extends View {
                         break;
 
                     case MotionEvent.ACTION_MOVE:
-
                         break;
 
                     case MotionEvent.ACTION_UP:
-
-
                         AlertDialog.Builder alert = new AlertDialog.Builder(cnxt);
                         alert.setTitle("텍스트 입력");
                         // Create TextView
                         final EditText input = new EditText(cnxt);
                         alert.setView(input);
-
 
                         alert.setPositiveButton("입력", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -307,9 +314,12 @@ public class Drawing extends View {
                         }
                         break;
                     case MotionEvent.ACTION_UP:
-                        if(!(index == -1)){
-                            Toast.makeText(this.getContext(), "선택한 영역에 사진이 있습니다.", Toast.LENGTH_SHORT).show();
-                        }
+                        /**
+                         * if(!(index == -1)){
+                         *     Toast.makeText(this.getContext(), "선택한 영역에 사진이 있습니다.", Toast.LENGTH_SHORT).show();
+                         * }
+                         * 작동 확인용
+                         * */
                         break;
                 }
                 break;
@@ -414,4 +424,82 @@ public class Drawing extends View {
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
+    private class GetData extends AsyncTask<String, Void, String> {
+        String errorString = null;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            Log.d(TAG, "response - " + result);
+
+            if (result == null){
+                Toast.makeText(Drawing.this.getContext(), errorString, Toast.LENGTH_SHORT).show();
+            } else{
+                Toast.makeText(Drawing.this.getContext(), errorString, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String serverURL = "http://192.168.219.196:81/android_db_api/whiteboardDBsave.php";
+            String postParameters = "";
+
+            if (params.length == 3) {
+                String searchKeyword1 = params[0];
+                String searchKeyword2 = params[1];
+                String searchKeyword3 = params[2];
+
+                postParameters = "userID=" + MainActivity.id +"&content_type=" + searchKeyword1 +"&contentX=" + searchKeyword2 +"&contentY=" + searchKeyword3;
+            }
+
+            try {
+                URL url = new URL(serverURL);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setReadTimeout(5000);
+                httpURLConnection.setConnectTimeout(5000);
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.connect();
+
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                outputStream.write(postParameters.getBytes("UTF-8"));
+                outputStream.flush();
+                outputStream.close();
+
+                int responseStatusCode = httpURLConnection.getResponseCode();
+                Log.d(TAG, "response code - " + responseStatusCode);
+
+                InputStream inputStream;
+                if(responseStatusCode == HttpURLConnection.HTTP_OK) {
+                    inputStream = httpURLConnection.getInputStream();
+                }
+                else{
+                    inputStream = httpURLConnection.getErrorStream();
+                }
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                StringBuilder sb = new StringBuilder();
+                String line;
+
+                while((line = bufferedReader.readLine()) != null){
+                    sb.append(line);
+                }
+
+                bufferedReader.close();
+
+                return sb.toString().trim();
+            } catch (Exception e) {
+                Log.d(TAG, "InsertData: Error ", e);
+                errorString = e.toString();
+
+                return null;
+            }
+        }
+    }
 }
