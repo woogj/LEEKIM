@@ -30,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private long prevPressTime = 0L;
     EditText edtLoginID, edtLoginPW;
     Button btnSign, btnLogin;
-    String id, pw, name, mJsonString;
-
+    String pw, name, mJsonString;
+    public static String id;
     private static String TAG = "test";
     private static final String TAG_JSON="data";
     private static final String TAG_NAME = "name";
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplication(), SignupActivity.class);
-
+                //Intent intent = new Intent(getApplication(), WhiteboardActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -82,13 +82,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = ProgressDialog.show(MainActivity.this,"Please Wait", null, true, true);
+            //progressDialog = ProgressDialog.show(MainActivity.this,"Please Wait", null, true, true);
         }
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            progressDialog.dismiss();
+            //progressDialog.dismiss();
             Log.d(TAG, "response - " + result);
 
             if (result == null){
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
             String searchKeyword1 = params[0];
             String searchKeyword2 = params[1];
 
-            String serverURL = "http://1.1.1.1/login.php";
+            String serverURL = "http://192.168.219.196:81/android_db_api/login.php";
             /** http://ip주소:포트번호/파일경로
              * ip주소   : cmd창에서 ipconfig로 IPv4의 주소를 찾아서 넣는다.
              * 포트번호 : 기본은 80번 포트이고 안적어도 된다. 포트번호가 다를 경우 적어야한다.

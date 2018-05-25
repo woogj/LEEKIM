@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.Manifest;
@@ -25,10 +26,13 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import project14_1.cookandroid.com.mobilewhiteboard.ColorPaletteDialog;
+import project14_1.cookandroid.com.mobilewhiteboard.MainActivity;
 import project14_1.cookandroid.com.mobilewhiteboard.OnColorSelectedListener;
 import project14_1.cookandroid.com.mobilewhiteboard.R;
 import project14_1.cookandroid.com.mobilewhiteboard.TeamChoiceActivity;
@@ -57,10 +61,16 @@ public class WhiteboardActivity extends AppCompatActivity {
     ImageButton ibSliding2;
     ImageButton ib_red;
 
-
     static int type = 0;
     static Uri rsrc = null;
     static Bitmap bitmap = null;
+    protected final int GALLERY = 1;
+    protected final int CAMERA = 2;
+
+    String cameraTempFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/tmp_image.jpg";
+    File imageFile = new File(cameraTempFilePath);
+    Uri imageFileUri = Uri.fromFile(imageFile);
+
     //private String[] items = {"Black", "Red", "Blue", "Yellow", "Green"};
     int mColor = 0xff000000;
 
@@ -98,17 +108,7 @@ public class WhiteboardActivity extends AppCompatActivity {
         ibEraser = (ImageButton)findViewById(R.id.ibEraser);
         ibPen = (ImageButton)findViewById(R.id.ibPen);
         drawTool = findViewById(R.id.DrawTool);
-        /*ib_image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                startActivityForResult(Intent.createChooser(intent, "사진 선택"), 1);
-                type = 3;
-            }
-        });
-*/
-        //
+
         ibTxt.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(final View v){
@@ -181,7 +181,10 @@ public class WhiteboardActivity extends AppCompatActivity {
                 dlg.setPositiveButton("카메라", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(WhiteboardActivity.this,"아직 준비중입니다.",Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imageFileUri);
+
+                        startActivityForResult(intent, CAMERA);
                     }
                 });
                 dlg.setNegativeButton("갤러리", new DialogInterface.OnClickListener() {
@@ -189,17 +192,10 @@ public class WhiteboardActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                         intent.setType("image/*");
-                        startActivityForResult(Intent.createChooser(intent, "사진 선택"), 1);
+                        startActivityForResult(Intent.createChooser(intent, "사진 선택"), GALLERY);
                     }
                 });
                 dlg.show();
-                /*
-                View drawing = (View) findViewById(R.id.Drawing);
-                //View drawTool = (View) findViewById(R.id.DrawTool);
-                drawing.setVisibility(View.VISIBLE);
-                //drawTool.setVisibility(View.VISIBLE);
-                type = 2;
-                */
             }
         });
 
@@ -322,12 +318,22 @@ public class WhiteboardActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
-            //이미지를 하나 골랐을때
-            if (resultCode == RESULT_OK) {
-                rsrc = data.getData();
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), rsrc);
-            } else {
-                Toast.makeText(this, "취소 되었습니다.", Toast.LENGTH_LONG).show();
+            if (requestCode == GALLERY) {
+                if (resultCode == RESULT_OK) {
+                    rsrc = data.getData();
+                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), rsrc);
+                } else {
+                    Toast.makeText(this, "취소 되었습니다.", Toast.LENGTH_LONG).show();
+                    type = 0;
+                }
+            }else if (requestCode == CAMERA) {
+                if (resultCode == RESULT_OK) {
+                    rsrc = imageFileUri;
+                    bitmap = BitmapFactory.decodeFile(cameraTempFilePath);
+                } else {
+                    Toast.makeText(this, "취소 되었습니다.", Toast.LENGTH_LONG).show();
+                    type = 0;
+                }
             }
         } catch (Exception e) {
             Toast.makeText(this, "오류 발생", Toast.LENGTH_LONG).show();
@@ -338,7 +344,8 @@ public class WhiteboardActivity extends AppCompatActivity {
     private void checkDangerousPermissions() {
         String[] permissions = {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA
         };
 
         int permissionCheck = PackageManager.PERMISSION_GRANTED;
