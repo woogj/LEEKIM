@@ -462,7 +462,7 @@ public class Drawing extends View {
             String boundary = "*****";
 
             if (params.length == 6) {
-                serverURL = "http://192.168.219.196:81/android_db_api/whiteboardIMGsave.php";
+                serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardIMGsave.php";
                 String searchKeyword1 = params[0];
                 String searchKeyword2 = params[1];
                 String searchKeyword3 = params[2];
@@ -549,7 +549,7 @@ public class Drawing extends View {
                     Toast.makeText(Drawing.this.getContext(), "이미지 파일이 없습니다.", Toast.LENGTH_SHORT).show();
                     return null;
                 }
-                serverURL = "http://192.168.219.196:81/android_db_api/whiteboardDBsave.php";
+                serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardDBsave.php";
                 postParameters = "userID=" + MainActivity.id +"&content_path=" + searchKeyword1 +"&content_type=" + searchKeyword2 +"&contentX=" + searchKeyword3 + "&contentY=" + searchKeyword4 + "&content_width=" + searchKeyword5 + "&content_height=" + searchKeyword6;
 
                 try {

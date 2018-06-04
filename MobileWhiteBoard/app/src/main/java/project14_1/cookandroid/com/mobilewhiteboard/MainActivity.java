@@ -32,7 +32,11 @@ public class MainActivity extends AppCompatActivity {
     static String userID;
 
     String pw, name, mJsonString;
-    public static String id;
+    public static String id,
+            IPaddress = "192.168.219.196:81";
+            /** LHW 집     : 192.168.219.196:81
+            *  LHW 핫스팟 : 192.168.43.242
+            *  LJY 집     : 192.168.0.6*/
     private static String TAG = "test";
     private static final String TAG_JSON="data";
     private static final String TAG_NAME = "name";
@@ -106,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             String searchKeyword1 = params[0];
             String searchKeyword2 = params[1];
 
-            String serverURL = "http://192.168.219.196:81/android_db_api/login.php";
+            String serverURL = "http://" + IPaddress + "/android_db_api/login.php";
 
             /** http://ip주소:포트번호/파일경로
              * ip주소   : cmd창에서 ipconfig로 IPv4의 주소를 찾아서 넣는다.
@@ -200,10 +204,5 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "'뒤로' 버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
         }
     }
-
-    /** LHW 집     : 192.168.219.196
-     *  LHW 핫스팟 : 192.168.43.242
-     *  LJY 집     : 192.168.0.6*/
-
 }
 

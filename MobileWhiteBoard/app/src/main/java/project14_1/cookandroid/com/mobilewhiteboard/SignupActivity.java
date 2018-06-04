@@ -164,7 +164,13 @@ public class SignupActivity extends AppCompatActivity {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 loading.dismiss();
-                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+                if (s.equals("s")) {
+                    Toast.makeText(getApplicationContext(), "회원가입에 성공했습니다.", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplication(), MainActivity.class);
+                    startActivity(intent);
+                }else if (s.equals("n")){
+                    Toast.makeText(getApplicationContext(), "회원가입에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                }
             }
             @Override
             protected String doInBackground(String... params) {
@@ -174,7 +180,7 @@ public class SignupActivity extends AppCompatActivity {
                     String userPW = (String) params[1];
                     String name = (String) params[2];
 
-                    String link = "http://61.79.96.104/signup.php";
+                    String link = "http://" + MainActivity.IPaddress + "/signup.php";
                     String data = URLEncoder.encode("userID", "UTF-8") + "=" + URLEncoder.encode(userID, "UTF-8");
                     data += "&" + URLEncoder.encode("userPW", "UTF-8") + "=" + URLEncoder.encode(userPW, "UTF-8");
                     data += "&" + URLEncoder.encode("name", "UTF-8") + "=" + URLEncoder.encode(name, "UTF-8");
