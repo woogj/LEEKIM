@@ -78,20 +78,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class GetData extends AsyncTask<String, Void, String>{
-        ProgressDialog progressDialog;
         String errorString = null;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //progressDialog = ProgressDialog.show(MainActivity.this,"Please Wait", null, true, true);
         }
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            //progressDialog.dismiss();
-            Log.d(TAG, "response - " + result);
 
             if (result == null){
                 Toast.makeText(MainActivity.this, errorString, Toast.LENGTH_LONG).show();

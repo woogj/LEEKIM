@@ -3,12 +3,11 @@ package project14_1.cookandroid.com.mobilewhiteboard.Whiteboard;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.Manifest;
-import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.net.Uri;
@@ -30,13 +29,13 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import project14_1.cookandroid.com.mobilewhiteboard.ColorPaletteDialog;
-import project14_1.cookandroid.com.mobilewhiteboard.MainActivity;
 import project14_1.cookandroid.com.mobilewhiteboard.OnColorSelectedListener;
 import project14_1.cookandroid.com.mobilewhiteboard.R;
 import project14_1.cookandroid.com.mobilewhiteboard.TeamChoiceActivity;
-import project14_1.cookandroid.com.mobilewhiteboard.Whiteboard.TextHistory;
 
 /**
  * Created by com on 2018-01-21.
@@ -64,6 +63,7 @@ public class WhiteboardActivity extends AppCompatActivity {
     static int type = 0;
     static Uri rsrc = null;
     static Bitmap bitmap = null;
+    static String absolutePath = null;
     protected final int GALLERY = 1;
     protected final int CAMERA = 2;
 
@@ -181,9 +181,15 @@ public class WhiteboardActivity extends AppCompatActivity {
                 dlg.setPositiveButton("카메라", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        long now = System.currentTimeMillis();
+                        Date date = new Date(now);
+                        SimpleDateFormat sdfNow = new SimpleDateFormat("yyyyMMdd_HHmmss");
+                        String strNow = sdfNow.format(date);
+                        cameraTempFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/wb/" + strNow + ".jpg";
+                        imageFile = new File(cameraTempFilePath);
+                        imageFileUri = Uri.fromFile(imageFile);
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imageFileUri);
-
                         startActivityForResult(intent, CAMERA);
                     }
                 });
@@ -322,6 +328,7 @@ public class WhiteboardActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     rsrc = data.getData();
                     bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), rsrc);
+                    absolutePath = getAbsolutePath(rsrc);
                 } else {
                     Toast.makeText(this, "취소 되었습니다.", Toast.LENGTH_LONG).show();
                     type = 0;
@@ -330,6 +337,7 @@ public class WhiteboardActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     rsrc = imageFileUri;
                     bitmap = BitmapFactory.decodeFile(cameraTempFilePath);
+                    absolutePath = cameraTempFilePath;
                 } else {
                     Toast.makeText(this, "취소 되었습니다.", Toast.LENGTH_LONG).show();
                     type = 0;
@@ -339,6 +347,14 @@ public class WhiteboardActivity extends AppCompatActivity {
             Toast.makeText(this, "오류 발생", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
+    }
+
+    private String getAbsolutePath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 
     private void checkDangerousPermissions() {

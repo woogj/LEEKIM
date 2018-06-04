@@ -17,6 +17,9 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -56,6 +59,8 @@ public class Drawing extends View {
     int dragCount = 0;
     int index = -1;
 
+    int MaxBufferSize = 1 * 1024 * 1024;
+
     RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -64,7 +69,7 @@ public class Drawing extends View {
     public static ArrayList<PictureHistory> pictures = new ArrayList<>(); //그림을 저장하는 배열
     public static ArrayList<TextHistory> textHistories = new ArrayList<>();
     public static HashMap<EditText,Integer> postIt_hashTable = new HashMap<EditText, Integer>();
-    public static  ArrayList<EditText> edtList = new ArrayList<>(); //포스트잇의 EditText를 저장하는 배열
+    public static ArrayList<EditText> edtList = new ArrayList<>(); //포스트잇의 EditText를 저장하는 배열
 
     public Drawing(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -240,7 +245,7 @@ public class Drawing extends View {
                         PictureHistory picture = new PictureHistory(WhiteboardActivity.bitmap, startX, startY, stopX, stopY);
                         pictures.add(picture);
                         GetData task = new GetData();
-                        task.execute("Picture", Float.toString(startX) , Float.toString(startY));
+                        task.execute(WhiteboardActivity.absolutePath, "Picture", Float.toString(picture.getX()) , Float.toString(picture.getY()), Float.toString(picture.getWidth()), Float.toString(picture.getHeight()));
                         et = true;
                         break;
                 }
@@ -439,65 +444,158 @@ public class Drawing extends View {
 
             if (result == null){
                 Toast.makeText(Drawing.this.getContext(), errorString, Toast.LENGTH_SHORT).show();
-            } else{
-                Toast.makeText(Drawing.this.getContext(), errorString, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(Drawing.this.getContext(), result, Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
         protected String doInBackground(String... params) {
-            String serverURL = "http://192.168.219.196:81/android_db_api/whiteboardDBsave.php";
+            String serverURL = "";
             String postParameters = "";
 
-            if (params.length == 3) {
+            HttpURLConnection conn = null;
+            DataOutputStream dos = null;
+
+            String lineEnd = "\r\n";
+            String twoHypens = "--";
+            String boundary = "*****";
+
+            if (params.length == 6) {
+                serverURL = "http://192.168.219.196:81/android_db_api/whiteboardIMGsave.php";
                 String searchKeyword1 = params[0];
                 String searchKeyword2 = params[1];
                 String searchKeyword3 = params[2];
+                String searchKeyword4 = params[3];
+                String searchKeyword5 = params[4];
+                String searchKeyword6 = params[5];
 
-                postParameters = "userID=" + MainActivity.id +"&content_type=" + searchKeyword1 +"&contentX=" + searchKeyword2 +"&contentY=" + searchKeyword3;
-            }
+                File imgFile = new File(searchKeyword1);
+                if (imgFile.exists()) {
+                    //이미지 파일이 있으면.
+                    try {
+                        FileInputStream FIS = new FileInputStream(imgFile);
 
-            try {
-                URL url = new URL(serverURL);
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setReadTimeout(5000);
-                httpURLConnection.setConnectTimeout(5000);
-                httpURLConnection.setRequestMethod("POST");
-                httpURLConnection.setDoInput(true);
-                httpURLConnection.connect();
+                        URL url = new URL(serverURL);
 
-                OutputStream outputStream = httpURLConnection.getOutputStream();
-                outputStream.write(postParameters.getBytes("UTF-8"));
-                outputStream.flush();
-                outputStream.close();
+                        conn = (HttpURLConnection) url.openConnection();
 
-                int responseStatusCode = httpURLConnection.getResponseCode();
-                Log.d(TAG, "response code - " + responseStatusCode);
+                        // connection setting....
+                        conn.setDoInput(true); // Allow Inputs
+                        conn.setDoOutput(true); // Allow Outputs
+                        conn.setUseCaches(false); // Don't use a Cached Copy
+                        conn.setRequestMethod("POST");
+                        conn.setRequestProperty("Connection", "Keep-Alive");
+                        conn.setRequestProperty("ENCTYPE", "multipart/form-data");
+                        conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
 
-                InputStream inputStream;
-                if(responseStatusCode == HttpURLConnection.HTTP_OK) {
-                    inputStream = httpURLConnection.getInputStream();
+                        dos = new DataOutputStream(conn.getOutputStream());
+                        //데이타 쓰기 시작
+                        dos.writeBytes(twoHypens + boundary + lineEnd);
+                        dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_img\";filename=\""
+                                + searchKeyword1 + "\"" + lineEnd);
+
+                        dos.writeBytes(lineEnd);
+
+                        int byteAvaiable = FIS.available();
+
+                        int bufferSize = Math.min(byteAvaiable, MaxBufferSize);
+                        byte[] buffer = new byte[bufferSize];
+
+                        int byteRead = FIS.read(buffer, 0, bufferSize);
+
+                        while (byteRead > 0) {
+                            dos.write(buffer, 0, bufferSize);
+                            byteAvaiable = FIS.available();
+                            bufferSize = Math.min(byteAvaiable, MaxBufferSize);
+                            byteRead = FIS.read(buffer, 0, bufferSize);
+                        }
+
+                        dos.writeBytes(lineEnd);
+                        dos.writeBytes(twoHypens + boundary + lineEnd);
+
+                        //data 쓰기 완료.
+                        int responseStatusCode = conn.getResponseCode();
+                        Log.d(TAG, "response code - " + responseStatusCode);
+
+                        InputStream inputStream;
+                        if(responseStatusCode == HttpURLConnection.HTTP_OK) {
+                            inputStream = conn.getInputStream();
+                        }else{
+                            inputStream = conn.getErrorStream();
+                        }
+
+                        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+
+                        while((line = bufferedReader.readLine()) != null){
+                            sb.append(line);
+                        }
+
+                        bufferedReader.close();
+
+                        FIS.close();
+
+                        dos.flush();
+                        dos.close();
+                        searchKeyword1 = sb.toString().trim();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                } else {
+                    Toast.makeText(Drawing.this.getContext(), "이미지 파일이 없습니다.", Toast.LENGTH_SHORT).show();
+                    return null;
                 }
-                else{
-                    inputStream = httpURLConnection.getErrorStream();
+                serverURL = "http://192.168.219.196:81/android_db_api/whiteboardDBsave.php";
+                postParameters = "userID=" + MainActivity.id +"&content_path=" + searchKeyword1 +"&content_type=" + searchKeyword2 +"&contentX=" + searchKeyword3 + "&contentY=" + searchKeyword4 + "&content_width=" + searchKeyword5 + "&content_height=" + searchKeyword6;
+
+                try {
+                    URL url = new URL(serverURL);
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(5000);
+                    conn.setConnectTimeout(5000);
+                    conn.setRequestMethod("POST");
+                    conn.setDoInput(true);
+                    conn.connect();
+
+                    OutputStream outputStream = conn.getOutputStream();
+                    outputStream.write(postParameters.getBytes("UTF-8"));
+                    outputStream.flush();
+                    outputStream.close();
+
+                    int responseStatusCode = conn.getResponseCode();
+                    Log.d(TAG, "response code - " + responseStatusCode);
+
+                    InputStream inputStream;
+                    if(responseStatusCode == HttpURLConnection.HTTP_OK) {
+                        inputStream = conn.getInputStream();
+                    }
+                    else{
+                        inputStream = conn.getErrorStream();
+                    }
+
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+
+                    while((line = bufferedReader.readLine()) != null){
+                        sb.append(line);
+                    }
+
+                    bufferedReader.close();
+
+                    return sb.toString().trim();
+                } catch (Exception e) {
+                    Log.d(TAG, "InsertData: Error ", e);
+                    errorString = e.toString();
+
+                    return null;
                 }
-
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                StringBuilder sb = new StringBuilder();
-                String line;
-
-                while((line = bufferedReader.readLine()) != null){
-                    sb.append(line);
-                }
-
-                bufferedReader.close();
-
-                return sb.toString().trim();
-            } catch (Exception e) {
-                Log.d(TAG, "InsertData: Error ", e);
-                errorString = e.toString();
-
+            } else {
                 return null;
             }
         }

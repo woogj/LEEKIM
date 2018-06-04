@@ -11,6 +11,7 @@ class PictureHistory {
     private Bitmap bitmap;
     private float x, y, width, height, gapX, gapY;
     private RectF setXY;
+    private String FilePath;
 
     public PictureHistory(Bitmap bitmap, float startX, float startY, float stopX, float stopY) {
         this.bitmap = bitmap;
@@ -52,6 +53,14 @@ class PictureHistory {
     }
 
     public RectF getSetXY() { return setXY; }
+
+    public float getX() { return x; }
+
+    public float getY() { return y; }
+
+    public float getWidth() { return width; }
+
+    public float getHeight() { return height; }
 
     public boolean isClicked(float startX, float startY) {
         return startX >= x && startX <= x+width && startY >= y && startY <= y+height;

@@ -13,12 +13,14 @@ mysqli_set_charset($link,"utf8");
 $whiteboardID = 1; //임시 값
 $teamID = 1; //임시 값
 $userID = $_REQUEST['userID'];
-$content_path = "somewhere"; // 임시 값
+$content_path = $_REQUEST['content_path'];
 $content_type = $_REQUEST['content_type'];
 $contentX = $_REQUEST['contentX'];
 $contentY = $_REQUEST['contentY'];
+$content_width = $_REQUEST['content_width'];
+$content_height = $_REQUEST['content_height'];
 
-$sql = "INSERT into whiteboard (whiteboardID, teamID, userID, content_path, content_type, contentX, contentY) values('$whiteboardID', '$teamID', '$userID', '$content_path', '$content_type', '$contentX', '$contentY')";
+$sql = "INSERT into whiteboard (whiteboardID, teamID, userID, content_path, content_type, contentX, contentY, content_width, content_height) values('$whiteboardID', '$teamID', '$userID', '$content_path', '$content_type', '$contentX', '$contentY', '$content_width', '$content_height')";
 $result = mysqli_query($link,$sql);
 
 if($result) {
