@@ -131,7 +131,7 @@ public class WhiteboardActivity extends AppCompatActivity {
 
                 alert.setPositiveButton("입력", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        Drawing.textHistories.add(new TextHistory(input.getText().toString(), 500, 500));
+                        Drawing.All.add(new ContentHistory(input.getText().toString(),500,500));
                         v.invalidate();
                         //drawing.invalidate();
                     }

@@ -66,10 +66,10 @@ public class Drawing extends View {
             ViewGroup.LayoutParams.WRAP_CONTENT
     ); //포스트잇이 그려지는 Layout 선언
 
-    public static ArrayList<PictureHistory> pictures = new ArrayList<>(); //그림을 저장하는 배열
-    public static ArrayList<TextHistory> textHistories = new ArrayList<>();
     public static HashMap<EditText,Integer> postIt_hashTable = new HashMap<EditText, Integer>();
     public static ArrayList<EditText> edtList = new ArrayList<>(); //포스트잇의 EditText를 저장하는 배열
+
+    public static ArrayList<ContentHistory> All = new ArrayList<ContentHistory>(); //그림과 글을 저장하는 배열 [배열명 수정 필요]
 
     public Drawing(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -80,13 +80,20 @@ public class Drawing extends View {
 
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        // 사진 그리기
-        for (int i = 0; i < pictures.size(); i++) {
-            PictureHistory picture = pictures.get(i);
-            int nh = (int) (picture.getBitmap().getHeight() * (1024.0 / picture.getBitmap().getWidth()));
-            Bitmap scaled = Bitmap.createScaledBitmap(picture.getBitmap(), 1024, nh, true);
-            canvas.drawBitmap(scaled, null, picture.getSetXY(), null);
-            scaled.recycle();
+        for (int i = 0; i < All.size(); i++) {
+            ContentHistory map = All.get(i);
+            if (map.getType() == "Text") {
+                //글 그리기
+                map.drawCanvas(canvas);
+            }else if (map.getType() == "Picture") {
+                // 사진 그리기
+                int nh = (int) (map.getBitmap().getHeight() * (1024.0 / map.getBitmap().getWidth()));
+                Bitmap scaled = Bitmap.createScaledBitmap(map.getBitmap(), 1024, nh, true);
+                canvas.drawBitmap(scaled, null, map.getSetXY(), null);
+                scaled.recycle();
+            }else {
+
+            }
         }
         if (et == true) {
             WhiteboardActivity.type = 0;
@@ -107,11 +114,6 @@ public class Drawing extends View {
                 scaled.recycle();
             }
         }else { }
-        // 글 쓰기
-        for(TextHistory textHistory : textHistories) {
-            textHistory.drawCanvas(canvas);
-        }
-
         //포스트잇 그리기
         if(addPostit == true){
             for(int i=0; i<id+1; i++){
@@ -123,15 +125,12 @@ public class Drawing extends View {
                 edt.setId(id);
                 edt.setText(p_text); //ptet= ""
 
-
                 edtList.add(edt);
 
                 edt.setBackgroundResource(R.drawable.postit3);
 
                 edtList.get(id).setLayoutParams(lp);
                 ((RelativeLayout) this.getParent()).addView(edtList.get(id));
-
-
 
                 edt.setHint("내용을 입력하시오");
                 edt.setPadding(50,50,10,10);
@@ -168,17 +167,17 @@ public class Drawing extends View {
                         // 터치한 영역에 있는 텍스트박스를 찾는다
                         index = -1;
                         dragCount = 0;
-                        for(int i=0; i<textHistories.size(); i++){
-                            if(textHistories.get(i).isClicked(event.getX(), event.getY())){
+                        for(int i=0; i<All.size(); i++){
+                            if(All.get(i).getType() == "Text" && All.get(i).isClicked(event.getX(), event.getY())){
                                 index = i;
                                 break;
                             }
                         }
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        if(dragCount>10 && index != -1){
+                        if(dragCount>5 && index != -1){
                             // 10번 이상 move가 찍히면 드래그였다고 판단하고 처음 터치한 영역에 있는 텍스트를 현재 좌표로 이동시킨다.
-                            textHistories.get(index).setPosition(event.getX(), event.getY());
+                            All.get(index).setPosition(event.getX(), event.getY());
                             invalidate();
                         }else{
                             dragCount++;
@@ -187,18 +186,18 @@ public class Drawing extends View {
                     case MotionEvent.ACTION_UP:
                         if(index == -1){
                             Toast.makeText(this.getContext(), "선택한 영역에 텍스트박스가 없습니다.", Toast.LENGTH_SHORT).show();
-                        } else if(dragCount<=10){
+                        } else if(dragCount<=5){
                             // 텍스트의 내용을 수정시킨다.
                             final WhiteboardActivity activity = (WhiteboardActivity) this.getContext();
                             AlertDialog.Builder alert = new AlertDialog.Builder(activity);
                             alert.setTitle("텍스트 수정");
                             // Create TextView
                             final EditText input = new EditText(activity);
-                            input.setText(textHistories.get(index).getText().toString());
+                            input.setText(All.get(index).getText().toString());
                             alert.setView(input);
                             alert.setPositiveButton("입력", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    textHistories.get(index).editText(input.getText().toString());
+                                    All.get(index).editText(input.getText().toString());
                                     invalidate();
                                     //activity.drawing.invalidate();
                                 }
@@ -242,10 +241,10 @@ public class Drawing extends View {
                         et = false;
                         break;
                     case MotionEvent.ACTION_UP:
-                        PictureHistory picture = new PictureHistory(WhiteboardActivity.bitmap, startX, startY, stopX, stopY);
-                        pictures.add(picture);
+                        ContentHistory map = new ContentHistory(WhiteboardActivity.absolutePath, WhiteboardActivity.bitmap, startX, startY, stopX, stopY);
+                        All.add(map);
                         GetData task = new GetData();
-                        task.execute(WhiteboardActivity.absolutePath, "Picture", Float.toString(picture.getX()) , Float.toString(picture.getY()), Float.toString(picture.getWidth()), Float.toString(picture.getHeight()));
+                        task.execute(WhiteboardActivity.absolutePath, "Picture", Float.toString(map.getX()) , Float.toString(map.getY()), Float.toString(map.getWidth()), Float.toString(map.getHeight()));
                         et = true;
                         break;
                 }
@@ -300,11 +299,11 @@ public class Drawing extends View {
                         // 터치한 영역에 있는 사진을 찾는다
                         index = -1;
                         dragCount = 0;
-                        for(int i=0; i<pictures.size(); i++){
-                            if(pictures.get(i).isClicked(event.getX(), event.getY())){
+                        for(int i=0; i<All.size(); i++){
+                            if(All.get(i).isClicked(event.getX(), event.getY())){
                                 index = i;
-                                pictures.get(i).makeGapX(event.getX());
-                                pictures.get(i).makeGapY(event.getY());
+                                All.get(i).makeGapX(event.getX());
+                                All.get(i).makeGapY(event.getY());
                                 PressTime = System.currentTimeMillis();
                                 break;
                             }
@@ -312,7 +311,7 @@ public class Drawing extends View {
                         break;
                     case MotionEvent.ACTION_MOVE:
                         if (dragCount > 5 && index != -1) {
-                            pictures.get(index).setPosition(event.getX(), event.getY());
+                            All.get(index).setPosition(event.getX(), event.getY());
                             invalidate();
                         }else {
                             dragCount++;
