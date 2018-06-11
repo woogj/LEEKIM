@@ -14,10 +14,11 @@ mysqli_set_charset($con, "utf8");
 $userID = $_POST['userID'];
 $title = $_POST['title'];
 $text = $_POST['text'];
+$no = $_POST['no'];
 
 
 
-$result = mysqli_query($con, "insert into memo (userID, title, text, insert_date, update_date) values('$userID', '$title', '$text', now(), now())");
+$result = mysqli_query($con, "update memo set title = '$title', text = '$text', update_date = now() where no = '$no' and userID = '$userID'");
 
 if($result) {
 	echo 'success';

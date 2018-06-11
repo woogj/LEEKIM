@@ -3,43 +3,52 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <Button
-            android:id="@+id/btnSave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.01"
-            android:layout_gravity="right"
-            android:text="저장"/>
+        android:id="@+id/btnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_weight="0.01"
+        android:text="저장" />
+
         <EditText
             android:id="@+id/edtTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.02"
             android:layout_margin="20dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="0.02"
+            android:background="@drawable/round_button_base_blue"
+            android:hint="제목"
             android:padding="10dp"
             android:paddingLeft="10dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:background="@drawable/round_button_base_blue"
-            android:textSize="20dp"
-            android:hint="제목"/>
+            android:textSize="20dp" />
+
         <EditText
             android:id="@+id/edtText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.97"
             android:layout_margin="20dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="0.97"
+            android:background="@drawable/round_button_base_blue"
+            android:hint="내용"
             android:padding="10dp"
             android:paddingLeft="10dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:background="@drawable/round_button_base_blue"
-            android:textSize="20dp"
-            android:hint="내용"/>
+            android:textSize="20dp" />
+        <EditText
+            android:id="@+id/edtNo"
+            android:visibility="invisible"
+            android:layout_height="0px"
+            android:layout_width="0px" />
     </LinearLayout>
 
 </LinearLayout>

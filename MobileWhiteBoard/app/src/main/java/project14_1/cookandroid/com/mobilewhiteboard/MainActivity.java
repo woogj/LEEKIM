@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     String pw, name, mJsonString;
     public static String id,
-            IPaddress = "192.168.219.196:81";
+            IPaddress = "172.30.1.41";
             /** LHW 집     : 192.168.219.196:81
             *  LHW 핫스팟 : 192.168.43.242
             *  LJY 집     : 192.168.0.6*/

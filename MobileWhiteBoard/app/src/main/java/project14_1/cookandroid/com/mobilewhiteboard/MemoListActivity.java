@@ -1,6 +1,7 @@
 package project14_1.cookandroid.com.mobilewhiteboard;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -38,10 +39,12 @@ public class MemoListActivity extends AppCompatActivity {
     private static final String TAG_DATE = "update_date";
     private static final String TAG_TITLE = "title";
     private static final String TAG_TEXT = "text";
+    static int type = 0;
     JSONArray peoples = null;
     ArrayList<HashMap<String, String>> personList;
     ListView lvMemo;
     ImageButton ibPlus;
+    Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +53,12 @@ public class MemoListActivity extends AppCompatActivity {
         ibPlus = (ImageButton) findViewById(R.id.ibPlus);
         lvMemo = (ListView) findViewById(R.id.lvMemo);
         personList = new ArrayList<HashMap<String, String>>();
-        getData("http://61.79.96.104/memoList.php"); //수정 필요
+        getData("http://172.30.1.41/android_db_api/memoList.php"); //수정 필요
 
         ibPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                type = 0;
                 Intent intent1 = new Intent(getApplication(), MemoActivity.class);
                 startActivity(intent1);
                 finish();
@@ -63,9 +67,19 @@ public class MemoListActivity extends AppCompatActivity {
         lvMemo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                type = 1;
+                String no, str, title, text;
+                str = personList.get(position).toString();
                 HashMap<String, String> item = personList.get(position);
-                Toast.makeText(MemoListActivity.this, userID, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MemoListActivity.this, personList.get(position).toString(), Toast.LENGTH_SHORT).show();
                 Intent intent1 = new Intent(getApplication(), MemoActivity.class);
+                text = str.substring(str.indexOf("text")+5,str.indexOf("title")-2);
+                title = str.substring(str.indexOf("title")+6, str.indexOf("no")-2);
+                no = str.substring(str.indexOf("no")+3, str.indexOf("}"));
+                intent1.putExtra("text", text);
+                intent1.putExtra("title", title);
+                intent1.putExtra("no", no);
+                Toast.makeText(MemoListActivity.this, no, Toast.LENGTH_SHORT).show();
                 startActivity(intent1);
             }
         });
