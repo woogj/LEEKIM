@@ -53,7 +53,7 @@ public class MemoListActivity extends AppCompatActivity {
         ibPlus = (ImageButton) findViewById(R.id.ibPlus);
         lvMemo = (ListView) findViewById(R.id.lvMemo);
         personList = new ArrayList<HashMap<String, String>>();
-        getData("http://172.30.1.41/android_db_api/memoList.php"); //수정 필요
+        getData("http://172.30.1.45/android_db_api/memoList.php"); //수정 필요
 
         ibPlus.setOnClickListener(new View.OnClickListener() {
             @Override
