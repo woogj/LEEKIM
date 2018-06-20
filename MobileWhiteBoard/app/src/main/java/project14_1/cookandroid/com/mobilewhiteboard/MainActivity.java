@@ -33,15 +33,15 @@ public class MainActivity extends AppCompatActivity {
 
     String pw, name, mJsonString;
     public static String id,
-            IPaddress = "172.30.1.45";
-            /** LHW 집     : 192.168.219.196:81
-            *  LHW 핫스팟 : 192.168.43.242
-            *  LJY 집     : 192.168.0.6*/
+            IPaddress = "14.63.168.206";
+            /** 서버       : 14.63.168.206
+             *  LHW 집     : 192.168.219.196:81
+             *  LHW 핫스팟 : 192.168.43.242
+             *  LJY 집     : 192.168.0.6*/
     private static String TAG = "test";
     private static final String TAG_JSON="data";
     private static final String TAG_NAME = "name";
     private static final String TAG_ID = "userID";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

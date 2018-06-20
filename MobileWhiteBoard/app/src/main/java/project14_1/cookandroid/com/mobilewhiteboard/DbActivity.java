@@ -23,7 +23,7 @@ import java.util.HashMap;
  */
 
 public class DbActivity extends AppCompatActivity {
-    private final String urlPath = "http://121.136.127.220/PHP_connection.php";
+    private final String urlPath = "http://" + MainActivity.IPaddress + "121.136.127.220/PHP_connection.php";
     private final String TAG = "PHPTEST";
 
     @Override

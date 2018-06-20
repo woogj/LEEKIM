@@ -87,7 +87,7 @@ public class MemoActivity extends AppCompatActivity {
                     String title = (String) params[1];
                     String text = (String) params[2];
 
-                    link = "http://172.30.1.45/android_db_api/memo.php";
+                    link = "http://" + MainActivity.IPaddress + "/android_db_api/memo.php";
 
                     String data = URLEncoder.encode("userID", "UTF-8") + "=" + URLEncoder.encode(userID, "UTF-8");
                     data += "&" + URLEncoder.encode("title", "UTF-8") + "=" + URLEncoder.encode(title, "UTF-8");
@@ -145,7 +145,7 @@ public class MemoActivity extends AppCompatActivity {
                     String text = (String) params[2];
                     String no = (String) params[3];
 
-                    link = "http://172.30.1.45/android_db_api/memoUpdate.php";
+                    link = "http://" + MainActivity.IPaddress + "/android_db_api/memoUpdate.php";
 
                     String data = URLEncoder.encode("userID", "UTF-8") + "=" + URLEncoder.encode(userID, "UTF-8");
                     data += "&" + URLEncoder.encode("title", "UTF-8") + "=" + URLEncoder.encode(title, "UTF-8");

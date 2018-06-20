@@ -78,7 +78,7 @@ public class TeamTaskActivity extends AppCompatActivity {
         super.onCreate(savedIntanteState);
         setContentView(R.layout.activity_task);
 
-        getData("http://172.30.1.45/android_db_api/task_userName.php");
+        getData("http://" + MainActivity.IPaddress + "/android_db_api/task_userName.php");
 
 
         lvTask = (ListView) findViewById(R.id.lvTask);
@@ -114,7 +114,7 @@ public class TeamTaskActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                getData("http://172.30.1.45/android_db_api/task_list.php");
+                getData("http://" + MainActivity.IPaddress + "/android_db_api/task_list.php");
             }
         });
         spnMember.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
