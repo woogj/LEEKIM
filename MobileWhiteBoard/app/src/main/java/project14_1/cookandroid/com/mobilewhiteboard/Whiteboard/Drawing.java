@@ -337,7 +337,7 @@ public class Drawing extends View {
                                     invalidate();
                                     break;
                             }
-                        }else {
+                        }else if (All.get(index).getType().equals("Text")) {
                             // 텍스트의 내용을 수정시킨다.
                             final WhiteboardActivity activity = (WhiteboardActivity) this.getContext();
                             AlertDialog.Builder alert = new AlertDialog.Builder(activity);
@@ -356,6 +356,8 @@ public class Drawing extends View {
                                 }
                             });
                             alert.show();
+                        }else {
+
                         }
                         break;
                 }
@@ -568,6 +570,7 @@ public class Drawing extends View {
                     }
 
                     bufferedReader.close();
+                    conn.disconnect();
 
                     return sb.toString().trim();
                 } catch (Exception e) {
@@ -705,6 +708,7 @@ public class Drawing extends View {
                     }
 
                     bufferedReader.close();
+                    conn.disconnect();
 
                     return sb.toString().trim();
                 } catch (Exception e) {
@@ -715,7 +719,7 @@ public class Drawing extends View {
                 }
             } else if (params.length == 0) {
                 serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardDBload.php";
-                postParameters = "whiteboardID=" + "1" +"&teamID=" + "1";
+                postParameters = "whiteboardID=" + "1" + "&teamID=" + "1";
                 // 1 부분은 변수로 변경 필요
 
                 try {
@@ -736,10 +740,9 @@ public class Drawing extends View {
                     Log.d(TAG, "response code - " + responseStatusCode);
 
                     InputStream inputStream;
-                    if(responseStatusCode == HttpURLConnection.HTTP_OK) {
+                    if (responseStatusCode == HttpURLConnection.HTTP_OK) {
                         inputStream = conn.getInputStream();
-                    }
-                    else{
+                    } else {
                         inputStream = conn.getErrorStream();
                     }
 
@@ -748,11 +751,12 @@ public class Drawing extends View {
                     StringBuilder sb = new StringBuilder();
                     String line;
 
-                    while((line = bufferedReader.readLine()) != null){
+                    while ((line = bufferedReader.readLine()) != null) {
                         sb.append(line);
                     }
 
                     bufferedReader.close();
+                    conn.disconnect();
 
                     return sb.toString().trim();
                 } catch (Exception e) {
@@ -776,10 +780,10 @@ public class Drawing extends View {
                 JSONObject item = jsonArray.getJSONObject(i);
                 if (item.getString(TAG_CONTENT_TYPE).equals("Picture")) {
                     ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), item.getString(TAG_CONTENTX), item.getString(TAG_CONTENTY), item.getString(TAG_CONTENT_WIDTH), item.getString(TAG_CONTENT_HEIGHT));
-                    All.add(map);
+                    All.add(i, map);
                 }else if (item.getString(TAG_CONTENT_TYPE).equals("Text")) {
                     ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), Float.parseFloat(item.getString(TAG_CONTENTX)), Float.parseFloat(item.getString(TAG_CONTENTY)));
-                    All.add(map);
+                    All.add(i, map);
                 }else {
 
                 }
