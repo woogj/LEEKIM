@@ -1,7 +1,9 @@
 package project14_1.cookandroid.com.mobilewhiteboard.Whiteboard;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
@@ -20,16 +22,22 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import project14_1.cookandroid.com.mobilewhiteboard.MainActivity;
 import project14_1.cookandroid.com.mobilewhiteboard.R;
@@ -54,12 +62,16 @@ public class Drawing extends View {
     //public static int paintColor = 0xFF000000;
     private Canvas drawCanvas;
     public static Bitmap canvasBitmap;
-    Bitmap bitmap = null;
+    Bitmap bitmap = null, DownIMG = null;
 
     int dragCount = 0;
     int index = -1;
 
     int MaxBufferSize = 1 * 1024 * 1024;
+
+    String mJsonString;
+    private static final String TAG_JSON="data", TAG_CONTENT_PATH="content_path", TAG_CONTENT_TYPE="content_type", TAG_CONTENTX="contentX", TAG_CONTENTY="contentY", TAG_CONTENT_WIDTH="content_width", TAG_CONTENT_HEIGHT = "content_height";
+    String content_path, contentX, contentY, content_width, content_height;
 
     RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -80,6 +92,10 @@ public class Drawing extends View {
 
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (All.size() == 0) {
+            GetData task = new GetData();
+            task.execute();
+        }
         for (int i = 0; i < All.size(); i++) {
             ContentHistory map = All.get(i);
             if (map.getType() == "Text") {
@@ -87,10 +103,20 @@ public class Drawing extends View {
                 map.drawCanvas(canvas);
             }else if (map.getType() == "Picture") {
                 // 사진 그리기
-                int nh = (int) (map.getBitmap().getHeight() * (1024.0 / map.getBitmap().getWidth()));
-                Bitmap scaled = Bitmap.createScaledBitmap(map.getBitmap(), 1024, nh, true);
-                canvas.drawBitmap(scaled, null, map.getSetXY(), null);
-                scaled.recycle();
+                if (map.getBitmap() == null) {
+                    load_image task = new load_image();
+                    task.execute("http://" + MainActivity.IPaddress + "/android_db_api/" + map.getPath());
+                    while (DownIMG == null) { }
+                    map.setBitmap(DownIMG);
+                    All.add(i, map);
+                    DownIMG = null;
+                    i--;
+                }else {
+                    int nh = (int) (map.getBitmap().getHeight() * (1024.0 / map.getBitmap().getWidth()));
+                    Bitmap scaled = Bitmap.createScaledBitmap(map.getBitmap(), 1024, nh, true);
+                    canvas.drawBitmap(scaled, null, map.getSetXY(), null);
+                    scaled.recycle();
+                }
             }else {
 
             }
@@ -304,7 +330,7 @@ public class Drawing extends View {
                                 index = i;
                                 All.get(i).makeGapX(event.getX());
                                 All.get(i).makeGapY(event.getY());
-                                PressTime = System.currentTimeMillis();
+                                //PressTime = System.currentTimeMillis();
                                 break;
                             }
                         }
@@ -318,12 +344,11 @@ public class Drawing extends View {
                         }
                         break;
                     case MotionEvent.ACTION_UP:
-                        /**
-                         * if(!(index == -1)){
-                         *     Toast.makeText(this.getContext(), "선택한 영역에 사진이 있습니다.", Toast.LENGTH_SHORT).show();
-                         * }
-                         * 작동 확인용
-                         * */
+                        if(!(index == -1)){
+                            Toast.makeText(this.getContext(), All.get(index).getPath(), Toast.LENGTH_SHORT).show();
+                        }
+                        //작동 확인용
+
                         break;
                 }
                 break;
@@ -428,6 +453,33 @@ public class Drawing extends View {
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
+    private class load_image extends AsyncTask<String,Integer,Bitmap> {
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+            try{
+                URL myFileUrl = new URL(urls[0]);
+                HttpURLConnection conn = (HttpURLConnection)myFileUrl.openConnection();
+                conn.setDoOutput(true);
+                conn.connect();
+
+                InputStream is = conn.getInputStream();
+                DownIMG = BitmapFactory.decodeStream(is);
+
+                conn.disconnect();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return DownIMG;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+        }
+    }
+
     private class GetData extends AsyncTask<String, Void, String> {
         String errorString = null;
 
@@ -443,6 +495,9 @@ public class Drawing extends View {
 
             if (result == null){
                 Toast.makeText(Drawing.this.getContext(), errorString, Toast.LENGTH_SHORT).show();
+            } else if (result.startsWith("{")) {
+                mJsonString = result;
+                showResult();
             } else {
                 Toast.makeText(Drawing.this.getContext(), result, Toast.LENGTH_SHORT).show();
             }
@@ -594,9 +649,77 @@ public class Drawing extends View {
 
                     return null;
                 }
+            } else if (params.length == 0) {
+                serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardDBload.php";
+                postParameters = "whiteboardID=" + "1" +"&teamID=" + "1";
+                // 1 부분은 변수로 변경 필요
+
+                try {
+                    URL url = new URL(serverURL);
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(5000);
+                    conn.setConnectTimeout(5000);
+                    conn.setRequestMethod("POST");
+                    conn.setDoInput(true);
+                    conn.connect();
+
+                    OutputStream outputStream = conn.getOutputStream();
+                    outputStream.write(postParameters.getBytes("UTF-8"));
+                    outputStream.flush();
+                    outputStream.close();
+
+                    int responseStatusCode = conn.getResponseCode();
+                    Log.d(TAG, "response code - " + responseStatusCode);
+
+                    InputStream inputStream;
+                    if(responseStatusCode == HttpURLConnection.HTTP_OK) {
+                        inputStream = conn.getInputStream();
+                    }
+                    else{
+                        inputStream = conn.getErrorStream();
+                    }
+
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+
+                    while((line = bufferedReader.readLine()) != null){
+                        sb.append(line);
+                    }
+
+                    bufferedReader.close();
+
+                    return sb.toString().trim();
+                } catch (Exception e) {
+                    Log.d(TAG, "InsertData: Error ", e);
+                    errorString = e.toString();
+
+                    return null;
+                }
             } else {
                 return null;
             }
+        }
+    }
+
+    private void showResult(){
+        try {
+            JSONObject jsonObject = new JSONObject(mJsonString);
+            JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
+
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject item = jsonArray.getJSONObject(i);
+                if (item.getString(TAG_CONTENT_TYPE).equals("Picture")) {
+                    ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), item.getString(TAG_CONTENTX), item.getString(TAG_CONTENTY), item.getString(TAG_CONTENT_WIDTH), item.getString(TAG_CONTENT_HEIGHT));
+                    All.add(map);
+                }else {
+
+                }
+            }
+            invalidate();
+        } catch (JSONException e) {
+            Log.d(TAG, "showResult : ", e);
         }
     }
 }

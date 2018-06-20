@@ -79,6 +79,17 @@ public class ContentHistory {
         map.put("setXY", new RectF((float)map.get("x"), (float)map.get("y"), (float)map.get("x") + (float)map.get("width"), (float)map.get("y") + (float)map.get("height")));
     }
 
+    public ContentHistory(String imgPath, String startX, String startY, String width, String height) {
+        map = new HashMap<String, Object>();
+        map.put("type", "Picture");
+        map.put("path", imgPath);
+        map.put("x", Float.parseFloat(startX));
+        map.put("y", Float.parseFloat(startY));
+        map.put("width", Float.parseFloat(width));
+        map.put("height", Float.parseFloat(height));
+        map.put("setXY", new RectF((float)map.get("x"), (float)map.get("y"), (float)map.get("x") + (float)map.get("width"), (float)map.get("y") + (float)map.get("height")));
+    }
+
     public void makeGapX (float x) {
         map.put("gapX", x - (float)map.get("x"));
     }
@@ -87,11 +98,21 @@ public class ContentHistory {
         map.put("gapY", y - (float)map.get("y"));
     }
 
+    public void setBitmap (Bitmap bitmap) {
+        map.put("bitmap", bitmap);
+    }
+
     public Bitmap getBitmap() {
         return (Bitmap)map.get("bitmap");
     }
 
-    public RectF getSetXY() { return (RectF)map.get("setXY"); }
+    public RectF getSetXY() {
+        return (RectF)map.get("setXY");
+    }
+
+    public String getPath() {
+        return (String)map.get("path");
+    }
 
     //공용
     public void setPosition(float x, float y) {
