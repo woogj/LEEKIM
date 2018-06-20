@@ -322,25 +322,41 @@ public class Drawing extends View {
                          * } else
                          */
 
-                        if(dragCount<=5){
+                        if(index == -1){
+
+                        }else if(dragCount > 5){
+                            switch (All.get(index).getType()) {
+                                case "Text" :
+                                    GetData task1 = new GetData();
+                                    task1.execute(All.get(index).getText(), All.get(index).getText(),"Text", Float.toString(All.get(index).getX()) , Float.toString(All.get(index).getY()), Float.toString(All.get(index).getWidth()), Float.toString(All.get(index).getHeight()));
+                                    invalidate();
+                                    break;
+                                case "Picture" :
+                                    GetData task2 = new GetData();
+                                    task2.execute(All.get(index).getPath(), All.get(index).getPath(),"Picture", Float.toString(All.get(index).getX()) , Float.toString(All.get(index).getY()), Float.toString(All.get(index).getWidth()), Float.toString(All.get(index).getHeight()));
+                                    invalidate();
+                                    break;
+                            }
+                        }else {
                             // 텍스트의 내용을 수정시킨다.
                             final WhiteboardActivity activity = (WhiteboardActivity) this.getContext();
                             AlertDialog.Builder alert = new AlertDialog.Builder(activity);
                             alert.setTitle("텍스트 수정");
                             // Create TextView
                             final EditText input = new EditText(activity);
+                            WhiteboardActivity.data = All.get(index).getText();
                             input.setText(All.get(index).getText().toString());
                             alert.setView(input);
                             alert.setPositiveButton("입력", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     All.get(index).editText(input.getText().toString());
+                                    GetData task = new GetData();
+                                    task.execute(WhiteboardActivity.data, All.get(index).getText(),"Text", Float.toString(All.get(index).getX()) , Float.toString(All.get(index).getY()), Float.toString(All.get(index).getWidth()), Float.toString(All.get(index).getHeight()));
                                     invalidate();
-                                    //activity.drawing.invalidate();
                                 }
                             });
                             alert.show();
                         }
-
                         break;
                 }
                 break;
@@ -506,8 +522,61 @@ public class Drawing extends View {
             String lineEnd = "\r\n";
             String twoHypens = "--";
             String boundary = "*****";
+            if (params.length == 7) {
+                String searchKeyword1 = params[0];
+                String searchKeyword2 = params[1];
+                String searchKeyword3 = params[2];
+                String searchKeyword4 = params[3];
+                String searchKeyword5 = params[4];
+                String searchKeyword6 = params[5];
+                String searchKeyword7 = params[6];
 
-            if (params.length == 6) {
+                serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardDBupdate.php";
+                postParameters = "content_path=" + searchKeyword1 + "&new_content_path=" + searchKeyword2 + "&content_type=" + searchKeyword3 + "&contentX=" + searchKeyword4 + "&contentY=" + searchKeyword5 + "&content_width=" + searchKeyword6 + "&content_height=" + searchKeyword7;
+
+                try {
+                    URL url = new URL(serverURL);
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(5000);
+                    conn.setConnectTimeout(5000);
+                    conn.setRequestMethod("POST");
+                    conn.setDoInput(true);
+                    conn.connect();
+
+                    OutputStream outputStream = conn.getOutputStream();
+                    outputStream.write(postParameters.getBytes("UTF-8"));
+                    outputStream.flush();
+                    outputStream.close();
+
+                    int responseStatusCode = conn.getResponseCode();
+                    Log.d(TAG, "response code - " + responseStatusCode);
+
+                    InputStream inputStream;
+                    if (responseStatusCode == HttpURLConnection.HTTP_OK) {
+                        inputStream = conn.getInputStream();
+                    } else {
+                        inputStream = conn.getErrorStream();
+                    }
+
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+
+                    while ((line = bufferedReader.readLine()) != null) {
+                        sb.append(line);
+                    }
+
+                    bufferedReader.close();
+
+                    return sb.toString().trim();
+                } catch (Exception e) {
+                    Log.d(TAG, "InsertData: Error ", e);
+                    errorString = e.toString();
+
+                    return null;
+                }
+            }else if (params.length == 6) {
                 String searchKeyword1 = params[0];
                 String searchKeyword2 = params[1];
                 String searchKeyword3 = params[2];

@@ -116,15 +116,11 @@ public class ContentHistory {
 
     //공용
     public void setPosition(float x, float y) {
-        if (map.get("type").equals("Text")) {
-            map.put("x", x);
-            map.put("y", y);
-        }else if (map.get("type").equals("Picture")) {
-            map.put("x", x - (float)map.get("gapX"));
-            map.put("y", y - (float)map.get("gapY"));
-            map.put("setXY", new RectF((float)map.get("x"), (float)map.get("y"), (float)map.get("x") + (float)map.get("width"), (float)map.get("y") + (float)map.get("height")));
-        }else {
+        map.put("x", x - (float)map.get("gapX"));
+        map.put("y", y - (float)map.get("gapY"));
 
+        if (map.get("type").equals("Picture")) {
+            map.put("setXY", new RectF((float)map.get("x"), (float)map.get("y"), (float)map.get("x") + (float)map.get("width"), (float)map.get("y") + (float)map.get("height")));
         }
     }
 
