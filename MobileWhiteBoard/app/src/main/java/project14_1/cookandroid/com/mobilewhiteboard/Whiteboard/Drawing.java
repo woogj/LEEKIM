@@ -55,7 +55,7 @@ public class Drawing extends View {
     RectF setXY = new RectF(0, 0, 0, 0); // 터치좌표
     boolean et = false; //et는 end trigger를 줄인것. 그림을 그린 후 다시 그려지는 것 방지
     boolean addPostit = false; // 포스트잇 추가 여부 저장 변수
-    long PressTime;
+    //long PressTime;
 
     private Path drawPath;
     public static Paint drawPaint, canvasPaint;
@@ -190,46 +190,15 @@ public class Drawing extends View {
             case 1:
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        // 터치한 영역에 있는 텍스트박스를 찾는다
-                        index = -1;
-                        dragCount = 0;
-                        for(int i=0; i<All.size(); i++){
-                            if(All.get(i).getType() == "Text" && All.get(i).isClicked(event.getX(), event.getY())){
-                                index = i;
-                                break;
-                            }
-                        }
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        if(dragCount>5 && index != -1){
-                            // 10번 이상 move가 찍히면 드래그였다고 판단하고 처음 터치한 영역에 있는 텍스트를 현재 좌표로 이동시킨다.
-                            All.get(index).setPosition(event.getX(), event.getY());
-                            invalidate();
-                        }else{
-                            dragCount++;
-                        }
                         break;
                     case MotionEvent.ACTION_UP:
-                        if(index == -1){
-                            Toast.makeText(this.getContext(), "선택한 영역에 텍스트박스가 없습니다.", Toast.LENGTH_SHORT).show();
-                        } else if(dragCount<=5){
-                            // 텍스트의 내용을 수정시킨다.
-                            final WhiteboardActivity activity = (WhiteboardActivity) this.getContext();
-                            AlertDialog.Builder alert = new AlertDialog.Builder(activity);
-                            alert.setTitle("텍스트 수정");
-                            // Create TextView
-                            final EditText input = new EditText(activity);
-                            input.setText(All.get(index).getText().toString());
-                            alert.setView(input);
-                            alert.setPositiveButton("입력", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    All.get(index).editText(input.getText().toString());
-                                    invalidate();
-                                    //activity.drawing.invalidate();
-                                }
-                            });
-                            alert.show();
-                        }
+                        ContentHistory map = new ContentHistory(WhiteboardActivity.data, event.getX(),event.getY());
+                        All.add(map);
+                        GetData task = new GetData();
+                        task.execute(map.getText(), "Text", Float.toString(map.getX()), Float.toString(map.getY()), Float.toString(map.getWidth()), Float.toString(map.getHeight()));
+                        WhiteboardActivity.type = 0;
                         break;
                 }
                 break;
@@ -344,10 +313,33 @@ public class Drawing extends View {
                         }
                         break;
                     case MotionEvent.ACTION_UP:
-                        if(!(index == -1)){
-                            Toast.makeText(this.getContext(), All.get(index).getPath(), Toast.LENGTH_SHORT).show();
+                        /** if(!(index == -1)){
+                         * Toast.makeText(this.getContext(), All.get(index).getPath(), Toast.LENGTH_SHORT).show();
+                         * }
+                         * //작동 확인용
+                         * else if(index == -1){
+                         * Toast.makeText(this.getContext(), "선택한 영역에 텍스트박스가 없습니다.", Toast.LENGTH_SHORT).show();
+                         * } else
+                         */
+
+                        if(dragCount<=5){
+                            // 텍스트의 내용을 수정시킨다.
+                            final WhiteboardActivity activity = (WhiteboardActivity) this.getContext();
+                            AlertDialog.Builder alert = new AlertDialog.Builder(activity);
+                            alert.setTitle("텍스트 수정");
+                            // Create TextView
+                            final EditText input = new EditText(activity);
+                            input.setText(All.get(index).getText().toString());
+                            alert.setView(input);
+                            alert.setPositiveButton("입력", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    All.get(index).editText(input.getText().toString());
+                                    invalidate();
+                                    //activity.drawing.invalidate();
+                                }
+                            });
+                            alert.show();
                         }
-                        //작동 확인용
 
                         break;
                 }
@@ -494,12 +486,12 @@ public class Drawing extends View {
             Log.d(TAG, "response - " + result);
 
             if (result == null){
-                Toast.makeText(Drawing.this.getContext(), errorString, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(Drawing.this.getContext(), errorString, Toast.LENGTH_SHORT).show();
             } else if (result.startsWith("{")) {
                 mJsonString = result;
                 showResult();
             } else {
-                Toast.makeText(Drawing.this.getContext(), result, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(Drawing.this.getContext(), result, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -516,7 +508,6 @@ public class Drawing extends View {
             String boundary = "*****";
 
             if (params.length == 6) {
-                serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardIMGsave.php";
                 String searchKeyword1 = params[0];
                 String searchKeyword2 = params[1];
                 String searchKeyword3 = params[2];
@@ -524,87 +515,92 @@ public class Drawing extends View {
                 String searchKeyword5 = params[4];
                 String searchKeyword6 = params[5];
 
-                File imgFile = new File(searchKeyword1);
-                if (imgFile.exists()) {
-                    //이미지 파일이 있으면.
-                    try {
-                        FileInputStream FIS = new FileInputStream(imgFile);
+                if (params[1].equals("Picture")) {
+                    serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardIMGsave.php";
 
-                        URL url = new URL(serverURL);
+                    File imgFile = new File(searchKeyword1);
+                    if (imgFile.exists()) {
+                        //이미지 파일이 있으면.
+                        try {
+                            FileInputStream FIS = new FileInputStream(imgFile);
 
-                        conn = (HttpURLConnection) url.openConnection();
+                            URL url = new URL(serverURL);
 
-                        // connection setting....
-                        conn.setDoInput(true); // Allow Inputs
-                        conn.setDoOutput(true); // Allow Outputs
-                        conn.setUseCaches(false); // Don't use a Cached Copy
-                        conn.setRequestMethod("POST");
-                        conn.setRequestProperty("Connection", "Keep-Alive");
-                        conn.setRequestProperty("ENCTYPE", "multipart/form-data");
-                        conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+                            conn = (HttpURLConnection) url.openConnection();
 
-                        dos = new DataOutputStream(conn.getOutputStream());
-                        //데이타 쓰기 시작
-                        dos.writeBytes(twoHypens + boundary + lineEnd);
-                        dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_img\";filename=\""
-                                + searchKeyword1 + "\"" + lineEnd);
+                            // connection setting....
+                            conn.setDoInput(true); // Allow Inputs
+                            conn.setDoOutput(true); // Allow Outputs
+                            conn.setUseCaches(false); // Don't use a Cached Copy
+                            conn.setRequestMethod("POST");
+                            conn.setRequestProperty("Connection", "Keep-Alive");
+                            conn.setRequestProperty("ENCTYPE", "multipart/form-data");
+                            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
 
-                        dos.writeBytes(lineEnd);
+                            dos = new DataOutputStream(conn.getOutputStream());
+                            //데이타 쓰기 시작
+                            dos.writeBytes(twoHypens + boundary + lineEnd);
+                            dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_img\";filename=\""
+                                    + searchKeyword1 + "\"" + lineEnd);
 
-                        int byteAvaiable = FIS.available();
+                            dos.writeBytes(lineEnd);
 
-                        int bufferSize = Math.min(byteAvaiable, MaxBufferSize);
-                        byte[] buffer = new byte[bufferSize];
+                            int byteAvaiable = FIS.available();
 
-                        int byteRead = FIS.read(buffer, 0, bufferSize);
+                            int bufferSize = Math.min(byteAvaiable, MaxBufferSize);
+                            byte[] buffer = new byte[bufferSize];
 
-                        while (byteRead > 0) {
-                            dos.write(buffer, 0, bufferSize);
-                            byteAvaiable = FIS.available();
-                            bufferSize = Math.min(byteAvaiable, MaxBufferSize);
-                            byteRead = FIS.read(buffer, 0, bufferSize);
+                            int byteRead = FIS.read(buffer, 0, bufferSize);
+
+                            while (byteRead > 0) {
+                                dos.write(buffer, 0, bufferSize);
+                                byteAvaiable = FIS.available();
+                                bufferSize = Math.min(byteAvaiable, MaxBufferSize);
+                                byteRead = FIS.read(buffer, 0, bufferSize);
+                            }
+
+                            dos.writeBytes(lineEnd);
+                            dos.writeBytes(twoHypens + boundary + lineEnd);
+
+                            //data 쓰기 완료.
+                            int responseStatusCode = conn.getResponseCode();
+                            Log.d(TAG, "response code - " + responseStatusCode);
+
+                            InputStream inputStream;
+                            if (responseStatusCode == HttpURLConnection.HTTP_OK) {
+                                inputStream = conn.getInputStream();
+                            } else {
+                                inputStream = conn.getErrorStream();
+                            }
+
+                            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                            StringBuilder sb = new StringBuilder();
+                            String line;
+
+                            while ((line = bufferedReader.readLine()) != null) {
+                                sb.append(line);
+                            }
+
+                            bufferedReader.close();
+
+                            FIS.close();
+
+                            dos.flush();
+                            dos.close();
+                            searchKeyword1 = sb.toString().trim();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return null;
                         }
-
-                        dos.writeBytes(lineEnd);
-                        dos.writeBytes(twoHypens + boundary + lineEnd);
-
-                        //data 쓰기 완료.
-                        int responseStatusCode = conn.getResponseCode();
-                        Log.d(TAG, "response code - " + responseStatusCode);
-
-                        InputStream inputStream;
-                        if(responseStatusCode == HttpURLConnection.HTTP_OK) {
-                            inputStream = conn.getInputStream();
-                        }else{
-                            inputStream = conn.getErrorStream();
-                        }
-
-                        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
-                        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                        StringBuilder sb = new StringBuilder();
-                        String line;
-
-                        while((line = bufferedReader.readLine()) != null){
-                            sb.append(line);
-                        }
-
-                        bufferedReader.close();
-
-                        FIS.close();
-
-                        dos.flush();
-                        dos.close();
-                        searchKeyword1 = sb.toString().trim();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } else {
+                        Toast.makeText(Drawing.this.getContext(), "이미지 파일이 없습니다.", Toast.LENGTH_SHORT).show();
                         return null;
                     }
-                } else {
-                    Toast.makeText(Drawing.this.getContext(), "이미지 파일이 없습니다.", Toast.LENGTH_SHORT).show();
-                    return null;
-                }
+                }else { }
+
                 serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardDBsave.php";
-                postParameters = "userID=" + MainActivity.id +"&content_path=" + searchKeyword1 +"&content_type=" + searchKeyword2 +"&contentX=" + searchKeyword3 + "&contentY=" + searchKeyword4 + "&content_width=" + searchKeyword5 + "&content_height=" + searchKeyword6;
+                postParameters = "userID=" + MainActivity.id + "&content_path=" + searchKeyword1 + "&content_type=" + searchKeyword2 + "&contentX=" + searchKeyword3 + "&contentY=" + searchKeyword4 + "&content_width=" + searchKeyword5 + "&content_height=" + searchKeyword6;
 
                 try {
                     URL url = new URL(serverURL);
@@ -624,10 +620,9 @@ public class Drawing extends View {
                     Log.d(TAG, "response code - " + responseStatusCode);
 
                     InputStream inputStream;
-                    if(responseStatusCode == HttpURLConnection.HTTP_OK) {
+                    if (responseStatusCode == HttpURLConnection.HTTP_OK) {
                         inputStream = conn.getInputStream();
-                    }
-                    else{
+                    } else {
                         inputStream = conn.getErrorStream();
                     }
 
@@ -636,7 +631,7 @@ public class Drawing extends View {
                     StringBuilder sb = new StringBuilder();
                     String line;
 
-                    while((line = bufferedReader.readLine()) != null){
+                    while ((line = bufferedReader.readLine()) != null) {
                         sb.append(line);
                     }
 
@@ -712,6 +707,9 @@ public class Drawing extends View {
                 JSONObject item = jsonArray.getJSONObject(i);
                 if (item.getString(TAG_CONTENT_TYPE).equals("Picture")) {
                     ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), item.getString(TAG_CONTENTX), item.getString(TAG_CONTENTY), item.getString(TAG_CONTENT_WIDTH), item.getString(TAG_CONTENT_HEIGHT));
+                    All.add(map);
+                }else if (item.getString(TAG_CONTENT_TYPE).equals("Text")) {
+                    ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), Float.parseFloat(item.getString(TAG_CONTENTX)), Float.parseFloat(item.getString(TAG_CONTENTY)));
                     All.add(map);
                 }else {
 

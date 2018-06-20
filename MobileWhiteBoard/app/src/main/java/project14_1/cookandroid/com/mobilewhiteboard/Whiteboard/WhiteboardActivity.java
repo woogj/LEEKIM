@@ -63,7 +63,7 @@ public class WhiteboardActivity extends AppCompatActivity {
     static int type = 0;
     static Uri rsrc = null;
     static Bitmap bitmap = null;
-    static String absolutePath = null;
+    static String absolutePath = null, data = null;
     protected final int GALLERY = 1;
     protected final int CAMERA = 2;
 
@@ -131,9 +131,7 @@ public class WhiteboardActivity extends AppCompatActivity {
 
                 alert.setPositiveButton("입력", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        Drawing.All.add(new ContentHistory(input.getText().toString(),500,500));
-                        v.invalidate();
-                        //drawing.invalidate();
+                        data = input.getText().toString();
                     }
                 });
 
