@@ -504,7 +504,7 @@ public class Drawing extends View {
             Log.d(TAG, "response - " + result);
 
             if (result == null){
-                //Toast.makeText(Drawing.this.getContext(), errorString, Toast.LENGTH_SHORT).show();
+                Toast.makeText(Drawing.this.getContext(), errorString, Toast.LENGTH_SHORT).show();
             } else if (result.startsWith("{")) {
                 mJsonString = result;
                 showResult();
