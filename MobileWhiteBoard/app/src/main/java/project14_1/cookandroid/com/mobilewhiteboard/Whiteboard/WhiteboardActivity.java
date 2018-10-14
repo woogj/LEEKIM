@@ -1,5 +1,6 @@
 package project14_1.cookandroid.com.mobilewhiteboard.Whiteboard;
 
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -194,9 +195,10 @@ public class WhiteboardActivity extends AppCompatActivity {
                 dlg.setNegativeButton("갤러리", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                        Intent intent = new Intent(Intent.ACTION_PICK);
+                        intent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         intent.setType("image/*");
-                        startActivityForResult(Intent.createChooser(intent, "사진 선택"), GALLERY);
+                        startActivityForResult(intent, GALLERY);
                     }
                 });
                 dlg.show();
@@ -349,9 +351,12 @@ public class WhiteboardActivity extends AppCompatActivity {
 
     private String getAbsolutePath(Uri uri) {
         String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        CursorLoader cursorLoader = new CursorLoader(this, uri, projection, null, null, null);
+        Cursor cursor = cursorLoader.loadInBackground();
+
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
+
         return cursor.getString(column_index);
     }
 
