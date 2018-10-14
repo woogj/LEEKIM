@@ -12,7 +12,7 @@ mysqli_set_charset($con,"utf8");
 
 //$id = $_REQUEST['userID'];
 
-$sql = "select a.userID, a.name, b.teamID, b.team_name from users a inner join team b on a.userID = b.userID where b.teamID = 1";
+$sql = "select a.userID, a.name, b.teamID from users a inner join team b on a.userID = b.userID inner join teamList c on b.teamID = c.teamID where b.teamID = 1;";
 $result = mysqli_query($con,$sql);
 $data = array();
 
