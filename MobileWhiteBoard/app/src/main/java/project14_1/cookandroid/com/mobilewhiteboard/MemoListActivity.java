@@ -1,12 +1,17 @@
 package project14_1.cookandroid.com.mobilewhiteboard;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -20,8 +25,11 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -33,7 +41,9 @@ import static project14_1.cookandroid.com.mobilewhiteboard.MainActivity.userID;
 
 public class MemoListActivity extends AppCompatActivity {
     String myJSON;
-
+    String link;
+    String no;
+    EditText edtNo;
     private static final String TAG_RESULTS = "result";
     private static final String TAG_NO = "no";
     private static final String TAG_DATE = "update_date";
@@ -50,6 +60,8 @@ public class MemoListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memo_list);
+
+        edtNo = (EditText) findViewById(R.id.edtNo);
         ibPlus = (ImageButton) findViewById(R.id.ibPlus);
         lvMemo = (ListView) findViewById(R.id.lvMemo);
         personList = new ArrayList<HashMap<String, String>>();
@@ -75,16 +87,84 @@ public class MemoListActivity extends AppCompatActivity {
                 Intent intent1 = new Intent(getApplication(), MemoActivity.class);
                 text = str.substring(str.indexOf("text")+5,str.indexOf("title")-2);
                 title = str.substring(str.indexOf("title")+6, str.indexOf("no")-2);
+                //Toast.makeText(MemoListActivity.this, str.toString(), Toast.LENGTH_SHORT).show();
                 no = str.substring(str.indexOf("no")+3, str.indexOf("}"));
                 intent1.putExtra("text", text);
                 intent1.putExtra("title", title);
                 intent1.putExtra("no", no);
-                Toast.makeText(MemoListActivity.this, no, Toast.LENGTH_SHORT).show();
                 startActivity(intent1);
             }
         });
+
+        lvMemo.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,int position, long id) {
+                String no, str;
+                str = personList.get(position).toString();
+                no = str.substring(str.indexOf("no")+3, str.indexOf("}"));
+                deletetoToDatabase(no);
+                getData("http://" + MainActivity.IPaddress + "/android_db_api/memoList.php");
+                //Intent intent = new Intent(getApplication(), MemoListActivity.class);
+                //startActivity(intent);
+                return false;
+            }
+        });
     }
+    private void deletetoToDatabase(String no) {
+        class deleteData extends AsyncTask<String, Void, String> {
+            ProgressDialog loading;
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loading = ProgressDialog.show(MemoListActivity.this, "Please Wait", null, true, true);
+            }
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                loading.dismiss();
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+            }
+            @Override
+            protected String doInBackground(String... params) {
+
+                try {
+                    String no = (String) params[0];
+
+                    link = "http://" + MainActivity.IPaddress + "/android_db_api/memoDelete.php";
+
+                    String data = URLEncoder.encode("no", "UTF-8") + "=" + URLEncoder.encode(no, "UTF-8");
+
+                    URL url = new URL(link);
+                    URLConnection conn = url.openConnection();
+
+                    conn.setDoOutput(true);
+                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+                    wr.write(data);
+                    wr.flush();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+
+                    // Read Server Response
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                        break;
+                    }
+                    return sb.toString();
+                } catch (Exception e) {
+                    return new String("Exception: " + e.getMessage());
+                }
+            }
+        }
+        deleteData task = new deleteData();
+        task.execute(no);
+    }
+
     protected void showList() {
+        personList.clear();
         try {
             JSONObject jsonObj = new JSONObject(myJSON);
             peoples = jsonObj.getJSONArray(TAG_RESULTS);
@@ -111,9 +191,7 @@ public class MemoListActivity extends AppCompatActivity {
                     new String[]{TAG_NO, TAG_TITLE, TAG_TEXT, TAG_DATE},
                     new int[]{ R.id.tvNo, R.id.tvTitle, R.id.tvText, R.id.tvDate}
             );
-
             lvMemo.setAdapter(adapter);
-
         } catch (JSONException e) {
             e.printStackTrace();
         }

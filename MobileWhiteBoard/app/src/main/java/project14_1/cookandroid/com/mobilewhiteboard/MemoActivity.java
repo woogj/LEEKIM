@@ -54,6 +54,7 @@ public class MemoActivity extends AppCompatActivity {
                 title = edtTitle.getText().toString().trim();
                 text = edtText.getText().toString().trim();
                 no = edtNo.getText().toString().trim();
+                //Toast.makeText(MemoActivity.this, "@@"+title+"@@@@"+text, Toast.LENGTH_SHORT).show();
                 if(type == 0) {
                     insertoToDatabase(userID, title, text);
                 }else if(type == 1) {
