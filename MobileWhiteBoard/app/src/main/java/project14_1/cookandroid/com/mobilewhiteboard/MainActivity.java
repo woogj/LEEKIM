@@ -33,11 +33,11 @@ public class MainActivity extends AppCompatActivity {
 
     String pw, name, mJsonString;
     public static String id,
-            IPaddress = "14.63.168.206";
-            /** 서버       : 14.63.168.206
-             *  LHW 집     : 192.168.219.169:81
-             *  LHW 핫스팟 : 192.168.43.242
-             *  LJY 집     : 192.168.0.6*/
+            IPaddress = ""; //내 IP
+    /** 서버       : 14.63.168.206
+     *  LHW 집     : 192.168.219.196:81
+     *  LHW 핫스팟 : 192.168.43.242
+     *  LJY 집     : 192.168.0.6*/
     private static String TAG = "test";
     private static final String TAG_JSON="data";
     private static final String TAG_NAME = "name";

@@ -2,10 +2,12 @@ package project14_1.cookandroid.com.mobilewhiteboard;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Canvas;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
@@ -44,11 +46,14 @@ import project14_1.cookandroid.com.mobilewhiteboard.Whiteboard.*;
  */
 public class TeamTaskActivity extends AppCompatActivity {
     String myJSON;
+    String link;
     ArrayList<HashMap<String, String>> personList;
     ArrayList<HashMap<String, String>> personList2;
+    ArrayList<HashMap<String, String>> personList3;
     private static final String TAG_RESULTS = "result";
     private static final String TAG_TEAM_ID = "teamID";
     private static final String TAG_USER_ID = "userID";
+    private static final String TAG_NO = "no";
     private static final String TAG_NAME = "name";
     private static final String TAG_TEXT = "text";
 
@@ -56,15 +61,9 @@ public class TeamTaskActivity extends AppCompatActivity {
     JSONArray peoples2 = null;
     private String TName = "  모바일 프로그래밍";
     private String TSchedule="  업무 분담";
-    //String[] spnMemberName = {"김영준", "이수빈", "이지연", "이현우"};
-
-    ArrayList<String> pvtTask0 =new ArrayList<>();
-    ArrayList<String> pvtTask1 =new ArrayList<>();
-    ArrayList<String> pvtTask2 =new ArrayList<>();
-    ArrayList<String> pvtTask3 =new ArrayList<>();
 
     ListView lvTask;
-    TextView tvTName, tvTSchedule;
+    TextView tvTName, tvTSchedule,tvSelectName, tvName;
     Spinner spnMember, spnMemberAdd;
     RadioGroup rgTaskChoice;
     Button btnAddTask, btnInputTask, btnAllTask;
@@ -79,10 +78,12 @@ public class TeamTaskActivity extends AppCompatActivity {
         setContentView(R.layout.activity_task);
 
         getData("http://" + MainActivity.IPaddress + "/android_db_api/task_userName.php");
+        getData("http://" + MainActivity.IPaddress + "/android_db_api/task_list.php");
 
-
+        tvName = (TextView) findViewById(R.id.tvName);
         lvTask = (ListView) findViewById(R.id.lvTask);
         tvTName = (TextView) findViewById(R.id.tvTName);
+        tvSelectName = (TextView) findViewById(R.id.tvSelectName);
         tvTSchedule = (TextView) findViewById(R.id.tvTSchedule);
         rgTaskChoice = (RadioGroup) findViewById(R.id.rgTaskChoice);
         rbAllTask = (RadioButton) findViewById(R.id.rbAllTask);
@@ -105,6 +106,7 @@ public class TeamTaskActivity extends AppCompatActivity {
          spnMemberAdd = (Spinner) findViewById(R.id.spnMemberAdd);
          personList = new ArrayList<HashMap<String, String>>();
         personList2 = new ArrayList<HashMap<String, String>>();
+        personList3 = new ArrayList<HashMap<String, String>>();
 
         //ArrayAdapter adapter = ArrayAdapter.createFromResource(this,R.array.Member,android.R.layout.simple_spinner_item);
         //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -113,8 +115,8 @@ public class TeamTaskActivity extends AppCompatActivity {
         btnAllTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 getData("http://" + MainActivity.IPaddress + "/android_db_api/task_list.php");
+                selectList();
             }
         });
         spnMember.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -133,7 +135,12 @@ public class TeamTaskActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //각 항목 클릭시 포지션값을 토스트에 띄운다.
-                Toast.makeText(getApplicationContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
+                String str, name;
+                str = personList.get(position).toString();
+                user = str.substring(str.indexOf("userID")+7, str.indexOf("}"));
+                //tvName.setText(user);
+                Toast.makeText(getApplicationContext(), user, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), tvName.getText(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -144,14 +151,27 @@ public class TeamTaskActivity extends AppCompatActivity {
         btnInputTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String str = spnMemberAdd.getSelectedItem().toString();
-                user = str.substring(str.indexOf("userID")+7,str.indexOf("teamID")-2);
-                text = edtTask.getText().toString().trim();
-                insertoToDatabase(user, text);
+                text = edtTask.getText().toString().trim();            
                 Toast.makeText(TeamTaskActivity.this, user, Toast.LENGTH_SHORT).show();
+                insertoToDatabase(user, text);
                 rlyTaskAdd.setVisibility(View.INVISIBLE);
                 rlyPrivateTask.setVisibility(View.VISIBLE);
 
+            }
+        });
+        lvTask.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,int position, long id) {
+                String no, str;
+                selectList();
+                str = personList3.get(position).toString();
+                Toast.makeText(TeamTaskActivity.this, str, Toast.LENGTH_SHORT).show();
+                no = str.substring(str.indexOf("no")+3, str.indexOf("}"));
+                Toast.makeText(TeamTaskActivity.this, no, Toast.LENGTH_SHORT).show();
+                deletetoToDatabase(no);
+                getData("http://" + MainActivity.IPaddress + "/android_db_api/task_list.php");
+
+                return false;
             }
         });
     }
@@ -170,8 +190,7 @@ public class TeamTaskActivity extends AppCompatActivity {
                 loading.dismiss();
                 if (s.equals("success")) {
                     Toast.makeText(getApplicationContext(), "업무가 저장되었습니다.", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getApplication(), TeamTaskActivity.class);
-                    startActivity(intent);
+                    getData("http://" + MainActivity.IPaddress + "/android_db_api/task_list.php");
                 }else if (s.equals("failure")){
                     Toast.makeText(getApplicationContext(), "저장에 실패하였습니다.", Toast.LENGTH_SHORT).show();
                 }
@@ -216,7 +235,80 @@ public class TeamTaskActivity extends AppCompatActivity {
         InsertData task = new InsertData();
         task.execute(userID, text);
     }
+    private void deletetoToDatabase(String no) {
+        class deleteData extends AsyncTask<String, Void, String> {
+            ProgressDialog loading;
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loading = ProgressDialog.show(TeamTaskActivity.this, "Please Wait", null, true, true);
+            }
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                loading.dismiss();
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+            }
+            @Override
+            protected String doInBackground(String... params) {
 
+                try {
+                    String no = (String) params[0];
+
+                    link = "http://" + MainActivity.IPaddress + "/android_db_api/task_delete.php";
+
+                    String data = URLEncoder.encode("no", "UTF-8") + "=" + URLEncoder.encode(no, "UTF-8");
+
+                    URL url = new URL(link);
+                    URLConnection conn = url.openConnection();
+
+                    conn.setDoOutput(true);
+                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+                    wr.write(data);
+                    wr.flush();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+
+                    // Read Server Response
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                        break;
+                    }
+                    return sb.toString();
+                } catch (Exception e) {
+                    return new String("Exception: " + e.getMessage());
+                }
+            }
+        }
+        deleteData task = new deleteData();
+        task.execute(no);
+    }
+    protected void selectList() {
+        try {
+            JSONObject jsonObj = new JSONObject(myJSON);
+            peoples = jsonObj.getJSONArray(TAG_RESULTS);
+
+            for (int i = 0; i < peoples.length(); i++) {
+                JSONObject c = peoples.getJSONObject(i);
+
+                int no = c.getInt(TAG_NO);
+
+                HashMap<String, String> persons = new HashMap<String, String>();
+
+                persons.put(TAG_NO, String.valueOf(no));
+
+                personList3.add(persons);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
     protected void showList() {
         try {
             JSONObject jsonObj = new JSONObject(myJSON);
@@ -225,27 +317,25 @@ public class TeamTaskActivity extends AppCompatActivity {
             for (int i = 0; i < peoples.length(); i++) {
                 JSONObject c = peoples.getJSONObject(i);
 
-                teamID = c.getString(TAG_TEAM_ID);
+                //teamID = c.getString(TAG_TEAM_ID);
                 userID = c.getString(TAG_USER_ID);
-                String name = c.getString(TAG_NAME);
+                //String name = c.getString(TAG_NAME);
 
 
                 HashMap<String, String> persons = new HashMap<String, String>();
 
-                persons.put(TAG_TEAM_ID, teamID);
+                //persons.put(TAG_TEAM_ID, teamID);
                 persons.put(TAG_USER_ID, userID);
-                persons.put(TAG_NAME, name);
+                //persons.put(TAG_NAME, name);
 
                 personList.add(persons);
             }
 
-
             ListAdapter adapter = new SimpleAdapter(
                     TeamTaskActivity.this, personList, R.layout.task_list_name,
-                    new String[]{TAG_TEAM_ID, TAG_USER_ID, TAG_NAME},
-                    new int[]{ R.id.tvTeamID, R.id.tvUserID, R.id.tvName}
+                    new String[]{ TAG_USER_ID },
+                    new int[]{ R.id.tvName}
             );
-
             spnMember.setAdapter((SpinnerAdapter) adapter);
             spnMemberAdd.setAdapter((SpinnerAdapter) adapter);
 
@@ -256,6 +346,7 @@ public class TeamTaskActivity extends AppCompatActivity {
     }
 
     protected void showList2() {
+        personList2.clear();
         try {
             JSONObject jsonObj = new JSONObject(myJSON);
             peoples = jsonObj.getJSONArray(TAG_RESULTS);
@@ -263,11 +354,13 @@ public class TeamTaskActivity extends AppCompatActivity {
             for (int i = 0; i < peoples.length(); i++) {
                 JSONObject c = peoples.getJSONObject(i);
 
+                int no = c.getInt(TAG_NO);
                 String text = c.getString(TAG_TEXT);
                 String name = c.getString(TAG_NAME);
 
                 HashMap<String, String> persons = new HashMap<String, String>();
 
+                persons.put(TAG_NO, String.valueOf(no));
                 persons.put(TAG_TEXT, text);
                 persons.put(TAG_NAME, name);
 
@@ -276,8 +369,8 @@ public class TeamTaskActivity extends AppCompatActivity {
 
             ListAdapter adapter = new SimpleAdapter(
                     TeamTaskActivity.this, personList2, R.layout.task_list_item,
-                    new String[]{TAG_TEXT, TAG_NAME},
-                    new int[]{ R.id.tvText, R.id.tvTaskName}
+                    new String[]{TAG_NO, TAG_TEXT, TAG_NAME},
+                    new int[]{ R.id.tvNo, R.id.tvText, R.id.tvTaskName}
             );
 
             lvTask.setAdapter(adapter);

@@ -12,13 +12,13 @@ mysqli_set_charset($con,"utf8");
 
 //$id = $_REQUEST['userID'];
 
-$sql = "select a.no, b.teamID, d.teamName, a.text, c.name from division a inner join team b on a.teamID = b.teamID and a.userID = b.userID inner join users c on a.userID = c.userID inner join teamList d on b.teamID = d.teamID;";
+$sql = "select a.no from division a inner join team b on a.teamID = b.teamID and a.userID = b.userID inner join users c on a.userID = c.userID inner join teamList d on b.teamID = d.teamID;";
 $result = mysqli_query($con,$sql);
 $data = array();
 
 while($row = mysqli_fetch_array($result)) {
 
-array_push($data, array('no'=>$row["no"], 'text'=>$row["text"],'name'=>$row["name"]));
+array_push($data, array('no'=>$row["no"]));
 
 }                  
 echo json_encode(array("result"=>$data));
