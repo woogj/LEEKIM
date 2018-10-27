@@ -158,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 bufferedReader.close();
+                httpURLConnection.disconnect();
 
                 return sb.toString().trim();
             } catch (Exception e) {

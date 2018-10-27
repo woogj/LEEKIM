@@ -20,11 +20,10 @@ $contentY = $_REQUEST['contentY'];
 $content_width = $_REQUEST['content_width'];
 $content_height = $_REQUEST['content_height'];
 
-if($content_path != $new_content_path && $content_type == "Text") {
+if(($content_path != $new_content_path) && ($content_type == "Text" || $content_type == "Drawing")) {
 	$sql = "UPDATE whiteboard SET content_path = '$new_content_path' WHERE whiteboardID = '$whiteboardID' and teamID = '$teamID' and content_path = '$content_path' and content_type = '$content_type'";
-}else {
+}else{
 	$sql = "UPDATE whiteboard SET contentX = '$contentX', contentY = '$contentY', content_path = '$new_content_path' WHERE whiteboardID = '$whiteboardID' and teamID = '$teamID' and content_path = '$content_path' and content_type = '$content_type' and content_width = '$content_width' and content_height = '$content_height'";
-
 }
 
 $result = mysqli_query($link,$sql);

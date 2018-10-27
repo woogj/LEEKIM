@@ -3,6 +3,8 @@ package project14_1.cookandroid.com.mobilewhiteboard.Whiteboard;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.TextPaint;
@@ -51,8 +53,24 @@ public class ContentHistory {
         return (String)map.get("text");
     }
 
-    public void drawCanvas(Canvas canvas){
-        canvas.drawText((String)map.get("text"), (float)map.get("x"), (float)map.get("y"), (TextPaint)map.get("textPaint"));
+    //그림
+    public ContentHistory(String path,int color) {
+        map = new HashMap<String, Object>();
+        map.put("type", "Drawing");
+        map.put("path", path);
+        map.put("color", color);
+    }
+
+    public void setPath(String path) {
+        map.put("path", path);
+    }
+
+    public int getColor() {
+        return (int) map.get("color");
+    }
+
+    public void setColor(int color) {
+        map.put("color", color);
     }
 
     //사진
@@ -122,6 +140,14 @@ public class ContentHistory {
         if (map.get("type").equals("Picture")) {
             map.put("setXY", new RectF((float)map.get("x"), (float)map.get("y"), (float)map.get("x") + (float)map.get("width"), (float)map.get("y") + (float)map.get("height")));
         }
+    }
+
+    public void drawCanvas(Canvas canvas){
+        if (map.get("type").equals("Text")) {
+            canvas.drawText((String) map.get("text"), (float) map.get("x"), (float) map.get("y"), (TextPaint) map.get("textPaint"));
+        }else if (map.get("type").equals("Drawing")) {
+
+        }else{}
     }
 
     public float getX() { return (float)map.get("x"); }
