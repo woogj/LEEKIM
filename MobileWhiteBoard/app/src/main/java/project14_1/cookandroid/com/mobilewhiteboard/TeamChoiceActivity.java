@@ -9,6 +9,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import project14_1.cookandroid.com.mobilewhiteboard.TeamManage.ManageTeamActivity;
 import project14_1.cookandroid.com.mobilewhiteboard.Whiteboard.WhiteboardActivity;
 
 /**
@@ -24,6 +25,7 @@ public class TeamChoiceActivity extends AppCompatActivity {
         RadioButton rb_task = (RadioButton) findViewById(R.id.rb_task);
         ImageButton ibtn_tName_1 = (ImageButton) findViewById(R.id.ibtn_tName_1);
         ImageButton ibtn_tName_2 = (ImageButton) findViewById(R.id.ibtn_tName_2);
+        ImageButton ibtn_t_manage = (ImageButton) findViewById(R.id.ibtn_t_manage);
 
         ibtn_tName_1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,6 +45,17 @@ public class TeamChoiceActivity extends AppCompatActivity {
 
             }
         });
+
+        ibtn_t_manage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplication(), ManageTeamActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
 
 
     }

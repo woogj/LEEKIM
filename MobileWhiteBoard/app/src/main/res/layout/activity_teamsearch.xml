@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbarResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorToolbar" >
+
+
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbarResult"
+        >
+        <TextView
+            android:id="@+id/timErum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:text="팀 이름  : "
+            android:textSize="22dp"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:background="@color/colorBackGround"/>
+        <TextView
+            android:id="@+id/tvTeamName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_alignRight="@+id/timErum"
+            android:textSize="22dp"
+            android:textColor="#1c2e44"
+            android:textStyle="bold"
+            android:background="@color/colorBackGround"
+            tools:textSize="22dp"
+            tools:textColor="#1c2e44"
+            tools:textStyle="bold"/>
+        <TextView
+            android:id="@+id/juje"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/timErum"
+            android:text="팀 주제  : "
+            android:textSize="18dp"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:background="@color/colorBackGround"/>
+
+        <TextView
+            android:id="@+id/tvTeamObject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/timErum"
+            android:layout_marginEnd="57dp"
+            android:background="@drawable/round_button_base_blue"
+            android:text="팀 이름  : "
+            android:textColor="#000000"
+            android:textSize="22dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/timgeayo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@+id/juje"
+            android:text="개요  "
+            android:textSize="18dp"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:background="@color/colorBackGround"/>
+
+        <TextView
+            android:id="@+id/tvTeamSummary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:text="팀 이름  : "
+            android:textSize="22dp"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:background="@drawable/round_button_base_blue"/>
+
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

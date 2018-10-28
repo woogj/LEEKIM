@@ -9,6 +9,7 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/connectIC"
         android:textStyle="bold|italic"
         android:textSize="50dp"
         android:gravity="center|bottom"

@@ -72,8 +72,6 @@ public class SignupActivity extends AppCompatActivity {
                 email = edtEmail.getText().toString().trim();
 
 
-                //String userID = edtID.getText().toString();
-                //String userPW = edtPw.getText().toString();
 
                 insertoToDatabase(userID, userPW, name, email);
                 /*if (id.isEmpty() || name.isEmpty() || email.isEmpty() || repass.isEmpty()|| pass.isEmpty()) {
@@ -145,12 +143,6 @@ public class SignupActivity extends AppCompatActivity {
         }
     };
 
-    /*public void insert(View view) {
-        String userID = edtID.getText().toString();
-        String userPW = edtPw.getText().toString();
-        insertoToDatabase(userID, userPW);
-    }
-    */
 
     private void insertoToDatabase(String userID, String userPW, String name, final String email) {
         class InsertData extends AsyncTask<String, Void, String> {
@@ -223,6 +215,3 @@ public class SignupActivity extends AppCompatActivity {
     }
 
 }
-
-/*  super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);*/
