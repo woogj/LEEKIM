@@ -19,7 +19,7 @@ $data = array();
 while($row = mysqli_fetch_array($result)) {
 
 //array_push($data, array('teamID'=>$row["teamID"],'userID'=>$row["userID"], 'name'=>$row["name"]));
-array_push($data, array('userID'=>$row["userID"]));
+array_push($data, array('userID'=>$row["userID"], 'name'=>$row["name"]));
 }                  
 echo json_encode(array("result"=>$data));
 

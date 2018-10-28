@@ -55,52 +55,7 @@
         android:layout_marginTop="10dp"
         android:layout_below="@+id/rlyTaskChoice">
 
-        <RelativeLayout
-            android:id="@+id/rlyTaskAdd"
-            android:layout_gravity="center"
-            android:background="@color/colorBaseBlue"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="60dp"
-            android:layout_marginTop="60dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:visibility="invisible">
 
-            <Spinner
-                android:id="@+id/spnMemberAdd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|top"></Spinner>
-            <TextView
-                android:id="@+id/tvSelectName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"/>
-            <Button
-                android:id="@+id/btnInputTask"
-                android:text="입력"
-                android:layout_alignParentRight="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/tvTask"
-                android:text="할 일을 입력하시오."
-                android:layout_below="@+id/spnMemberAdd"
-                android:layout_margin="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <EditText
-                android:id="@+id/edtTask"
-                android:layout_below="@+id/tvTask"
-                android:layout_margin="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-
-
-        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/rlyALLTask"
@@ -145,16 +100,58 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/rlyTaskAdd"
+            android:layout_gravity="center"
+            android:background="@color/colorBaseBlue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="60dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:visibility="invisible">
+
+            <Spinner
+                android:id="@+id/spnMemberAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|top"></Spinner>
+            <Button
+                android:id="@+id/btnInputTask"
+                android:text="입력"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/tvTask"
+                android:text="할 일을 입력하시오."
+                android:layout_below="@+id/spnMemberAdd"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/edtTask"
+                android:layout_below="@+id/tvTask"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/tvUserID"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible"/>
+            <TextView
+                android:id="@+id/tvNo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible"/>
+        </RelativeLayout>
+        <RelativeLayout
             android:id="@+id/rlyPrivateTask"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="invisible"
-            >
-
-            <Spinner
-                android:id="@+id/spnMember"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></Spinner>
+            android:visibility="invisible">
             <Button
                 android:id="@+id/btnAddTask"
                 android:text="+"
@@ -164,7 +161,7 @@
 
             <RelativeLayout
                 android:id="@+id/rlyViewPrivate"
-                android:layout_below="@+id/spnMember"
+                android:layout_below="@+id/btnAddTask"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
