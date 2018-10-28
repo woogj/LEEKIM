@@ -32,6 +32,8 @@
         <activity android:name=".Whiteboard.WhiteboardActivity"
             android:screenOrientation="sensorLandscape"> </activity>
         <activity android:name=".TeamTaskActivity" > </activity>
+        <activity android:name=".TeamManage.ManageTeamActivity" android:theme="@style/Theme.AppCompat.Light.NoActionBar"> </activity>
+        <activity android:name=".TeamManage.CreateTeamActivity" > </activity>
         <activity android:name=".ColorPaletteDialog" android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"></activity>
     </application>
 

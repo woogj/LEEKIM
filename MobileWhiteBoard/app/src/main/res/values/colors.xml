@@ -7,4 +7,10 @@
     <color name="colorBaseBlue">#3075AD</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorInvisibleWhite">#ffffffff</color>
+    <color name="colorToolbar">#42ccc8</color>
+    <color name="colorMaster">#4fa7d3</color>
+    <color name="colorGrade2">#4875aa</color>
+    <color name="colorGrade3">#62539b</color>
+    <color name="colorBackGround">#fefef2</color>
+
 </resources>

@@ -1,6 +1,5 @@
 package project14_1.cookandroid.com.mobilewhiteboard;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -23,10 +23,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+
 public class MainActivity extends AppCompatActivity {
     private static final long   DURATION_TIME = 2000L;
     private long prevPressTime = 0L;
     EditText edtLoginID, edtLoginPW;
+    TextView tvConnect;
     Button btnSign, btnLogin;
 
     static String userID;
@@ -37,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
             /** 서버       : 14.63.168.206
              *  LHW 집     : 192.168.219.169:81
              *  LHW 핫스팟 : 192.168.43.242
-             *  LJY 집     : 192.168.0.6*/
+             *  LJY 핫스팟 : 192.168.43.101
+             *  LJY 집     : 192.168.99.1 */
     private static String TAG = "test";
     private static final String TAG_JSON="data";
     private static final String TAG_NAME = "name";
@@ -50,9 +53,19 @@ public class MainActivity extends AppCompatActivity {
 
         edtLoginID = (EditText) findViewById(R.id.edtLoginID);
         edtLoginPW = (EditText) findViewById(R.id.edtLoginPW);
+        tvConnect = (TextView) findViewById(R.id.connectIC);
 
         btnSign = (Button) findViewById(R.id.btnSign);
         btnLogin = (Button) findViewById(R.id.btnLogin);
+
+        tvConnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), TeamChoiceActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         btnSign.setOnClickListener(new View.OnClickListener() {
             @Override
