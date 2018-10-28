@@ -1,31 +1,36 @@
 <?php
+$link=mysqli_connect("220.67.115.32","yjkim_1812","yjkim_1812","yjkim_1812");
+if (!$link)  
+{  
+    echo "MySQL 접속 에러 : ";
+    echo mysqli_connect_error();
+    exit();  
+}  
 
-$con=mysqli_connect("localhost", "yjkim_1812", "yjkim_1812", "yjkim_1812");
+mysqli_set_charset($link,"utf8");
 
-mysqli_set_charset($con, "utf8");
-
-if(mysqli_connect_errno($con))
-{
-   echo "Failed to connect to MYSQL: " . mysqli_connect_error();
-}
-
-mysqli_set_charset($con, "utf8");
-
-$teamName = $_POST['tName'];
-$teamTitle = $_POST['tTitle'];
-$teamSummary = $_POST['tSummary'];
-$teamURL = $_POST['tURL'];
-$masterID = $_POST['mID'];
+//post값 읽어오기
+$name = $_REQUEST['teamName'];
+$title = $_REQUEST['object'];
+$summary = $_REQUEST['summary'];
+$master = $_REQUEST['masterID'];
 
 
-$result = mysqli_query($con, "insert into teamList (teamName, object, summary, URL, masterID) values('$teamName', '$teamTitle', '$teamSummary', '$teamURL','$masterID')");
+$sql = "INSERT INTO teamList (teamName, object, summary, masterID, reg_date) values('$name', '$title', '$summary','$master', now())";
+$result = mysqli_query($link,$sql);
 
-if($result) {
-	echo 's';
-} else {
-	echo 'n';
-}
+$sql2 = "SELECT teamID FROM teamList WHERE teamName = '$name'";
+$teamID = mysqli_query($link,$sql2);
+$row = mysqli_fetch_row($teamID);
+echo $row[0];
 
-mysqli_close($con);
+$sql3 = "INSERT INTO team(teamID, userID, grade) VALUES ('$row[0]','$master','1')";
+$result3 = mysqli_query($link,$sql3);
+  if($result){
+        echo "success";
+    }else{
+        echo "error to insert data";
+    }
 
+mysqli_close($link);
 ?>
