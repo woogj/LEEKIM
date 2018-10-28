@@ -11,11 +11,10 @@ if(mysqli_connect_errno($con))
 
 mysqli_set_charset($con, "utf8");
 
-//$teamID = $_POST['teamID'];
-$userID = $_POST['userID'];
-$text = $_POST['text'];
+$no = $_POST['no'];
 
-$result = mysqli_query($con, "insert into division (teamID, userID, text, deadline_date, importance, lastupdate_date) values('1', '$userID', '$text', now(), 4 , now());");
+
+$result = mysqli_query($con, "delete from memo where no = '$no';");
 
 if($result) {
 	echo 'success';

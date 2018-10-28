@@ -1,7 +1,6 @@
 package project14_1.cookandroid.com.mobilewhiteboard.Whiteboard;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -69,6 +68,8 @@ public class Drawing extends View {
 
     int MaxBufferSize = 1 * 1024 * 1024;
 
+    String Paths = null;
+
     String mJsonString;
     private static final String TAG_JSON="data", TAG_CONTENT_PATH="content_path", TAG_CONTENT_TYPE="content_type", TAG_CONTENTX="contentX", TAG_CONTENTY="contentY", TAG_CONTENT_WIDTH="content_width", TAG_CONTENT_HEIGHT = "content_height";
     String content_path, contentX, contentY, content_width, content_height;
@@ -101,6 +102,36 @@ public class Drawing extends View {
             if (map.getType() == "Text") {
                 //글 그리기
                 map.drawCanvas(canvas);
+            }else if (map.getType() == "Drawing") {
+                //그림 그리기
+                if (map.getPath().endsWith("json")) {
+                    load_paths task = new load_paths();
+                    task.execute("http://" + MainActivity.IPaddress + "/android_db_api/" + map.getPath());
+                    while (Paths == null) { }
+                    showPaths(i);
+                    i--;
+                }else {
+                    String[] coordA = map.getPath().split("/"), coordB;
+                    float touchX = 0, touchY = 0;
+                    for (int j=0; j<coordA.length; j++) {
+                        coordB = coordA[j].split(",");
+                        for (int k=0; k<coordB.length; k++) {
+                            if (k==0) {
+                                touchX = Float.parseFloat(coordB[0]);
+                            }else if (k==1) {
+                                touchY = Float.parseFloat(coordB[1]);
+                            }
+                        }
+                        if (j==0) {
+                            drawPath.moveTo(touchX, touchY);
+                        }else {
+                            drawPath.lineTo(touchX, touchY);
+                        }
+                    }
+                    drawPaint.setColor(map.getColor());
+                    drawCanvas.drawPath(drawPath, drawPaint);
+                    drawPath.reset();
+                }
             }else if (map.getType() == "Picture") {
                 // 사진 그리기
                 if (map.getBitmap() == null) {
@@ -118,7 +149,7 @@ public class Drawing extends View {
                     scaled.recycle();
                 }
             }else {
-
+                Log.d(TAG, "error");
             }
         }
         if (et == true) {
@@ -208,16 +239,28 @@ public class Drawing extends View {
 
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        drawPath.reset();
                         drawPath.moveTo(touchX, touchY);
+
+                        Paths = "{\r\n\t\"data\" : [\r\n\t\t{\r\n\t\t\t\"coord\": \"" + (int)touchX +","+ (int)touchY;
                         break;
                     case MotionEvent.ACTION_MOVE:
                         drawPath.lineTo(touchX, touchY);
+                        Paths += "/" + (int)touchX +","+ (int)touchY;
+                        drawCanvas.drawPath(drawPath, drawPaint);
+                        drawPath.reset();
+                        drawPath.moveTo(touchX, touchY);
                         break;
                     case MotionEvent.ACTION_UP:
                         drawPath.lineTo(touchX, touchY);
+                        Paths += "\",\r\n\t\t\t\"color\": \"" + drawPaint.getColor() + "\"\r\n\t\t}\r\n\t]\r\n}";
                         drawCanvas.drawPath(drawPath, drawPaint);
                         drawPath.reset();
-
+                        Toast.makeText(this.getContext(), Paths, Toast.LENGTH_SHORT).show();
+                        ContentHistory map = new ContentHistory(Paths, drawPaint.getColor());
+                        All.add(map);
+                        GetData task = new GetData();
+                        task.execute(map.getPath(), "Drawing");
                         break;
                     default:
                         return false;
@@ -490,6 +533,96 @@ public class Drawing extends View {
         }
     }
 
+    private class load_paths extends AsyncTask<String, Void, String> {
+        String errorString = null;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String searchKeyword1 = params[0];
+
+            String serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardJSONload.php";
+            String postParameters = "content_path=" + searchKeyword1;
+
+            try {
+                URL url = new URL(serverURL);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(5000);
+                conn.setConnectTimeout(5000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.connect();
+
+                OutputStream outputStream = conn.getOutputStream();
+                outputStream.write(postParameters.getBytes("UTF-8"));
+                outputStream.flush();
+                outputStream.close();
+
+                int responseStatusCode = conn.getResponseCode();
+                Log.d(TAG, "response code - " + responseStatusCode);
+
+                InputStream inputStream;
+                if (responseStatusCode == HttpURLConnection.HTTP_OK) {
+                    inputStream = conn.getInputStream();
+                } else {
+                    inputStream = conn.getErrorStream();
+                }
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                StringBuilder sb = new StringBuilder();
+                String line;
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                bufferedReader.close();
+                conn.disconnect();
+
+                Paths = sb.toString().trim();
+
+                return sb.toString().trim();
+            } catch (Exception e) {
+                Log.d(TAG, "InsertData: Error ", e);
+                errorString = e.toString();
+
+                return null;
+            }
+        }
+    }
+
+    private void showPaths(int j){
+        try {
+            mJsonString = Paths;
+            JSONObject jsonObject = new JSONObject(mJsonString);
+            JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
+
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject item = jsonArray.getJSONObject(i);
+
+                ContentHistory map = All.get(j);
+                map.setPath(item.getString("coord"));
+                map.setColor(Integer.parseInt(item.getString("color")));
+                All.add(j, map);
+            }
+            Paths = null;
+
+            invalidate();
+        } catch (JSONException e) {
+            Log.d(TAG, "showPaths : ", e);
+        }
+    }
+
     private class GetData extends AsyncTask<String, Void, String> {
         String errorString = null;
 
@@ -579,7 +712,7 @@ public class Drawing extends View {
 
                     return null;
                 }
-            }else if (params.length == 6) {
+            } else if (params.length == 6) {
                 String searchKeyword1 = params[0];
                 String searchKeyword2 = params[1];
                 String searchKeyword3 = params[2];
@@ -610,7 +743,7 @@ public class Drawing extends View {
                             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
 
                             dos = new DataOutputStream(conn.getOutputStream());
-                            //데이타 쓰기 시작
+                            //데이터 쓰기 시작
                             dos.writeBytes(twoHypens + boundary + lineEnd);
                             dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_img\";filename=\""
                                     + searchKeyword1 + "\"" + lineEnd);
@@ -669,11 +802,11 @@ public class Drawing extends View {
                         Toast.makeText(Drawing.this.getContext(), "이미지 파일이 없습니다.", Toast.LENGTH_SHORT).show();
                         return null;
                     }
-                }else { }
+                } else {
+                }
 
                 serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardDBsave.php";
                 postParameters = "userID=" + MainActivity.id + "&content_path=" + searchKeyword1 + "&content_type=" + searchKeyword2 + "&contentX=" + searchKeyword3 + "&contentY=" + searchKeyword4 + "&content_width=" + searchKeyword5 + "&content_height=" + searchKeyword6;
-
                 try {
                     URL url = new URL(serverURL);
                     conn = (HttpURLConnection) url.openConnection();
@@ -717,7 +850,102 @@ public class Drawing extends View {
 
                     return null;
                 }
-            } else if (params.length == 0) {
+            }else if (params.length == 2) {
+                String searchKeyword1 = params[0];
+                String searchKeyword2 = params[1];
+
+                serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardJSONsave.php";
+                postParameters = "content_path=" + searchKeyword1;
+                try {
+                    URL url = new URL(serverURL);
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(5000);
+                    conn.setConnectTimeout(5000);
+                    conn.setRequestMethod("POST");
+                    conn.setDoInput(true);
+                    conn.connect();
+
+                    OutputStream outputStream = conn.getOutputStream();
+                    outputStream.write(postParameters.getBytes("UTF-8"));
+                    outputStream.flush();
+                    outputStream.close();
+
+                    int responseStatusCode = conn.getResponseCode();
+                    Log.d(TAG, "response code - " + responseStatusCode);
+
+                    InputStream inputStream;
+                    if (responseStatusCode == HttpURLConnection.HTTP_OK) {
+                        inputStream = conn.getInputStream();
+                    } else {
+                        inputStream = conn.getErrorStream();
+                    }
+
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+
+                    while ((line = bufferedReader.readLine()) != null) {
+                        sb.append(line);
+                    }
+
+                    bufferedReader.close();
+                    conn.disconnect();
+
+                    searchKeyword1 = sb.toString().trim();
+                } catch (Exception e) {
+                    Log.d(TAG, "InsertData: Error ", e);
+                    errorString = e.toString();
+
+                    return null;
+                }
+
+                serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardDBsave.php";
+                postParameters = "userID=" + MainActivity.id + "&content_path=" + searchKeyword1 + "&content_type=" + searchKeyword2;
+                try {
+                    URL url = new URL(serverURL);
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(5000);
+                    conn.setConnectTimeout(5000);
+                    conn.setRequestMethod("POST");
+                    conn.setDoInput(true);
+                    conn.connect();
+
+                    OutputStream outputStream = conn.getOutputStream();
+                    outputStream.write(postParameters.getBytes("UTF-8"));
+                    outputStream.flush();
+                    outputStream.close();
+
+                    int responseStatusCode = conn.getResponseCode();
+                    Log.d(TAG, "response code - " + responseStatusCode);
+
+                    InputStream inputStream;
+                    if (responseStatusCode == HttpURLConnection.HTTP_OK) {
+                        inputStream = conn.getInputStream();
+                    } else {
+                        inputStream = conn.getErrorStream();
+                    }
+
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+
+                    while ((line = bufferedReader.readLine()) != null) {
+                        sb.append(line);
+                    }
+
+                    bufferedReader.close();
+                    conn.disconnect();
+
+                    return sb.toString().trim();
+                } catch (Exception e) {
+                    Log.d(TAG, "InsertData: Error ", e);
+                    errorString = e.toString();
+
+                    return null;
+                }
+            }else if (params.length == 0) {
                 serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardDBload.php";
                 postParameters = "whiteboardID=" + "1" + "&teamID=" + "1";
                 // 1 부분은 변수로 변경 필요
@@ -783,6 +1011,9 @@ public class Drawing extends View {
                     All.add(i, map);
                 }else if (item.getString(TAG_CONTENT_TYPE).equals("Text")) {
                     ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), Float.parseFloat(item.getString(TAG_CONTENTX)), Float.parseFloat(item.getString(TAG_CONTENTY)));
+                    All.add(i, map);
+                }else if (item.getString(TAG_CONTENT_TYPE).equals("Drawing")) {
+                    ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), 0);
                     All.add(i, map);
                 }else {
 
