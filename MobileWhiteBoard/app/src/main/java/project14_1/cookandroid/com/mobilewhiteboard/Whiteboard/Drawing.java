@@ -56,7 +56,7 @@ public class Drawing extends View {
     boolean addPostit = false; // 포스트잇 추가 여부 저장 변수
     //long PressTime;
 
-    private Path drawPath;
+    private Path drawPath1, drawPath2;
     public static Paint drawPaint, canvasPaint;
     //public static int paintColor = 0xFF000000;
     private Canvas drawCanvas;
@@ -99,16 +99,20 @@ public class Drawing extends View {
         }
         for (int i = 0; i < All.size(); i++) {
             ContentHistory map = All.get(i);
-            if (map.getType() == "Text") {
+            if (map.getType().equals("Text")) {
                 //글 그리기
                 map.drawCanvas(canvas);
-            }else if (map.getType() == "Drawing") {
-                //그림 그리기
+            }else if (map.getType().equals("Drawing")) {
+                //손글씨 그리기
                 if (map.getPath().endsWith("json")) {
                     load_paths task = new load_paths();
                     task.execute("http://" + MainActivity.IPaddress + "/android_db_api/" + map.getPath());
                     while (Paths == null) { }
+                    map.setPath(Paths);
+                    i--;
+                }else if (map.getPath().startsWith("{")) {
                     showPaths(i);
+                    while (Paths != null) { }
                     i--;
                 }else {
                     String[] coordA = map.getPath().split("/"), coordB;
@@ -123,16 +127,16 @@ public class Drawing extends View {
                             }
                         }
                         if (j==0) {
-                            drawPath.moveTo(touchX, touchY);
+                            drawPath1.moveTo(touchX, touchY);
                         }else {
-                            drawPath.lineTo(touchX, touchY);
+                            drawPath1.lineTo(touchX, touchY);
                         }
                     }
-                    drawPaint.setColor(map.getColor());
-                    drawCanvas.drawPath(drawPath, drawPaint);
-                    drawPath.reset();
+                    //drawPaint.setColor(map.getColor());
+                    drawCanvas.drawPath(drawPath1, drawPaint);
+                    drawPath1.reset();
                 }
-            }else if (map.getType() == "Picture") {
+            }else if (map.getType().equals("Picture")) {
                 // 사진 그리기
                 if (map.getBitmap() == null) {
                     load_image task = new load_image();
@@ -211,9 +215,9 @@ public class Drawing extends View {
             }
 
         }
-        // 손글씨 그리기
+        //손글씨 바로 그릴 때
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
-        canvas.drawPath(drawPath, drawPaint);
+        canvas.drawPath(drawPath2, drawPaint);
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -239,26 +243,20 @@ public class Drawing extends View {
 
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        drawPath.reset();
-                        drawPath.moveTo(touchX, touchY);
-
+                        drawPath2.moveTo(touchX, touchY);
                         Paths = "{\r\n\t\"data\" : [\r\n\t\t{\r\n\t\t\t\"coord\": \"" + (int)touchX +","+ (int)touchY;
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        drawPath.lineTo(touchX, touchY);
+                        drawPath2.lineTo(touchX, touchY);
                         Paths += "/" + (int)touchX +","+ (int)touchY;
-                        drawCanvas.drawPath(drawPath, drawPaint);
-                        drawPath.reset();
-                        drawPath.moveTo(touchX, touchY);
                         break;
                     case MotionEvent.ACTION_UP:
-                        drawPath.lineTo(touchX, touchY);
                         Paths += "\",\r\n\t\t\t\"color\": \"" + drawPaint.getColor() + "\"\r\n\t\t}\r\n\t]\r\n}";
-                        drawCanvas.drawPath(drawPath, drawPaint);
-                        drawPath.reset();
-                        Toast.makeText(this.getContext(), Paths, Toast.LENGTH_SHORT).show();
+                        drawPath2.lineTo(touchX, touchY);
+                        drawCanvas.drawPath(drawPath2, drawPaint);
+                        drawPath2.reset();
                         ContentHistory map = new ContentHistory(Paths, drawPaint.getColor());
-                        All.add(map);
+                        //All.add(map);
                         GetData task = new GetData();
                         task.execute(map.getPath(), "Drawing");
                         break;
@@ -332,12 +330,13 @@ public class Drawing extends View {
                 }
                 break;
             default:
-                switch (event.getAction()) {
+                    switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         // 터치한 영역에 있는 사진을 찾는다
                         index = -1;
                         dragCount = 0;
                         for(int i=0; i<All.size(); i++){
+                            System.out.println(All.get(i).isClicked(event.getX(), event.getY()));
                             if(All.get(i).isClicked(event.getX(), event.getY())){
                                 index = i;
                                 All.get(i).makeGapX(event.getX());
@@ -495,7 +494,8 @@ public class Drawing extends View {
             }
         });
 
-        drawPath = new Path();
+        drawPath1 = new Path();
+        drawPath2 = new Path();
         drawPaint = new Paint();
         //drawPaint.setColor(paintColor);
         drawPaint.setAntiAlias(true);
