@@ -54,11 +54,15 @@ public class ContentHistory {
     }
 
     //그림
-    public ContentHistory(String path,int color) {
+    public ContentHistory(String path,int color, float startX, float startY, float stopX, float stopY) {
         map = new HashMap<String, Object>();
         map.put("type", "Drawing");
         map.put("path", path);
         map.put("color", color);
+        map.put("x", startX);
+        map.put("width", stopX);
+        map.put("y", startY);
+        map.put("height", stopY);
     }
 
     public void setPath(String path) {

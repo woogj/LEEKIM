@@ -156,8 +156,14 @@ public class WhiteboardActivity extends AppCompatActivity {
 
                     isPageOpen = false;
                 }
-                drawTool.setVisibility(View.VISIBLE);
-                type = 2;
+
+                if(type == 2) {
+                    drawTool.setVisibility(View.INVISIBLE);
+                    type = 0;
+                }else {
+                    drawTool.setVisibility(View.VISIBLE);
+                    type = 2;
+                }
             }
         });
 
@@ -225,7 +231,7 @@ public class WhiteboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Drawing.canvasBitmap.eraseColor(Color.TRANSPARENT);
-                Drawing.drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+                Drawing.drawPaint2.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
                 view.invalidate();
             }
         });
@@ -233,8 +239,8 @@ public class WhiteboardActivity extends AppCompatActivity {
         ibEraser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Drawing.drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-                Drawing.drawPaint.setStrokeWidth(150);
+                Drawing.drawPaint2.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+                Drawing.drawPaint2.setStrokeWidth(150);
             }
         });
 
@@ -243,11 +249,11 @@ public class WhiteboardActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ColorPaletteDialog.listener = new OnColorSelectedListener() {
                     public void onColorSelected(int color) {
-                        Drawing.drawPaint.setXfermode(null);
-                        Drawing.drawPaint.setStrokeWidth(30);
+                        Drawing.drawPaint2.setXfermode(null);
+                        Drawing.drawPaint2.setStrokeWidth(30);
                         ibPen.setColorFilter(color);
                         mColor = color;
-                        Drawing.drawPaint.setColor(mColor);
+                        Drawing.drawPaint2.setColor(mColor);
                     }
                 };
                 Intent intent = new Intent(getApplicationContext(), ColorPaletteDialog.class);

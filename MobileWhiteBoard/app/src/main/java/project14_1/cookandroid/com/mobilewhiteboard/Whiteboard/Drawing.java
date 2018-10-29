@@ -57,7 +57,7 @@ public class Drawing extends View {
     //long PressTime;
 
     private Path drawPath1, drawPath2;
-    public static Paint drawPaint, canvasPaint;
+    public static Paint drawPaint1, drawPaint2, canvasPaint;
     //public static int paintColor = 0xFF000000;
     private Canvas drawCanvas;
     public static Bitmap canvasBitmap;
@@ -132,8 +132,8 @@ public class Drawing extends View {
                             drawPath1.lineTo(touchX, touchY);
                         }
                     }
-                    //drawPaint.setColor(map.getColor());
-                    drawCanvas.drawPath(drawPath1, drawPaint);
+                    drawPaint1.setColor(map.getColor());
+                    drawCanvas.drawPath(drawPath1, drawPaint1);
                     drawPath1.reset();
                 }
             }else if (map.getType().equals("Picture")) {
@@ -217,7 +217,7 @@ public class Drawing extends View {
         }
         //손글씨 바로 그릴 때
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
-        canvas.drawPath(drawPath2, drawPaint);
+        canvas.drawPath(drawPath2, drawPaint2);
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -251,12 +251,12 @@ public class Drawing extends View {
                         Paths += "/" + (int)touchX +","+ (int)touchY;
                         break;
                     case MotionEvent.ACTION_UP:
-                        Paths += "\",\r\n\t\t\t\"color\": \"" + drawPaint.getColor() + "\"\r\n\t\t}\r\n\t]\r\n}";
+                        Paths += "\",\r\n\t\t\t\"color\": \"" + drawPaint2.getColor() + "\"\r\n\t\t}\r\n\t]\r\n}";
                         drawPath2.lineTo(touchX, touchY);
-                        drawCanvas.drawPath(drawPath2, drawPaint);
+                        drawCanvas.drawPath(drawPath2, drawPaint2);
                         drawPath2.reset();
-                        ContentHistory map = new ContentHistory(Paths, drawPaint.getColor());
-                        //All.add(map);
+                        ContentHistory map = new ContentHistory(Paths, drawPaint2.getColor(),0,0,0,0);
+                        All.add(map);
                         GetData task = new GetData();
                         task.execute(map.getPath(), "Drawing");
                         break;
@@ -496,13 +496,19 @@ public class Drawing extends View {
 
         drawPath1 = new Path();
         drawPath2 = new Path();
-        drawPaint = new Paint();
+        drawPaint1 = new Paint();
+        drawPaint2 = new Paint();
         //drawPaint.setColor(paintColor);
-        drawPaint.setAntiAlias(true);
-        drawPaint.setStrokeWidth(30);
-        drawPaint.setStyle(Paint.Style.STROKE);
-        drawPaint.setStrokeJoin(Paint.Join.ROUND);
-        drawPaint.setStrokeCap(Paint.Cap.ROUND);
+        drawPaint1.setAntiAlias(true);
+        drawPaint1.setStrokeWidth(30);
+        drawPaint1.setStyle(Paint.Style.STROKE);
+        drawPaint1.setStrokeJoin(Paint.Join.ROUND);
+        drawPaint1.setStrokeCap(Paint.Cap.ROUND);
+        drawPaint2.setAntiAlias(true);
+        drawPaint2.setStrokeWidth(30);
+        drawPaint2.setStyle(Paint.Style.STROKE);
+        drawPaint2.setStrokeJoin(Paint.Join.ROUND);
+        drawPaint2.setStrokeCap(Paint.Cap.ROUND);
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
@@ -901,7 +907,7 @@ public class Drawing extends View {
                 }
 
                 serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardDBsave.php";
-                postParameters = "userID=" + MainActivity.id + "&content_path=" + searchKeyword1 + "&content_type=" + searchKeyword2;
+                postParameters = "userID=" + MainActivity.id + "&content_path=" + searchKeyword1 + "&content_type=" + searchKeyword2 + "&contentX=" + 0 + "&contentY=" + 0 + "&content_width=" + 0 + "&content_height=" + 0 ;
                 try {
                     URL url = new URL(serverURL);
                     conn = (HttpURLConnection) url.openConnection();
@@ -1013,7 +1019,7 @@ public class Drawing extends View {
                     ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), Float.parseFloat(item.getString(TAG_CONTENTX)), Float.parseFloat(item.getString(TAG_CONTENTY)));
                     All.add(i, map);
                 }else if (item.getString(TAG_CONTENT_TYPE).equals("Drawing")) {
-                    ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), 0);
+                    ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), 0, Float.parseFloat(item.getString(TAG_CONTENTX)), Float.parseFloat(item.getString(TAG_CONTENTY)), Float.parseFloat(item.getString(TAG_CONTENT_WIDTH)), Float.parseFloat(item.getString(TAG_CONTENT_HEIGHT)));
                     All.add(i, map);
                 }else {
 
