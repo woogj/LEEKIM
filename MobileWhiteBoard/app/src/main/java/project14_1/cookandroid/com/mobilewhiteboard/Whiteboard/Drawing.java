@@ -44,8 +44,7 @@ import project14_1.cookandroid.com.mobilewhiteboard.R;
 import static android.content.ContentValues.TAG;
 
 public class Drawing extends View {
-    float startX = -1, startY = -1, stopX = -1, stopY = -1; // 터치 좌표
-    float oldx = -1, oldy = -1, i=0;//터치 좌표
+    float startX = -1, startY = -1, stopX = -1, stopY = -1, oldx = -1, oldy = -1, i=0;//터치 좌표
     int id = -1, selectID =0;  //포스트잇 ID
     String p_text; // 포스트잇 text를 저장하는 변수
     EditText edt; // 동적 생성될 EditText
@@ -54,7 +53,6 @@ public class Drawing extends View {
     RectF setXY = new RectF(0, 0, 0, 0); // 터치좌표
     boolean et = false; //et는 end trigger를 줄인것. 그림을 그린 후 다시 그려지는 것 방지
     boolean addPostit = false; // 포스트잇 추가 여부 저장 변수
-    //long PressTime;
 
     private Path drawPath1, drawPath2;
     public static Paint drawPaint1, drawPaint2, canvasPaint;
@@ -65,6 +63,8 @@ public class Drawing extends View {
 
     int dragCount = 0;
     int index = -1;
+    Boolean Press = false,
+            Start = true;
 
     int MaxBufferSize = 1 * 1024 * 1024;
 
@@ -72,7 +72,6 @@ public class Drawing extends View {
 
     String mJsonString;
     private static final String TAG_JSON="data", TAG_CONTENT_PATH="content_path", TAG_CONTENT_TYPE="content_type", TAG_CONTENTX="contentX", TAG_CONTENTY="contentY", TAG_CONTENT_WIDTH="content_width", TAG_CONTENT_HEIGHT = "content_height";
-    String content_path, contentX, contentY, content_width, content_height;
 
     RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -83,6 +82,7 @@ public class Drawing extends View {
     public static ArrayList<EditText> edtList = new ArrayList<>(); //포스트잇의 EditText를 저장하는 배열
 
     public static ArrayList<ContentHistory> All = new ArrayList<ContentHistory>(); //그림과 글을 저장하는 배열 [배열명 수정 필요]
+    public static ArrayList<ContentHistory> List = new ArrayList<ContentHistory>();
 
     public Drawing(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -93,29 +93,33 @@ public class Drawing extends View {
 
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (All.size() == 0) {
-            GetData task = new GetData();
-            task.execute();
-        }
+        Log.d("TAG", All.toString());
         for (int i = 0; i < All.size(); i++) {
+            //배열에 있는 것들을 그린다.
             ContentHistory map = All.get(i);
             if (map.getType().equals("Text")) {
                 //글 그리기
                 map.drawCanvas(canvas);
             }else if (map.getType().equals("Drawing")) {
                 //손글씨 그리기
-                if (map.getPath().endsWith("json")) {
+                if (map.getCoord().equals("null")) {
+                    //경로가 비어있을 경우
                     load_paths task = new load_paths();
+                    if(task.getStatus()== AsyncTask.Status.RUNNING){
+                        task.cancel(true);
+                    }
                     task.execute("http://" + MainActivity.IPaddress + "/android_db_api/" + map.getPath());
                     while (Paths == null) { }
-                    map.setPath(Paths);
+                    map.setCoord(Paths);
                     i--;
-                }else if (map.getPath().startsWith("{")) {
+                }else if (map.getCoord().startsWith("{")) {
+                    //경로가 json형식으로 저장되있는 경우 내용을 배열에 넣는다.
                     showPaths(i);
                     while (Paths != null) { }
                     i--;
                 }else {
-                    String[] coordA = map.getPath().split("/"), coordB;
+                    //배열에 있는 정보로 그림 그리기
+                    String[] coordA = map.getCoord().split("/"), coordB;
                     float touchX = 0, touchY = 0;
                     for (int j=0; j<coordA.length; j++) {
                         coordB = coordA[j].split(",");
@@ -138,8 +142,11 @@ public class Drawing extends View {
                 }
             }else if (map.getType().equals("Picture")) {
                 // 사진 그리기
-                if (map.getBitmap() == null) {
+                if (map.checkBitmap().equals("null")) {
                     load_image task = new load_image();
+                    if(task.getStatus()== AsyncTask.Status.RUNNING){
+                        task.cancel(true);
+                    }
                     task.execute("http://" + MainActivity.IPaddress + "/android_db_api/" + map.getPath());
                     while (DownIMG == null) { }
                     map.setBitmap(DownIMG);
@@ -147,8 +154,8 @@ public class Drawing extends View {
                     DownIMG = null;
                     i--;
                 }else {
-                    int nh = (int) (map.getBitmap().getHeight() * (1024.0 / map.getBitmap().getWidth()));
-                    Bitmap scaled = Bitmap.createScaledBitmap(map.getBitmap(), 1024, nh, true);
+                    int nh = (int) (map.getBitmap().getHeight() * (512.0 / map.getBitmap().getWidth()));
+                    Bitmap scaled = Bitmap.createScaledBitmap(map.getBitmap(), 512, nh, true);
                     canvas.drawBitmap(scaled, null, map.getSetXY(), null);
                     scaled.recycle();
                 }
@@ -169,8 +176,8 @@ public class Drawing extends View {
 
             bitmap = WhiteboardActivity.bitmap;
             if (bitmap != null) {
-                int nh = (int) (bitmap.getHeight() * (1024.0 / bitmap.getWidth()));
-                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 1024, nh, true);
+                int nh = (int) (bitmap.getHeight() * (512.0 / bitmap.getWidth()));
+                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
                 canvas.drawBitmap(scaled, null, setXY, null);
                 scaled.recycle();
             }
@@ -218,6 +225,11 @@ public class Drawing extends View {
         //손글씨 바로 그릴 때
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath2, drawPaint2);
+        if(Start) {
+            RenewThread rt = new RenewThread();
+            rt.start();
+        }
+        //Log.d("TAG", All.toString()); //배열 확인용
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -232,6 +244,9 @@ public class Drawing extends View {
                         ContentHistory map = new ContentHistory(WhiteboardActivity.data, event.getX(),event.getY());
                         All.add(map);
                         GetData task = new GetData();
+                        if(task.getStatus()== AsyncTask.Status.RUNNING){
+                            task.cancel(true);
+                        }
                         task.execute(map.getText(), "Text", Float.toString(map.getX()), Float.toString(map.getY()), Float.toString(map.getWidth()), Float.toString(map.getHeight()));
                         WhiteboardActivity.type = 0;
                         break;
@@ -258,6 +273,9 @@ public class Drawing extends View {
                         ContentHistory map = new ContentHistory(Paths, drawPaint2.getColor(),0,0,0,0);
                         All.add(map);
                         GetData task = new GetData();
+                        if(task.getStatus()== AsyncTask.Status.RUNNING){
+                            task.cancel(true);
+                        }
                         task.execute(map.getPath(), "Drawing");
                         break;
                     default:
@@ -280,6 +298,9 @@ public class Drawing extends View {
                         ContentHistory map = new ContentHistory(WhiteboardActivity.absolutePath, WhiteboardActivity.bitmap, startX, startY, stopX, stopY);
                         All.add(map);
                         GetData task = new GetData();
+                        if(task.getStatus()== AsyncTask.Status.RUNNING){
+                            task.cancel(true);
+                        }
                         task.execute(WhiteboardActivity.absolutePath, "Picture", Float.toString(map.getX()) , Float.toString(map.getY()), Float.toString(map.getWidth()), Float.toString(map.getHeight()));
                         et = true;
                         break;
@@ -313,7 +334,6 @@ public class Drawing extends View {
 
                                 addPostit = true;
                                 p_text = input.getText().toString();
-                                invalidate();
                                 id++;
                             }
                         });
@@ -330,9 +350,11 @@ public class Drawing extends View {
                 }
                 break;
             default:
-                    switch (event.getAction()) {
+                LongClickEvent lce;
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        // 터치한 영역에 있는 사진을 찾는다
+                        // 터치한 영역에 있는 것을 찾는다
+                        Press = true;
                         index = -1;
                         dragCount = 0;
                         for(int i=0; i<All.size(); i++){
@@ -341,7 +363,12 @@ public class Drawing extends View {
                                 index = i;
                                 All.get(i).makeGapX(event.getX());
                                 All.get(i).makeGapY(event.getY());
-                                //PressTime = System.currentTimeMillis();
+
+                                lce = new LongClickEvent();
+                                if(lce.getStatus()== AsyncTask.Status.RUNNING){
+                                    lce.cancel(true);
+                                }
+                                lce.execute(System.currentTimeMillis());
                                 break;
                             }
                         }
@@ -349,34 +376,29 @@ public class Drawing extends View {
                     case MotionEvent.ACTION_MOVE:
                         if (dragCount > 5 && index != -1) {
                             All.get(index).setPosition(event.getX(), event.getY());
-                            invalidate();
                         }else {
                             dragCount++;
                         }
                         break;
                     case MotionEvent.ACTION_UP:
-                        /** if(!(index == -1)){
-                         * Toast.makeText(this.getContext(), All.get(index).getPath(), Toast.LENGTH_SHORT).show();
-                         * }
-                         * //작동 확인용
-                         * else if(index == -1){
-                         * Toast.makeText(this.getContext(), "선택한 영역에 텍스트박스가 없습니다.", Toast.LENGTH_SHORT).show();
-                         * } else
-                         */
-
+                        Press = false;
                         if(index == -1){
 
                         }else if(dragCount > 5){
                             switch (All.get(index).getType()) {
                                 case "Text" :
                                     GetData task1 = new GetData();
+                                    if(task1.getStatus()== AsyncTask.Status.RUNNING){
+                                        task1.cancel(true);
+                                    }
                                     task1.execute(All.get(index).getText(), All.get(index).getText(),"Text", Float.toString(All.get(index).getX()) , Float.toString(All.get(index).getY()), Float.toString(All.get(index).getWidth()), Float.toString(All.get(index).getHeight()));
-                                    invalidate();
                                     break;
                                 case "Picture" :
                                     GetData task2 = new GetData();
+                                    if(task2.getStatus()== AsyncTask.Status.RUNNING){
+                                        task2.cancel(true);
+                                    }
                                     task2.execute(All.get(index).getPath(), All.get(index).getPath(),"Picture", Float.toString(All.get(index).getX()) , Float.toString(All.get(index).getY()), Float.toString(All.get(index).getWidth()), Float.toString(All.get(index).getHeight()));
-                                    invalidate();
                                     break;
                             }
                         }else if (All.get(index).getType().equals("Text")) {
@@ -393,8 +415,10 @@ public class Drawing extends View {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     All.get(index).editText(input.getText().toString());
                                     GetData task = new GetData();
+                                    if(task.getStatus()== AsyncTask.Status.RUNNING){
+                                        task.cancel(true);
+                                    }
                                     task.execute(WhiteboardActivity.data, All.get(index).getText(),"Text", Float.toString(All.get(index).getX()) , Float.toString(All.get(index).getY()), Float.toString(All.get(index).getWidth()), Float.toString(All.get(index).getHeight()));
-                                    invalidate();
                                 }
                             });
                             alert.show();
@@ -402,7 +426,7 @@ public class Drawing extends View {
 
                         }
                         break;
-                }
+                    }
                 break;
         }
         invalidate();
@@ -512,6 +536,148 @@ public class Drawing extends View {
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
+    //JSON 디코드
+    private void showPaths(int j){
+        try {
+            mJsonString = Paths;
+            JSONObject jsonObject = new JSONObject(mJsonString);
+            JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
+
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject item = jsonArray.getJSONObject(i);
+
+                ContentHistory map = All.get(j);
+                map.setCoord(item.getString("coord"));
+                map.setColor(Integer.parseInt(item.getString("color")));
+                All.add(j, map);
+            }
+            Paths = null;
+        } catch (JSONException e) {
+            Log.d(TAG, "showPaths : ", e);
+        }
+    }
+
+    //백그라운드
+    private class showResult extends AsyncTask<Void,Void,Boolean> {
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... work) {
+            try {
+                JSONObject jsonObject = new JSONObject(mJsonString);
+                JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
+
+                List.clear();
+
+                for(int i=0;i<jsonArray.length();i++){
+                    JSONObject item = jsonArray.getJSONObject(i);
+                    if (item.getString(TAG_CONTENT_TYPE).equals("Picture")) {
+                        ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), item.getString(TAG_CONTENTX), item.getString(TAG_CONTENTY), item.getString(TAG_CONTENT_WIDTH), item.getString(TAG_CONTENT_HEIGHT));
+                        List.add(map);
+                    }else if (item.getString(TAG_CONTENT_TYPE).equals("Text")) {
+                        ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), Float.parseFloat(item.getString(TAG_CONTENTX)), Float.parseFloat(item.getString(TAG_CONTENTY)));
+                        List.add(map);
+                    }else if (item.getString(TAG_CONTENT_TYPE).equals("Drawing")) {
+                        ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), 0, Float.parseFloat(item.getString(TAG_CONTENTX)), Float.parseFloat(item.getString(TAG_CONTENTY)), Float.parseFloat(item.getString(TAG_CONTENT_WIDTH)), Float.parseFloat(item.getString(TAG_CONTENT_HEIGHT)));
+                        List.add(map);
+                    }else {
+
+                    }
+                }
+                //중복배열 삭제
+                ArrayList<Integer> overlap = new ArrayList<>();
+                for (int i = 0; i < List.size(); i++) {
+                    for (int j = i+1; j < List.size(); j++) {
+                        if (List.get(i).equals(List.get(j))) {
+                            overlap.add(j);
+                        }
+                    }
+                }
+                for (int i = 0; i < overlap.size(); i++) {
+                    List.remove(overlap.get(i));
+                }
+
+                //HW 사진 경로 있는 것인지 확인
+                if (!Start) {
+                    for (int i = 0; i < List.size(); i++) {
+                        for (int j = 0; j < All.size(); j++) {
+                            if (List.get(i).getPath().equals(All.get(j).getPath())) {
+                                if ((List.get(i).getX() == All.get(j).getX()) && (List.get(i).getY() == All.get(j).getY())) {
+                                    if ((i != j) && (i < j)) {
+                                        All.add(i, All.get(j));
+                                        All.remove(j + 1);
+                                    }
+                                } else {
+                                    if ((i != j) && (i < j)) {
+                                        All.add(i, All.get(j));
+                                        All.remove(j + 1);
+                                    }
+                                    switch (All.get(i).getType()) {
+                                        case "Drawing":
+                                            All.get(i).setWidth(List.get(i).getWidth());
+                                            All.get(i).setHeight(List.get(i).getHeight());
+                                            All.get(i).setBitmap(List.get(i).getBitmap());
+                                            break;
+                                        case "Picture":
+                                            All.get(i).setWidth(List.get(i).getWidth());
+                                            All.get(i).setHeight(List.get(i).getHeight());
+                                            All.get(i).setCoord(List.get(i).getCoord());
+                                            All.get(i).setColor(List.get(i).getColor());
+                                            break;
+                                    }
+                                    All.get(i).setX(List.get(i).getX());
+                                    All.get(i).setY(List.get(i).getY());
+                                }
+                            } else { }
+                        }
+                    }
+
+                    if (All.size() == List.size()) {
+                        for (int i = 0; i < List.size(); i++) {
+                            if (!(All.get(i).equals(List.get(i)))) {
+                                All.add(List.get(i));
+                                All.remove(i);
+                            }
+                        }
+                    }else if (All.size() > List.size()) {
+                        for (int i = 0; i < All.size(); i++) {
+                            if (i > List.size() - 1) {
+                                All.remove(i);
+                            }else if (!(All.get(i).equals(List.get(i)))) {
+                                All.remove(i);
+                                All.add(List.get(i));
+                            }
+                        }
+                    }else if (List.size() > All.size()) {
+                        for (int i = 0; i < List.size(); i++) {
+                            if (i > All.size() - 1) {
+                                All.add(List.get(i));
+                            }else if (!(All.get(i).equals(List.get(i)))) {
+                                All.add(List.get(i));
+                                All.remove(i);
+                            }
+                        }
+                    }else { }
+                }else{
+                    All = List;
+                    Start = false;
+                }
+            } catch (JSONException e) {
+                Log.d(TAG, "showResult : ", e);
+            }
+            invalidate();
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean b) {
+            super.onPostExecute(b);
+        }
+    }
+
     private class load_image extends AsyncTask<String,Integer,Bitmap> {
         @Override
         protected Bitmap doInBackground(String... urls) {
@@ -574,7 +740,7 @@ public class Drawing extends View {
                 outputStream.close();
 
                 int responseStatusCode = conn.getResponseCode();
-                Log.d(TAG, "response code - " + responseStatusCode);
+                Log.d(TAG, "response code Coord - " + responseStatusCode);
 
                 InputStream inputStream;
                 if (responseStatusCode == HttpURLConnection.HTTP_OK) {
@@ -607,25 +773,147 @@ public class Drawing extends View {
         }
     }
 
-    private void showPaths(int j){
-        try {
-            mJsonString = Paths;
-            JSONObject jsonObject = new JSONObject(mJsonString);
-            JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
+    private class LongClickEvent extends AsyncTask<Long,String,Boolean> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
 
-            for(int i=0;i<jsonArray.length();i++){
-                JSONObject item = jsonArray.getJSONObject(i);
-
-                ContentHistory map = All.get(j);
-                map.setPath(item.getString("coord"));
-                map.setColor(Integer.parseInt(item.getString("color")));
-                All.add(j, map);
+        @Override
+        protected Boolean doInBackground(Long... Time) {
+            long now = System.currentTimeMillis();
+            while (1500 >= now - Time[0]){
+                now = System.currentTimeMillis();
             }
-            Paths = null;
+            if (dragCount <= 5 && Press) {
+                Log.d("TAG", "롱클릭 Y");
+                return true;
+            }else {
+                Log.d("TAG", "롱클릭 N");
+                return false;
+            }
+        }
 
-            invalidate();
-        } catch (JSONException e) {
-            Log.d(TAG, "showPaths : ", e);
+        @Override
+        protected void onProgressUpdate(String... params) {
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+
+            Press = false;
+            dragCount = 0;
+
+            if (result) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(cnxt);
+                alert.setTitle("삭제 하시겠습니까?");
+
+                alert.setPositiveButton("취소", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                });
+                //HW
+                alert.setNegativeButton("삭제", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        //배열에서 삭제
+                        All.remove(index);
+                        Log.d(TAG, All.toString());
+                        //DB에서 삭제
+
+                    }
+                });
+
+                alert.show();
+            }
+        }
+    }
+
+    private class RenewThread extends Thread {
+        public void run() {
+            while (true) {
+                GetDataThread gdt = new GetDataThread();
+                gdt.start();
+
+                long now = System.currentTimeMillis(), past = now;
+                while (10000 >= now - past){ //HW 시간초 조절 필요
+                    now = System.currentTimeMillis();
+                }
+            }
+        }
+    }
+
+    private class GetDataThread extends Thread {
+        public void run() {
+            String errorString = null, result = null;
+
+            String serverURL = "";
+            String postParameters = "";
+
+            HttpURLConnection conn = null;
+            DataOutputStream dos = null;
+
+            String lineEnd = "\r\n";
+            String twoHypens = "--";
+            String boundary = "*****";
+
+            serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardDBload.php";
+            postParameters = "whiteboardID=" + "1" + "&teamID=" + "1";
+            // 1 부분은 변수로 변경 필요
+
+            try {
+                URL url = new URL(serverURL);
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(5000);
+                conn.setConnectTimeout(5000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.connect();
+
+                OutputStream outputStream = conn.getOutputStream();
+                outputStream.write(postParameters.getBytes("UTF-8"));
+                outputStream.flush();
+                outputStream.close();
+
+                int responseStatusCode = conn.getResponseCode();
+                Log.d(TAG, "response code All - " + responseStatusCode);
+
+                InputStream inputStream;
+                if (responseStatusCode == HttpURLConnection.HTTP_OK) {
+                    inputStream = conn.getInputStream();
+                } else {
+                    inputStream = conn.getErrorStream();
+                }
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                StringBuilder sb = new StringBuilder();
+                String line;
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                bufferedReader.close();
+                conn.disconnect();
+
+                result = sb.toString().trim();
+            } catch (Exception e) {
+                Log.d(TAG, "InsertData: Error ", e);
+                errorString = e.toString();
+            }
+            if (result == null){
+                Toast.makeText(Drawing.this.getContext(), errorString, Toast.LENGTH_SHORT).show();
+            } else if (result.startsWith("{")) {
+                mJsonString = result;
+                showResult sr = new showResult();
+                if(sr.getStatus()== AsyncTask.Status.RUNNING){
+                    sr.cancel(true);
+                }
+                sr.execute();
+            } else { }
         }
     }
 
@@ -644,9 +932,6 @@ public class Drawing extends View {
 
             if (result == null){
                 Toast.makeText(Drawing.this.getContext(), errorString, Toast.LENGTH_SHORT).show();
-            } else if (result.startsWith("{")) {
-                mJsonString = result;
-                showResult();
             } else {
                 //Toast.makeText(Drawing.this.getContext(), result, Toast.LENGTH_SHORT).show();
             }
@@ -690,7 +975,7 @@ public class Drawing extends View {
                     outputStream.close();
 
                     int responseStatusCode = conn.getResponseCode();
-                    Log.d(TAG, "response code - " + responseStatusCode);
+                    Log.d(TAG, "response code Text - " + responseStatusCode);
 
                     InputStream inputStream;
                     if (responseStatusCode == HttpURLConnection.HTTP_OK) {
@@ -775,7 +1060,7 @@ public class Drawing extends View {
 
                             //data 쓰기 완료.
                             int responseStatusCode = conn.getResponseCode();
-                            Log.d(TAG, "response code - " + responseStatusCode);
+                            Log.d(TAG, "response code IMG - " + responseStatusCode);
 
                             InputStream inputStream;
                             if (responseStatusCode == HttpURLConnection.HTTP_OK) {
@@ -828,7 +1113,7 @@ public class Drawing extends View {
                     outputStream.close();
 
                     int responseStatusCode = conn.getResponseCode();
-                    Log.d(TAG, "response code - " + responseStatusCode);
+                    Log.d(TAG, "response code All Type - " + responseStatusCode);
 
                     InputStream inputStream;
                     if (responseStatusCode == HttpURLConnection.HTTP_OK) {
@@ -877,7 +1162,7 @@ public class Drawing extends View {
                     outputStream.close();
 
                     int responseStatusCode = conn.getResponseCode();
-                    Log.d(TAG, "response code - " + responseStatusCode);
+                    Log.d(TAG, "response code JSON - " + responseStatusCode);
 
                     InputStream inputStream;
                     if (responseStatusCode == HttpURLConnection.HTTP_OK) {
@@ -923,55 +1208,7 @@ public class Drawing extends View {
                     outputStream.close();
 
                     int responseStatusCode = conn.getResponseCode();
-                    Log.d(TAG, "response code - " + responseStatusCode);
-
-                    InputStream inputStream;
-                    if (responseStatusCode == HttpURLConnection.HTTP_OK) {
-                        inputStream = conn.getInputStream();
-                    } else {
-                        inputStream = conn.getErrorStream();
-                    }
-
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
-                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-
-                    while ((line = bufferedReader.readLine()) != null) {
-                        sb.append(line);
-                    }
-
-                    bufferedReader.close();
-                    conn.disconnect();
-
-                    return sb.toString().trim();
-                } catch (Exception e) {
-                    Log.d(TAG, "InsertData: Error ", e);
-                    errorString = e.toString();
-
-                    return null;
-                }
-            }else if (params.length == 0) {
-                serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardDBload.php";
-                postParameters = "whiteboardID=" + "1" + "&teamID=" + "1";
-                // 1 부분은 변수로 변경 필요
-
-                try {
-                    URL url = new URL(serverURL);
-                    conn = (HttpURLConnection) url.openConnection();
-                    conn.setReadTimeout(5000);
-                    conn.setConnectTimeout(5000);
-                    conn.setRequestMethod("POST");
-                    conn.setDoInput(true);
-                    conn.connect();
-
-                    OutputStream outputStream = conn.getOutputStream();
-                    outputStream.write(postParameters.getBytes("UTF-8"));
-                    outputStream.flush();
-                    outputStream.close();
-
-                    int responseStatusCode = conn.getResponseCode();
-                    Log.d(TAG, "response code - " + responseStatusCode);
+                    Log.d(TAG, "response code Drawing - " + responseStatusCode);
 
                     InputStream inputStream;
                     if (responseStatusCode == HttpURLConnection.HTTP_OK) {
@@ -1002,32 +1239,6 @@ public class Drawing extends View {
             } else {
                 return null;
             }
-        }
-    }
-
-    private void showResult(){
-        try {
-            JSONObject jsonObject = new JSONObject(mJsonString);
-            JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
-
-            for(int i=0;i<jsonArray.length();i++){
-                JSONObject item = jsonArray.getJSONObject(i);
-                if (item.getString(TAG_CONTENT_TYPE).equals("Picture")) {
-                    ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), item.getString(TAG_CONTENTX), item.getString(TAG_CONTENTY), item.getString(TAG_CONTENT_WIDTH), item.getString(TAG_CONTENT_HEIGHT));
-                    All.add(i, map);
-                }else if (item.getString(TAG_CONTENT_TYPE).equals("Text")) {
-                    ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), Float.parseFloat(item.getString(TAG_CONTENTX)), Float.parseFloat(item.getString(TAG_CONTENTY)));
-                    All.add(i, map);
-                }else if (item.getString(TAG_CONTENT_TYPE).equals("Drawing")) {
-                    ContentHistory map = new ContentHistory(item.getString(TAG_CONTENT_PATH), 0, Float.parseFloat(item.getString(TAG_CONTENTX)), Float.parseFloat(item.getString(TAG_CONTENTY)), Float.parseFloat(item.getString(TAG_CONTENT_WIDTH)), Float.parseFloat(item.getString(TAG_CONTENT_HEIGHT)));
-                    All.add(i, map);
-                }else {
-
-                }
-            }
-            invalidate();
-        } catch (JSONException e) {
-            Log.d(TAG, "showResult : ", e);
         }
     }
 }
