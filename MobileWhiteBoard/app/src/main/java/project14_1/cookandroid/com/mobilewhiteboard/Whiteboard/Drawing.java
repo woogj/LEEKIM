@@ -319,13 +319,11 @@ public class Drawing extends View {
                                 id++;
                             }
                         });
-
                         alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 // Canceled.
                             }
                         });
-
                         alert.show();
 
                         break;

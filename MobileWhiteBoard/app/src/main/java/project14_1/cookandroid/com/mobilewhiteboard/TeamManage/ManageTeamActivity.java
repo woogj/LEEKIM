@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -31,9 +32,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import project14_1.cookandroid.com.mobilewhiteboard.MainActivity;
-import project14_1.cookandroid.com.mobilewhiteboard.MemoActivity;
-import project14_1.cookandroid.com.mobilewhiteboard.MemoListActivity;
 import project14_1.cookandroid.com.mobilewhiteboard.R;
+import project14_1.cookandroid.com.mobilewhiteboard.TeamChoiceActivity;
 
 import static project14_1.cookandroid.com.mobilewhiteboard.MainActivity.IPaddress;
 
@@ -46,6 +46,7 @@ public class ManageTeamActivity extends AppCompatActivity implements AdapterView
     Spinner spinTeam;
     String[] item;
     int choseSearch =0;
+    static int teamtype = 0;
     String myJSON;
     JSONArray teamInfo = null;
     ArrayList<HashMap<String, String>> teamInfoList;
@@ -75,6 +76,7 @@ public class ManageTeamActivity extends AppCompatActivity implements AdapterView
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true); // 뒤로가기 버튼, 디폴트로 true만 해도 백버튼이 생김
         actionBar.setHomeAsUpIndicator(R.drawable.back2); //뒤로가기 버튼을 본인이 만든 아이콘으로 하기 위해 필요
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
         View actionbar = inflater.inflate(R.layout.custom_toolbar, null);
@@ -90,26 +92,35 @@ public class ManageTeamActivity extends AppCompatActivity implements AdapterView
 
         spinTeam.setAdapter(adapter);
 
-  /*      listTeamInfo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listTeamInfo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //type = 1;
-                String no, str, title, text;
-                str = personList.get(position).toString();
-                HashMap<String, String> item = personList.get(position);
-                //Toast.makeText(MemoListActivity.this, personList.get(position).toString(), Toast.LENGTH_SHORT).show();
-                Intent intent1 = new Intent(getApplication(), MemoActivity.class);
-                text = str.substring(str.indexOf("text")+5,str.indexOf("title")-2);
-                title = str.substring(str.indexOf("title")+6, str.indexOf("no")-2);
-                no = str.substring(str.indexOf("no")+3, str.indexOf("}"));
-                intent1.putExtra("text", text);
-                intent1.putExtra("title", title);
-                intent1.putExtra("no", no);
-                Toast.makeText(MemoListActivity.this, no, Toast.LENGTH_SHORT).show();
+                teamtype = 1;
+                String str;
+                String teamID, teamName, object, summary, masterID, reg_date;
+                str = teamInfoList.get(position).toString();
+
+               Intent intent1 = new Intent(getApplication(), ShowTeamInfoActivity.class);
+
+                object = str.substring(str.indexOf("object")+7,str.indexOf("teamID")-2);
+                teamID = str.substring(str.indexOf("teamID")+7,str.indexOf("reg_date")-2);
+                reg_date = str.substring(str.indexOf("reg_date")+9,str.indexOf("masterID")-2);
+                masterID = str.substring(str.indexOf("masterID")+9,str.indexOf("summary")-2);
+                summary = str.substring(str.indexOf("summary")+8,str.indexOf("teamName")-2);
+                teamName = str.substring(str.indexOf("teamName")+9,str.indexOf("}")-2);
+
+                intent1.putExtra("teamID", teamID);
+                intent1.putExtra("teamName", teamName);
+                intent1.putExtra("object", object);
+                intent1.putExtra("summary", summary);
+                intent1.putExtra("masterID", masterID);
+                intent1.putExtra("reg_date", reg_date);
+
                 startActivity(intent1);
+                finish();
             }
         });
-*/
+
 
 
         btnCreateTeam.setOnClickListener(new View.OnClickListener() {
@@ -120,6 +131,17 @@ public class ManageTeamActivity extends AppCompatActivity implements AdapterView
                 finish();
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:{ //toolbar의 back키 눌렀을 때 동작
+                onBackPressed();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -144,11 +166,6 @@ public class ManageTeamActivity extends AppCompatActivity implements AdapterView
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        // Another interface callback
-/*        choseSearch = 0;
-        task.execute(String.valueOf(choseSearch));
-        Toast.makeText(this, "choseSearch is "+choseSearch, Toast.LENGTH_SHORT).show();
-        //task.execute(String.valueOf(choseSearch));*/
     }
 
     protected void showList() {
@@ -257,4 +274,11 @@ public class ManageTeamActivity extends AppCompatActivity implements AdapterView
             }
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplication(), TeamChoiceActivity.class);
+        startActivity(intent);
+    }
+
 }

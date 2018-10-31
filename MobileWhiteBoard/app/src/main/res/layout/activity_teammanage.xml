@@ -32,47 +32,13 @@
             android:layout_height="match_parent"></ListView>
 
     </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/rlyTeamManage"
-        android:layout_below="@+id/rlyTeamSearchResult"
-        android:layout_alignParentBottom="true"
+
+    <Button
+        android:id="@+id/btnCreateTeam"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginBottom="10dp">
-
-        <Button
-            android:id="@+id/btnSearchTeam"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:gravity="center"
-            android:text="팀 조회" />
-
-        <Button
-            android:id="@+id/btnInviteTeam"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@+id/btnSearchTeam"
-            android:text="팀 초대" />
-
-        <Button
-            android:id="@+id/btnCreateTeam"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@+id/btnInviteTeam"
-            android:text="팀 생성" />
-
-        <Button
-            android:id="@+id/btnDeleteTeam"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@+id/btnCreateTeam"
-            android:text="팀 삭제" />
-    </RelativeLayout>
-
+        android:layout_alignParentBottom="true"
+        android:layout_margin="15dp"
+        android:background="@drawable/round_button_base_white"
+        android:text="팀 생성" />
 </RelativeLayout>

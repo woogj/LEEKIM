@@ -16,6 +16,7 @@
     </android.support.v7.widget.Toolbar>
 
     <RelativeLayout
+        android:id="@+id/rlyResultTeamInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbarResult"
@@ -37,7 +38,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
             android:layout_alignRight="@+id/timErum"
+            android:layout_alignParentRight="true"
             android:textSize="22dp"
             android:textColor="#1c2e44"
             android:textStyle="bold"
@@ -54,22 +57,24 @@
             android:layout_below="@+id/timErum"
             android:text="팀 주제  : "
             android:textSize="18dp"
+            android:focusable="false"
             android:textColor="#000000"
             android:textStyle="bold"
             android:background="@color/colorBackGround"/>
 
-        <TextView
-            android:id="@+id/tvTeamObject"
+        <EditText
+            android:id="@+id/edtTeamObject"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/timErum"
-            android:layout_marginEnd="57dp"
-            android:background="@drawable/round_button_base_blue"
-            android:text="팀 이름  : "
+            android:layout_height="30dp"
+            android:layout_below="@+id/tvTeamName"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@+id/juje"
+            android:breakStrategy="balanced"
             android:textColor="#000000"
-            android:textSize="22dp"
-            android:textStyle="bold" />
+            android:textSize="16dp"
+            android:background="@null"
+            tools:text="test"
+            />
 
         <TextView
             android:id="@+id/timgeayo"
@@ -85,20 +90,120 @@
             android:textStyle="bold"
             android:background="@color/colorBackGround"/>
 
+        <EditText
+            android:id="@+id/edtTeamSummary"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            android:padding="10dp"
+            android:layout_below="@+id/timgeayo"
+            android:background="@null"
+            android:textSize="20dp"
+            android:textColor="#000000"
+            tools:text="test"/>
+
+        <!--android:focusable="false"-->
+
+        <ImageButton
+            android:id="@+id/ibLeader"
+            android:layout_below="@+id/edtTeamSummary"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/leadership"/>
         <TextView
-            android:id="@+id/tvTeamSummary"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvTeamMaster"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="10dp"
-            android:text="팀 이름  : "
-            android:textSize="22dp"
+            android:layout_marginRight="15dp"
+            android:padding="10dp"
+            android:layout_toRightOf="@+id/ibLeader"
+            android:layout_below="@+id/edtTeamSummary"
+            android:textSize="20dp"
             android:textColor="#000000"
-            android:textStyle="bold"
-            android:background="@drawable/round_button_base_blue"/>
+            tools:text="test"
+           />
+        <ImageButton
+            android:id="@+id/ibMember"
+            android:layout_below="@+id/ibLeader"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="35dp"
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/network"/>
 
+        <TextView
+            android:id="@+id/tvTeamMember"
+            android:layout_width="270dp"
+            android:layout_height="44dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/ibMember" />
 
+    </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/rlyResultTeamInfo"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="11dp">
+
+        <Button
+            android:id="@+id/btnLeaveTeam"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:enabled="true"
+            android:background="@color/colorOriginButton"
+            android:text="팀 탈퇴" />
+
+        <Button
+            android:id="@+id/btInviteTeam"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="5dp"
+            android:layout_toRightOf="@+id/btnLeaveTeam"
+            android:background="@color/colorOriginButton"
+            android:enabled="false"
+            android:text="팀원 초대" />
+
+        <!--android:enabled="false"-->
+
+        <Button
+            android:id="@+id/btnChangeTeam"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="5dp"
+            android:layout_toRightOf="@+id/btInviteTeam"
+            android:background="@color/colorOriginButton"
+            android:enabled="false"
+            android:text="팀 정보 수정" />
+
+        <Button
+            android:id="@+id/btnDeleteTeam"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="5dp"
+            android:layout_toRightOf="@+id/btnChangeTeam"
+
+            android:background="@color/colorOriginButton"
+            android:enabled="false"
+            android:text="팀 삭제" />
     </RelativeLayout>
 
 </RelativeLayout>
