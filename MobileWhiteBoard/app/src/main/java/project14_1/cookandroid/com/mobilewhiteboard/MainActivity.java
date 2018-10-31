@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -22,10 +23,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import project14_1.cookandroid.com.mobilewhiteboard.Whiteboard.WhiteboardActivity;
+
 
 public class MainActivity extends AppCompatActivity {
     private static final long   DURATION_TIME = 2000L;
     private long prevPressTime = 0L;
+
+    TextView ShortCut;//SC
     EditText edtLoginID, edtLoginPW;
     Button btnSign, btnLogin;
 
@@ -33,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
     String pw, name, mJsonString;
     public static String id,
-            IPaddress = "14.63.168.206"; //내 IP
+            IPaddress = "192.168.219.169:81"; //내 IP
     /** 서버       : 14.63.168.206
-     *  LHW 집     : 192.168.219.196:81
+     *  LHW 집     : 192.168.219.169:81
      *  LHW 핫스팟 : 192.168.43.242
      *  LJY 집     : 192.168.0.6*/
     private static String TAG = "test";
@@ -48,17 +53,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ShortCut = (TextView) findViewById(R.id.connectIC);//SC
         edtLoginID = (EditText) findViewById(R.id.edtLoginID);
         edtLoginPW = (EditText) findViewById(R.id.edtLoginPW);
-
         btnSign = (Button) findViewById(R.id.btnSign);
         btnLogin = (Button) findViewById(R.id.btnLogin);
+
+        ShortCut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //SC 테스팅용 숏컷
+                id = "SC";
+                Intent intent = new Intent(getApplication(), WhiteboardActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         btnSign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplication(), SignupActivity.class);
-                //Intent intent = new Intent(getApplication(), WhiteboardActivity.class);
                 startActivity(intent);
                 finish();
             }

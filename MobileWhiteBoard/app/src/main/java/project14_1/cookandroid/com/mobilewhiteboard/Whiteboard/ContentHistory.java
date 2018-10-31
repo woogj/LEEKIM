@@ -54,21 +54,28 @@ public class ContentHistory {
     }
 
     //그림
-    public ContentHistory(String path,int color) {
+    public ContentHistory(String path,int color, float startX, float startY, float stopX, float stopY) {
         map = new HashMap<String, Object>();
         map.put("type", "Drawing");
         map.put("path", path);
+        map.put("coord", "null");
         map.put("color", color);
+        map.put("x", startX);
+        map.put("width", stopX);
+        map.put("y", startY);
+        map.put("height", stopY);
     }
 
-    public void setPath(String path) {
-        map.put("path", path);
+    public String getCoord() {
+        return (String) map.get("coord");
     }
-
     public int getColor() {
         return (int) map.get("color");
     }
 
+    public void setCoord(String coord) {
+        map.put("coord", coord);
+    }
     public void setColor(int color) {
         map.put("color", color);
     }
@@ -101,6 +108,7 @@ public class ContentHistory {
         map = new HashMap<String, Object>();
         map.put("type", "Picture");
         map.put("path", imgPath);
+        map.put("bitmap", "null");
         map.put("x", Float.parseFloat(startX));
         map.put("y", Float.parseFloat(startY));
         map.put("width", Float.parseFloat(width));
@@ -121,15 +129,15 @@ public class ContentHistory {
     }
 
     public Bitmap getBitmap() {
-        return (Bitmap)map.get("bitmap");
+        return (Bitmap) map.get("bitmap");
+    }
+
+    public String checkBitmap() {
+        return map.get("bitmap").toString();
     }
 
     public RectF getSetXY() {
         return (RectF)map.get("setXY");
-    }
-
-    public String getPath() {
-        return (String)map.get("path");
     }
 
     //공용
@@ -150,13 +158,26 @@ public class ContentHistory {
         }else{}
     }
 
+    public String getPath() {
+        return (String)map.get("path");
+    }
     public float getX() { return (float)map.get("x"); }
-
     public float getY() { return (float)map.get("y"); }
-
     public float getWidth() { return (float)map.get("width"); }
-
     public float getHeight() { return (float)map.get("height"); }
+
+    public void setX (float x) {
+        map.put("x", x);
+    }
+    public void setY (float y) {
+        map.put("y", y);
+    }
+    public void setWidth (float width) {
+        map.put("width", width);
+    }
+    public void setHeight (float height) {
+        map.put("height", height);
+    }
 
     public boolean isClicked(float startX, float startY) {
         return startX >= (float)map.get("x") && startX <= (float)map.get("x") + (float)map.get("width") && startY >= (float)map.get("y") && startY <= (float)map.get("y") + (float)map.get("height");
