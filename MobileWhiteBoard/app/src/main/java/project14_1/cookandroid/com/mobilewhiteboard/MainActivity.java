@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,14 +33,15 @@ public class MainActivity extends AppCompatActivity {
 
     TextView ShortCut;//SC
     EditText edtLoginID, edtLoginPW;
-    Button btnSign, btnLogin;
+    Button btnLogin;
+    TextView btnSign;
 
-    static String userID;
+    public static String userID;
 
     String pw, name, mJsonString;
     public static String id,
 
-            IPaddress = "192.168.10.5"; //내 IP
+            IPaddress = "14.63.168.206"; //내 IP
 
     /** 서버       : 14.63.168.206
      *  LHW 집     : 192.168.219.169:81
@@ -55,13 +57,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ShortCut = (TextView) findViewById(R.id.connectIC);//SC
+       // ShortCut = (TextView) findViewById(R.id.connectIC);//SC
         edtLoginID = (EditText) findViewById(R.id.edtLoginID);
         edtLoginPW = (EditText) findViewById(R.id.edtLoginPW);
-        btnSign = (Button) findViewById(R.id.btnSign);
+
+        btnSign = (TextView) findViewById(R.id.btnSign);
+        btnSign.setText(Html.fromHtml("<u>회원가입</u>"));
         btnLogin = (Button) findViewById(R.id.btnLogin);
 
-        ShortCut.setOnClickListener(new View.OnClickListener() {
+/*        ShortCut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //SC 테스팅용 숏컷
@@ -70,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        });
+        });*/
 
         btnSign.setOnClickListener(new View.OnClickListener() {
             @Override

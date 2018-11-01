@@ -5,9 +5,10 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -25,22 +26,34 @@ import static project14_1.cookandroid.com.mobilewhiteboard.MemoListActivity.type
  */
 
 public class MemoActivity extends AppCompatActivity {
-    EditText edtTitle;
-    EditText edtText;
-    Button btnSave;
-    EditText edtNo;
-    String link;
-    String title, text;
-    String no;
+
+    EditText edtTitle, edtText, edtNo;
+    RelativeLayout btnSave;
+    String link, title, text, no;
+    Toolbar toolbar;
 
     protected void onCreate(Bundle savedIntanteState){
         super.onCreate(savedIntanteState);
         setContentView(R.layout.activity_memo);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("메모 등록");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_chevron_left_24dp));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         Intent intent = getIntent();
         edtTitle = (EditText) findViewById(R.id.edtTitle);
         edtText = (EditText) findViewById(R.id.edtText);
-        edtNo = (EditText)findViewById(R.id.edtNo);
-        btnSave = (Button) findViewById(R.id.btnSave);
+        edtNo = (EditText) findViewById(R.id.edtNo);
+        btnSave = (RelativeLayout) findViewById(R.id.btnSave);
 
         if(type == 1) {
             edtText.setText(intent.getStringExtra("text"));
@@ -57,12 +70,14 @@ public class MemoActivity extends AppCompatActivity {
                 //Toast.makeText(MemoActivity.this, "@@"+title+"@@@@"+text, Toast.LENGTH_SHORT).show();
                 if(type == 0) {
                     insertoToDatabase(userID, title, text);
-                    Intent intent =  new Intent(getApplication(), MemoListActivity.class);
-                    startActivity(intent);
+                    /*Intent intent =  new Intent(getApplication(), MemoListActivity.class);
+                    startActivity(intent);*/
+                    finish();
                 }else if(type == 1) {
                     updateToDatabases(userID, title, text, no);
-                    Intent intent =  new Intent(getApplication(), MemoListActivity.class);
-                    startActivity(intent);
+                    /*Intent intent =  new Intent(getApplication(), MemoListActivity.class);
+                    startActivity(intent);*/
+                    finish();
                 }
 
             }
@@ -187,7 +202,8 @@ public class MemoActivity extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(getApplication(), MemoListActivity.class);
-        startActivity(intent);
+        /*Intent intent = new Intent(getApplication(), MemoListActivity.class);
+        startActivity(intent);*/
+        finish();
     }
 }

@@ -7,6 +7,8 @@ import android.graphics.Canvas;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
@@ -14,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -64,56 +67,101 @@ public class TeamTaskActivity extends AppCompatActivity {
     private String TSchedule="  업무 분담";
 
     ListView lvTask;
-    TextView tvTName, tvTSchedule, tvName, tvUserID, tvNo;
+    //TextView tvTName;
+    //tvTSchedule, tvName, tvUserID, tvNo;
     Spinner spnMemberAdd;
     RadioGroup rgTaskChoice;
-    Button btnAddTask, btnInputTask, btnAllTask, btnClose;
-    RelativeLayout rlyAllTask, rlyPrivateTask, rlyTaskAdd, rlyALLTask;
+    Button  btnAllTask, btnClose;
+    ImageButton btnAddTask,btnInputTask;
+    RelativeLayout rlyAllTask, rlyPrivateTask, rlyALLTask;
+    RelativeLayout layout_schedule,layout_private;
+    CardView rlyTaskAdd;
     RadioButton rbAllTask, rbPrivateTask;
     EditText edtTask;
     String teamID, userID, user, text,no, name;
     int flag=0;
+    private Toolbar toolbar;
 
     protected void onCreate(Bundle savedIntanteState){
         super.onCreate(savedIntanteState);
         setContentView(R.layout.activity_task);
 
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("업무 분담");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_chevron_left_24dp));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        getDataName("http://" + MainActivity.IPaddress + "/android_db_api/task_userName.php");
         getDataList("http://" + MainActivity.IPaddress + "/android_db_api/task_list.php");
 
-        tvUserID = (TextView) findViewById(R.id.tvUserID);
-        tvNo = (TextView) findViewById(R.id.tvNo);
-        tvName = (TextView) findViewById(R.id.tvName);
         lvTask = (ListView) findViewById(R.id.lvTask);
-        tvTName = (TextView) findViewById(R.id.tvTName);
-        tvTSchedule = (TextView) findViewById(R.id.tvTSchedule);
+        //tvTName = (TextView) findViewById(R.id.tvTName);
+    /*    tvTSchedule = (TextView) findViewById(R.id.tvTSchedule);
         rgTaskChoice = (RadioGroup) findViewById(R.id.rgTaskChoice);
         rbAllTask = (RadioButton) findViewById(R.id.rbAllTask);
-        rbPrivateTask = (RadioButton) findViewById(R.id.rbPrivateTask);
+        rbPrivateTask = (RadioButton) findViewById(R.id.rbPrivateTask);*/
         rlyAllTask = (RelativeLayout) findViewById(R.id.rlyALLTask);
+        layout_schedule = (RelativeLayout) findViewById(R.id.layout_schedule);
+        layout_private = (RelativeLayout) findViewById(R.id.layout_private);
+        layout_schedule.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                flag = 0;
+                rlyPrivateTask.setVisibility(View.INVISIBLE);
+                rlyAllTask.setVisibility(View.VISIBLE);
+            }
+        });
         rlyPrivateTask = (RelativeLayout) findViewById(R.id.rlyPrivateTask);
-        rlyTaskAdd = (RelativeLayout) findViewById(R.id.rlyTaskAdd);
-        btnAddTask = (Button) findViewById(R.id.btnAddTask);
-        btnInputTask = (Button) findViewById(R.id.btnInputTask);
-        btnAllTask = (Button) findViewById(R.id.btnAllTask);
+        layout_private.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDataName("http://" + MainActivity.IPaddress + "/android_db_api/task_userName.php");
+                rlyAllTask.setVisibility(View.INVISIBLE);
+                rlyPrivateTask.setVisibility(View.VISIBLE);
+                flag = 0;
+
+                btnAddTask.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        rlyPrivateTask.setVisibility(View.INVISIBLE);
+                        rlyTaskAdd.setVisibility(View.VISIBLE);
+
+
+                    }
+                });
+            }
+        });
+        rlyTaskAdd = (CardView) findViewById(R.id.rlyTaskAdd);
+        btnAddTask = (ImageButton) findViewById(R.id.btnAddTask);
+        btnInputTask = (ImageButton) findViewById(R.id.btnInputTask);
         edtTask = (EditText) findViewById(R.id.edtTask);
-        btnClose = (Button) findViewById(R.id.btnClose);
+        //btnClose = (Button) findViewById(R.id.btnClose);
 
-        rbAllTask.setOnClickListener(radioButtonClickListener);
-        rbPrivateTask.setOnClickListener(radioButtonClickListener);
+      //  rbAllTask.setOnClickListener(radioButtonClickListener);
+//        rbPrivateTask.setOnClickListener(radioButtonClickListener);
 
-        tvTName.setText(TName);
-        tvTSchedule.setText(TSchedule);
+ //       tvTName.setText(TName);
+//        tvTSchedule.setText(TSchedule);
 
         spnMemberAdd = (Spinner) findViewById(R.id.spnMemberAdd);
         personList = new ArrayList<HashMap<String, String>>();
         personList2 = new ArrayList<HashMap<String, String>>();
 
-        btnAllTask.setOnClickListener(new View.OnClickListener() {
+/*        btnAllTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getDataList("http://" + MainActivity.IPaddress + "/android_db_api/task_list.php");
             }
-        });
+        });*/
 
         spnMemberAdd.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -123,7 +171,8 @@ public class TeamTaskActivity extends AppCompatActivity {
                 try {
                     jsonObject = userName.getJSONObject(position);
                     getId = jsonObject.getString("userID");
-                    tvUserID.setText(getId);
+                  //  tvUserID.setText(getId);
+                    userID =getId;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -139,8 +188,10 @@ public class TeamTaskActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String inputID, inputNo;
-                inputID = tvUserID.getText().toString().trim();
-                inputNo = tvNo.getText().toString().trim();
+             //   inputID = tvUserID.getText().toString().trim();
+             //   inputNo = tvNo.getText().toString().trim();
+                inputID= userID;
+                inputNo = no;
                 text = edtTask.getText().toString().trim();            
                 //Toast.makeText(TeamTaskActivity.this, inputID, Toast.LENGTH_SHORT).show();
                 if(flag==0) {
@@ -154,12 +205,14 @@ public class TeamTaskActivity extends AppCompatActivity {
                 edtTask.setText("");
             }
         });
+/*
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 rlyTaskAdd.setVisibility(View.INVISIBLE);
             }
         });
+*/
         lvTask.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -174,7 +227,8 @@ public class TeamTaskActivity extends AppCompatActivity {
                     getNo = jsonObject.getString("no");
                     getText = jsonObject.getString("text");
                     edtTask.setText(getText);
-                    tvNo.setText(getNo);
+                    //tvNo.setText(getNo);
+                    no = getNo;
                     Log.i("getNo", getNo + "");
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -219,6 +273,9 @@ public class TeamTaskActivity extends AppCompatActivity {
                 if (s.equals("success")) {
                     Toast.makeText(getApplicationContext(), "업무가 저장되었습니다.", Toast.LENGTH_SHORT).show();
                     getDataList("http://" + MainActivity.IPaddress + "/android_db_api/task_list.php");
+                    flag = 0;
+                    rlyPrivateTask.setVisibility(View.INVISIBLE);
+                    rlyAllTask.setVisibility(View.VISIBLE);
                 }else if (s.equals("failure")){
                     Toast.makeText(getApplicationContext(), "저장에 실패하였습니다.", Toast.LENGTH_SHORT).show();
                 }
@@ -522,15 +579,13 @@ public class TeamTaskActivity extends AppCompatActivity {
     }
 
 
-    RadioButton.OnClickListener radioButtonClickListener = new RadioButton.OnClickListener(){
+   /* RadioButton.OnClickListener radioButtonClickListener = new RadioButton.OnClickListener(){
         @Override
        public void onClick(View view) {
 
             switch (rgTaskChoice.getCheckedRadioButtonId()){
                 case R.id.rbAllTask:
-                    flag = 0;
-                    rlyPrivateTask.setVisibility(View.INVISIBLE);
-                    rlyAllTask.setVisibility(View.VISIBLE);
+
                     break;
                 case R.id.rbPrivateTask:
                     getDataName("http://" + MainActivity.IPaddress + "/android_db_api/task_userName.php");
@@ -556,7 +611,7 @@ public class TeamTaskActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "기능을 선택하시오", Toast.LENGTH_SHORT).show();
             }
         }
-  };
+  };*/
 
     public void getDataName(String url) {
         class GetDataJSON extends AsyncTask<String, Void, String> {

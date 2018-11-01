@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/colorWhite"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite">
 
     <LinearLayout
         android:id="@+id/baseView"
-        android:background="@color/colorWhite"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorWhite"
         android:orientation="vertical">
+
         <RelativeLayout
             android:id="@+id/DrawTool"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="left"
             android:visibility="invisible">
+
             <ImageButton
                 android:id="@+id/ibPen"
                 android:layout_width="wrap_content"
@@ -62,10 +64,12 @@
                 android:scaleType="fitXY"
                 android:src="@drawable/save" />
         </RelativeLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/DrawTool">
+
             <project14_1.cookandroid.com.mobilewhiteboard.Whiteboard.Drawing
                 android:id="@+id/Drawing"
                 android:layout_width="match_parent"
@@ -78,11 +82,11 @@
         android:id="@+id/slidingMenu"
         android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.18"
         android:layout_gravity="right"
+        android:layout_weight="0.18"
         android:background="@drawable/border"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ImageButton
             android:id="@+id/lb_return"
@@ -113,10 +117,10 @@
             android:layout_margin="10dp"
             android:layout_weight="1"
             android:background="@null"
+            android:onClick="onClick"
             android:padding="5sp"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_drawing"
-            android:onClick="onClick"/>
+            android:src="@drawable/ic_drawing" />
 
         <ImageButton
             android:id="@+id/ibPicture"
@@ -142,23 +146,25 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:orientation="vertical"
-        android:layout_gravity="right|center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center"
+        android:orientation="vertical">
+
         <ImageButton
             android:id="@+id/ibSliding"
-            android:src="@drawable/ic_left"
             android:layout_width="30dp"
             android:layout_height="60dp"
-            android:visibility="visible"
-            android:onClick="onButton1Clicked"/>
+            android:onClick="onButton1Clicked"
+            android:src="@drawable/ic_left"
+            android:visibility="visible" />
+
         <ImageButton
             android:id="@+id/ibSliding2"
-            android:src="@drawable/ic_right"
             android:layout_width="30dp"
             android:layout_height="60dp"
-            android:visibility="invisible"
-            android:onClick="onButton1Clicked"/>
+            android:onClick="onButton1Clicked"
+            android:src="@drawable/ic_right"
+            android:visibility="invisible" />
     </RelativeLayout>
 </FrameLayout>

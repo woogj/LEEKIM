@@ -1,160 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/layout_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.2"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#FFFFFF" />
+
+        <View
+            android:id="@+id/view_shadow_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_below="@+id/toolbar"
+            android:background="@drawable/shadow_toolbar" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layout_toolbar"
+        android:paddingLeft="24dp"
+        android:paddingTop="24dp"
+        android:paddingRight="24dp">
 
         <TextView
-            android:textStyle="bold|italic"
-            android:textSize="30dp"
-            android:gravity="center"
-            android:text="Mobile WhiteBoard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:textStyle="bold|italic"
-            android:textSize="50dp"
-            android:gravity="center"
-            android:text="SignUp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.8"
-        android:padding="20dp"
-        android:orientation="vertical">
-
-        <LinearLayout
+            android:id="@+id/text_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:text="계정정보"
+            android:textColor="#222222"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <RelativeLayout
+            android:id="@+id/layout_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text_account"
+            android:layout_marginTop="16dp">
 
             <EditText
                 android:id="@+id/edtID"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="0.15"
-                android:background="@drawable/round_button_base_blue"
-                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:layout_toLeftOf="@+id/checkID"
                 android:hint="아이디"
-                />
-            <Button
+                android:paddingLeft="4dp"
+                android:theme="@style/EditText" />
+
+            <ImageButton
                 android:id="@+id/checkID"
-                android:text="중복확인"
-                android:layout_marginLeft="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-
-        <EditText
-            android:id="@+id/edtName"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:paddingLeft="10dp"
-            android:layout_weight="0.15"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/round_button_base_blue"
-            android:textSize="20dp"
-            android:hint="이름"
-            />
-
-        <EditText
-            android:id="@+id/edtEmail"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:paddingLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_weight="0.15"
-            android:background="@drawable/round_button_base_blue"
-            android:hint="이메일"
-            />
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/background_confirm"
+                android:src="@drawable/ic_check_24dp" />
+        </RelativeLayout>
 
         <EditText
             android:id="@+id/edtPw"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:paddingLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_weight="0.15"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_id"
+            android:layout_marginTop="8dp"
+            android:hint="비밀번호"
             android:inputType="numberPassword"
-            android:background="@drawable/round_button_base_blue"
-            android:hint="비밀번호" />
+            android:paddingLeft="4dp"
+            android:theme="@style/EditText" />
 
         <EditText
             android:id="@+id/edtRePw"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:paddingLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_weight="0.15"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/edtPw"
+            android:layout_marginTop="8dp"
+            android:hint="비밀번호확인"
             android:inputType="numberPassword"
-            android:background="@drawable/round_button_base_blue"
-            android:hint="비밀번호 확인" />
+            android:theme="@style/EditText" />
+
+        <EditText
+            android:id="@+id/edtEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/edtRePw"
+            android:layout_marginTop="8dp"
+            android:hint="이메일"
+            android:theme="@style/EditText" />
+
+        <TextView
+            android:id="@+id/text_member"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/edtEmail"
+            android:layout_marginTop="24dp"
+            android:text="회원 정보"
+            android:textColor="#222222"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edtName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_member"
+            android:layout_marginTop="16dp"
+            android:hint="이름"
+            android:theme="@style/EditText" />
 
         <RadioGroup
             android:id="@+id/group"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.15"
-            android:layout_marginTop="16dp"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/edtName"
+            android:layout_marginTop="12dp"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp">
 
             <RadioButton
                 android:id="@+id/rbDevelop"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.333"
-                android:text="개발" />
+                android:text="개발"
+                android:theme="@style/EditText" />
 
             <RadioButton
                 android:id="@+id/rbPlan"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.333"
-                android:text="기획" />
+                android:text="기획"
+                android:theme="@style/EditText" />
 
             <RadioButton
                 android:id="@+id/rbDesign"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.333"
-                android:text="디자인" />
+                android:text="디자인"
+                android:theme="@style/EditText" />
         </RadioGroup>
 
         <Button
             android:id="@+id/btnResister"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.15"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/round_button_base_blue"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/background_login"
             android:gravity="center"
+            android:padding="16dp"
             android:onClick="register_btn"
-            android:text="회원가입" />
+            android:text="회원가입"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtLoginGo"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.1"
+            android:layout_height="wrap_content"
             android:gravity="right"
-            android:text="Already member? 로그인" />
-    </LinearLayout>
-</LinearLayout>
+            android:text="Already member? 로그인"
+            android:visibility="gone" />
+    </RelativeLayout>
+</RelativeLayout>

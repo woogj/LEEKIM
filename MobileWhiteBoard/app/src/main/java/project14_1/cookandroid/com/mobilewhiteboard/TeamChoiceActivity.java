@@ -3,10 +3,15 @@ package project14_1.cookandroid.com.mobilewhiteboard;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import project14_1.cookandroid.com.mobilewhiteboard.TeamManage.ManageTeamActivity;
@@ -20,12 +25,24 @@ public class TeamChoiceActivity extends AppCompatActivity {
         super.onCreate(savedIntanteState);
         setContentView(R.layout.activity_teamchoice);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_chevron_left_24dp));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         final RadioGroup rg_teamChoice = (RadioGroup) findViewById(R.id.rg_teamChoice);
         RadioButton rb_WB = (RadioButton) findViewById(R.id.rb_WB);
         RadioButton rb_task = (RadioButton) findViewById(R.id.rb_task);
-        ImageButton ibtn_tName_1 = (ImageButton) findViewById(R.id.ibtn_tName_1);
-        ImageButton ibtn_tName_2 = (ImageButton) findViewById(R.id.ibtn_tName_2);
-        ImageButton ibtn_t_manage = (ImageButton) findViewById(R.id.ibtn_t_manage);
+        RelativeLayout ibtn_tName_1 = (RelativeLayout) findViewById(R.id.ibtn_tName_1);
+        RelativeLayout ibtn_tName_2 = (RelativeLayout) findViewById(R.id.ibtn_tName_2);
 
         ibtn_tName_1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,14 +63,14 @@ public class TeamChoiceActivity extends AppCompatActivity {
             }
         });
 
-        ibtn_t_manage.setOnClickListener(new View.OnClickListener() {
+      /*  ibtn_t_manage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplication(), ManageTeamActivity.class);
                 startActivity(intent);
                 finish();
             }
-        });
+        });*/
 
 
 
@@ -62,7 +79,30 @@ public class TeamChoiceActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(getApplication(), MainViewActivity.class);
-        startActivity(intent);
+        /*Intent intent = new Intent(getApplication(), MainViewActivity.class);
+        startActivity(intent);*/
+        finish();
+    }
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //return super.onCreateOptionsMenu(menu);
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_team, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent intent = new Intent(getApplication(), ManageTeamActivity.class);
+                startActivity(intent);
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 }
