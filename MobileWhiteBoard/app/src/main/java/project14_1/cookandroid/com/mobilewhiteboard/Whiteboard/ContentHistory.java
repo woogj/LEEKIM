@@ -64,6 +64,7 @@ public class ContentHistory {
         map.put("width", stopX);
         map.put("y", startY);
         map.put("height", stopY);
+        map.put("sig", "N");
     }
 
     public String getCoord() {
@@ -100,7 +101,7 @@ public class ContentHistory {
             map.put("y", startY);
             map.put("height", stopY - startY);
         }
-
+        map.put("sig", "N");
         map.put("setXY", new RectF((float)map.get("x"), (float)map.get("y"), (float)map.get("x") + (float)map.get("width"), (float)map.get("y") + (float)map.get("height")));
     }
 
@@ -109,6 +110,7 @@ public class ContentHistory {
         map.put("type", "Picture");
         map.put("path", imgPath);
         map.put("bitmap", "null");
+        map.put("sig", "N");
         map.put("x", Float.parseFloat(startX));
         map.put("y", Float.parseFloat(startY));
         map.put("width", Float.parseFloat(width));
@@ -165,6 +167,9 @@ public class ContentHistory {
     public float getY() { return (float)map.get("y"); }
     public float getWidth() { return (float)map.get("width"); }
     public float getHeight() { return (float)map.get("height"); }
+    public String getSig() {
+        return (String)map.get("sig");
+    }
 
     public void setX (float x) {
         map.put("x", x);
@@ -177,6 +182,9 @@ public class ContentHistory {
     }
     public void setHeight (float height) {
         map.put("height", height);
+    }
+    public void setSig (String sig) {
+        map.put("sig", sig);
     }
 
     public boolean isClicked(float startX, float startY) {
