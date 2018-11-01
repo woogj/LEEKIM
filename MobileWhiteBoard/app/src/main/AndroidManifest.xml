@@ -33,8 +33,17 @@
             android:screenOrientation="sensorLandscape"> </activity>
         <activity android:name=".TeamTaskActivity" > </activity>
         <activity android:name=".TeamManage.ManageTeamActivity" android:theme="@style/Theme.AppCompat.Light.NoActionBar"> </activity>
-        <activity android:name=".TeamManage.CreateTeamActivity" > </activity>
-        <activity android:name=".ColorPaletteDialog" android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"></activity>
+        <activity
+            android:name=".TeamManage.CreateTeamActivity"
+            android:parentActivityName=".TeamChoiceActivity"
+            > </activity>
+        <activity
+            android:name=".TeamManage.ShowTeamInfoActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:parentActivityName=".TeamManage.ManageTeamActivity"
+            > </activity>
+        <activity
+            android:name=".ColorPaletteDialog" android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"></activity>
     </application>
 
 </manifest>

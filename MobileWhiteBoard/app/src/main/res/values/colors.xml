@@ -12,5 +12,7 @@
     <color name="colorGrade2">#4875aa</color>
     <color name="colorGrade3">#62539b</color>
     <color name="colorBackGround">#fefef2</color>
-
+    <color name="colorOriginButton">#eaf9e2</color>
+    <color name="colorOriginButton1">#60AF62</color>
+    <color name="colorChangeButton">#789579</color>
 </resources>
