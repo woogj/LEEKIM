@@ -117,11 +117,19 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|top"></Spinner>
             <Button
-                android:id="@+id/btnInputTask"
-                android:text="입력"
+                android:id="@+id/btnClose"
+                android:text="x"
                 android:layout_alignParentRight="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_width="60px"
+                android:layout_height="60px" />
+            <Button
+                android:id="@+id/btnInputTask"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/btnClose"
+                android:text="입력"
+                android:layout_width="120px"
+                android:layout_height="60px" />
+
             <TextView
                 android:id="@+id/tvTask"
                 android:text="할 일을 입력하시오."

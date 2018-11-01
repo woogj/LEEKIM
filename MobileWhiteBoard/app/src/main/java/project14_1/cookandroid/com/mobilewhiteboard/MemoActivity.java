@@ -57,8 +57,12 @@ public class MemoActivity extends AppCompatActivity {
                 //Toast.makeText(MemoActivity.this, "@@"+title+"@@@@"+text, Toast.LENGTH_SHORT).show();
                 if(type == 0) {
                     insertoToDatabase(userID, title, text);
+                    Intent intent =  new Intent(getApplication(), MemoListActivity.class);
+                    startActivity(intent);
                 }else if(type == 1) {
                     updateToDatabases(userID, title, text, no);
+                    Intent intent =  new Intent(getApplication(), MemoListActivity.class);
+                    startActivity(intent);
                 }
 
             }

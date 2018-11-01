@@ -80,32 +80,41 @@ public class MemoListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 type = 1;
-                String no, str, title, text;
-                str = personList.get(position).toString();
-                HashMap<String, String> item = personList.get(position);
-                //Toast.makeText(MemoListActivity.this, personList.get(position).toString(), Toast.LENGTH_SHORT).show();
-                Intent intent1 = new Intent(getApplication(), MemoActivity.class);
-                text = str.substring(str.indexOf("text")+5,str.indexOf("title")-2);
-                title = str.substring(str.indexOf("title")+6, str.indexOf("no")-2);
-                //Toast.makeText(MemoListActivity.this, str.toString(), Toast.LENGTH_SHORT).show();
-                no = str.substring(str.indexOf("no")+3, str.indexOf("}"));
-                intent1.putExtra("text", text);
-                intent1.putExtra("title", title);
-                intent1.putExtra("no", no);
-                startActivity(intent1);
+                String getNo, getTitle, getText;
+
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = peoples.getJSONObject(position);
+                    getNo = jsonObject.getString("no");
+                    getTitle = jsonObject.getString("title");
+                    getText = jsonObject.getString("text");
+
+                    Intent intent1 = new Intent(getApplication(), MemoActivity.class);
+                    intent1.putExtra("no", getNo);
+                    intent1.putExtra("title", getTitle);
+                    intent1.putExtra("text", getText);
+                    startActivity(intent1);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
         lvMemo.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view,int position, long id) {
-                String no, str;
-                str = personList.get(position).toString();
-                no = str.substring(str.indexOf("no")+3, str.indexOf("}"));
-                deletetoToDatabase(no);
+                String getNo = null;
+                JSONObject jsonObject = null;
+
+                try {
+                    jsonObject = peoples.getJSONObject(position);
+                    getNo = jsonObject.getString("no");
+                    deletetoToDatabase(getNo);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 getData("http://" + MainActivity.IPaddress + "/android_db_api/memoList.php");
-                //Intent intent = new Intent(getApplication(), MemoListActivity.class);
-                //startActivity(intent);
                 return false;
             }
         });

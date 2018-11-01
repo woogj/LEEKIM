@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     String pw, name, mJsonString;
     public static String id,
-            IPaddress = "14.63.168.206"; //내 IP
+            IPaddress = "192.168.10.5"; //내 IP
     /** 서버       : 14.63.168.206
      *  LHW 집     : 192.168.219.196:81
      *  LHW 핫스팟 : 192.168.43.242
@@ -92,12 +92,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-
             if (result == null){
                 Toast.makeText(MainActivity.this, errorString, Toast.LENGTH_LONG).show();
-            }else if (result.equals("WrongID")){
+            }else if (result.equals("\uFEFFWrongID")){
                 Toast.makeText(MainActivity.this, "존재하지 않는 회원 입니다.", Toast.LENGTH_LONG).show();
-            }else if (result.equals("WrongPW")){
+            }else if (result.equals("\uFEFFWrongPW")){
                 Toast.makeText(MainActivity.this, "아이디와 비밀번호가 일치하지 않습니다.", Toast.LENGTH_LONG).show();
             }else{
                 mJsonString = result;

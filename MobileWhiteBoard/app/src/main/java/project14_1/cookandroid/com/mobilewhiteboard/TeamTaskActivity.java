@@ -67,11 +67,10 @@ public class TeamTaskActivity extends AppCompatActivity {
     TextView tvTName, tvTSchedule, tvName, tvUserID, tvNo;
     Spinner spnMemberAdd;
     RadioGroup rgTaskChoice;
-    Button btnAddTask, btnInputTask, btnAllTask;
+    Button btnAddTask, btnInputTask, btnAllTask, btnClose;
     RelativeLayout rlyAllTask, rlyPrivateTask, rlyTaskAdd, rlyALLTask;
     RadioButton rbAllTask, rbPrivateTask;
     EditText edtTask;
-    static int type = 0;
     String teamID, userID, user, text,no, name;
     int flag=0;
 
@@ -97,6 +96,7 @@ public class TeamTaskActivity extends AppCompatActivity {
         btnInputTask = (Button) findViewById(R.id.btnInputTask);
         btnAllTask = (Button) findViewById(R.id.btnAllTask);
         edtTask = (EditText) findViewById(R.id.edtTask);
+        btnClose = (Button) findViewById(R.id.btnClose);
 
         rbAllTask.setOnClickListener(radioButtonClickListener);
         rbPrivateTask.setOnClickListener(radioButtonClickListener);
@@ -127,7 +127,7 @@ public class TeamTaskActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Toast.makeText(TeamTaskActivity.this, getId, Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -154,6 +154,12 @@ public class TeamTaskActivity extends AppCompatActivity {
                 edtTask.setText("");
             }
         });
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rlyTaskAdd.setVisibility(View.INVISIBLE);
+            }
+        });
         lvTask.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -173,7 +179,6 @@ public class TeamTaskActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Toast.makeText(TeamTaskActivity.this, getNo, Toast.LENGTH_SHORT).show();
                 return;
             }
         });
@@ -184,7 +189,6 @@ public class TeamTaskActivity extends AppCompatActivity {
                 String getNo = null;
 
                 str = personList2.get(position).toString();
-                Toast.makeText(TeamTaskActivity.this, str, Toast.LENGTH_SHORT).show();
 
                 JSONObject jsonObject = null;
                 try {
@@ -331,7 +335,7 @@ public class TeamTaskActivity extends AppCompatActivity {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 loading.dismiss();
-                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "업무가 삭제되었습니다.", Toast.LENGTH_SHORT).show();
             }
             @Override
             protected String doInBackground(String... params) {
