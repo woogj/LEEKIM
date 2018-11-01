@@ -217,7 +217,8 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if(System.currentTimeMillis() - prevPressTime <= DURATION_TIME) {
             moveTaskToBack(true);
-            finish();
+           // finish();
+            finishAffinity();
             android.os.Process.killProcess(android.os.Process.myPid());
         }else{
             prevPressTime = System.currentTimeMillis();

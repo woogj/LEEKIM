@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import static project14_1.cookandroid.com.mobilewhiteboard.TeamManage.ManageTeam
 
 public class ShowTeamInfoActivity extends AppCompatActivity{
 
+    RelativeLayout rlyResultTeamInfo;
     TextView tvTeamName, tvTeamMaster, tvTeamMember;
     EditText edtTeamObject, edtTeamSummary;
     Button btnLeaveTeam, btInviteTeam, btnChangeTeam, btnDeleteTeam;
@@ -42,7 +44,7 @@ public class ShowTeamInfoActivity extends AppCompatActivity{
 
         Intent intent = getIntent();
 
-
+        rlyResultTeamInfo=(RelativeLayout)findViewById(R.id.rlyResultTeamInfo);
         toolbarResult =(Toolbar) findViewById(R.id.toolbarResult);
 
         tvTeamName = (TextView) findViewById(R.id.tvTeamName);
@@ -98,8 +100,8 @@ public class ShowTeamInfoActivity extends AppCompatActivity{
 
                     ChangeButton = true;
                     // 정보 수정 상태
-                    edtTeamObject.setFocusableInTouchMode(true);
-                    edtTeamSummary.setFocusableInTouchMode(true);
+                    rlyResultTeamInfo.setClickable(true);
+                   // rlyResultTeamInfo.is();
 
                     btnChangeTeam.setText("수정 완료?");
                     //colorChangeButton
@@ -109,8 +111,8 @@ public class ShowTeamInfoActivity extends AppCompatActivity{
                 }else{
                     ChangeButton = false;
                     // 정보 수정 완료 상태
-                    edtTeamObject.setFocusableInTouchMode(false);
-                    edtTeamSummary.setFocusableInTouchMode(false); //editText에 커서가 있으면 false가 안먹힘
+                    rlyResultTeamInfo.setClickable(false);
+                   // rlyResultTeamInfo.isFocusable();
 
                     changeObject = edtTeamObject.getText().toString();
                     changeSummary=edtTeamSummary.getText().toString();
