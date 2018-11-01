@@ -90,17 +90,12 @@ public class Drawing extends View {
         cnxt = (WhiteboardActivity) context; // EditText 동적 생성을 위한 context 선언
         test = (WhiteboardActivity) context;
         setupDrawing();
-        timer = System.currentTimeMillis() - 5000;
     }
 
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         Log.d("TAG", All.toString());
         Long now = System.currentTimeMillis();
-        if (All.size() == 0 && now - timer > 5000) {
-            GetDataThread GetNew = new GetDataThread();
-            GetNew.start();
-        }
         for (int i = 0; i < All.size(); i++) {
             //배열에 있는 것들을 그린다.
             ContentHistory map = All.get(i);
@@ -109,21 +104,21 @@ public class Drawing extends View {
                 map.drawCanvas(canvas);
             }else if (map.getType().equals("Drawing")) {
                 //손글씨 그리기
-                if (map.getCoord().equals("null")) {
+                if(Paths != null) {
+                    map.setCoord(Paths);
+                    Paths = null;
+                    map.setSig("N");
+                }else if (map.getCoord().equals("null") && map.getSig() == "N") {
                     //경로가 비어있을 경우
                     load_paths task1 = new load_paths();
                     if(task1.getStatus()== AsyncTask.Status.RUNNING){
                         task1.cancel(true);
                     }
                     task1.execute("http://" + MainActivity.IPaddress + "/android_db_api/" + map.getPath());
-                    while (Paths == null) { }
-                    map.setCoord(Paths);
-                    i--;
+                    map.setSig("Y");
                 }else if (map.getCoord().startsWith("{")) {
                     //경로가 json형식으로 저장되있는 경우 내용을 배열에 넣는다.
                     showPaths(i);
-                    while (Paths != null) { }
-                    i--;
                 }else {
                     //배열에 있는 정보로 그림 그리기
                     String[] coordA = map.getCoord().split("/"), coordB;
@@ -149,17 +144,18 @@ public class Drawing extends View {
                 }
             }else if (map.getType().equals("Picture")) {
                 // 사진 그리기
-                if (map.checkBitmap().equals("null")) {
+                if(DownIMG != null) {
+                    map.setBitmap(DownIMG);
+                    All.add(i, map);
+                    DownIMG = null;
+                    map.setSig("N");
+                }else if (map.checkBitmap().equals("null") && map.getSig() == "N") {
                     load_image task2 = new load_image();
                     if(task2.getStatus()== AsyncTask.Status.RUNNING){
                         task2.cancel(true);
                     }
                     task2.execute("http://" + MainActivity.IPaddress + "/android_db_api/" + map.getPath());
-                    while (DownIMG == null) { }
-                    map.setBitmap(DownIMG);
-                    All.add(i, map);
-                    DownIMG = null;
-                    i--;
+                    map.setSig("Y");
                 }else {
                     int nh = (int) (map.getBitmap().getHeight() * (512.0 / map.getBitmap().getWidth()));
                     Bitmap scaled = Bitmap.createScaledBitmap(map.getBitmap(), 512, nh, true);
@@ -232,6 +228,13 @@ public class Drawing extends View {
         //손글씨 바로 그릴 때
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath2, drawPaint2);
+        if(Start) {
+            LoopInvalidate li = new LoopInvalidate();
+            RenewThread rt = new RenewThread();
+            li.start();
+            rt.start();
+            Start = false;
+        }
         //Log.d("TAG", All.toString()); //배열 확인용
     }
 
@@ -600,71 +603,66 @@ public class Drawing extends View {
                     List.remove(overlap.get(i));
                 }
 
-                //HW 사진 경로 있는 것인지 확인
-                if (!Start) {
-                    for (int i = 0; i < List.size(); i++) {
-                        for (int j = 0; j < All.size(); j++) {
-                            if (List.get(i).getPath().equals(All.get(j).getPath())) {
-                                if ((List.get(i).getX() == All.get(j).getX()) && (List.get(i).getY() == All.get(j).getY())) {
-                                    if ((i != j) && (i < j)) {
-                                        All.add(i, All.get(j));
-                                        All.remove(j + 1);
-                                    }
-                                } else {
-                                    if ((i != j) && (i < j)) {
-                                        All.add(i, All.get(j));
-                                        All.remove(j + 1);
-                                    }
-                                    switch (All.get(i).getType()) {
-                                        case "Drawing":
-                                            All.get(i).setWidth(List.get(i).getWidth());
-                                            All.get(i).setHeight(List.get(i).getHeight());
-                                            All.get(i).setBitmap(List.get(i).getBitmap());
-                                            break;
-                                        case "Picture":
-                                            All.get(i).setWidth(List.get(i).getWidth());
-                                            All.get(i).setHeight(List.get(i).getHeight());
-                                            All.get(i).setCoord(List.get(i).getCoord());
-                                            All.get(i).setColor(List.get(i).getColor());
-                                            break;
-                                    }
-                                    All.get(i).setX(List.get(i).getX());
-                                    All.get(i).setY(List.get(i).getY());
+                for (int i = 0; i < List.size(); i++) {
+                    for (int j = 0; j < All.size(); j++) {
+                        if (List.get(i).getPath().equals(All.get(j).getPath())) {
+                            if ((List.get(i).getX() == All.get(j).getX()) && (List.get(i).getY() == All.get(j).getY())) {
+                                if ((i != j) && (i < j)) {
+                                    All.add(i, All.get(j));
+                                    All.remove(j + 1);
                                 }
-                            } else { }
+                            } else {
+                                if ((i != j) && (i < j)) {
+                                    All.add(i, All.get(j));
+                                    All.remove(j + 1);
+                                }
+                                switch (All.get(i).getType()) {
+                                    case "Drawing":
+                                        All.get(i).setWidth(List.get(i).getWidth());
+                                        All.get(i).setHeight(List.get(i).getHeight());
+                                        All.get(i).setBitmap(List.get(i).getBitmap());
+                                        break;
+                                    case "Picture":
+                                        All.get(i).setWidth(List.get(i).getWidth());
+                                        All.get(i).setHeight(List.get(i).getHeight());
+                                        All.get(i).setCoord(List.get(i).getCoord());
+                                        All.get(i).setColor(List.get(i).getColor());
+                                        break;
+                                }
+                                All.get(i).setX(List.get(i).getX());
+                                All.get(i).setY(List.get(i).getY());
+                            }
+                        } else { }
+                    }
+                }
+
+                if (All.size() == List.size()) {
+                    for (int i = 0; i < List.size(); i++) {
+                        if (!(All.get(i).equals(List.get(i)))) {
+                            All.add(List.get(i));
+                            All.remove(i);
                         }
                     }
+                }else if (All.size() > List.size()) {
+                    for (int i = 0; i < All.size(); i++) {
+                        if (i > List.size() - 1) {
+                            All.remove(i);
+                        }else if (!(All.get(i).equals(List.get(i)))) {
+                            All.remove(i);
+                            All.add(List.get(i));
+                        }
+                    }
+                }else if (List.size() > All.size()) {
+                    for (int i = 0; i < List.size(); i++) {
+                        if (i > All.size() - 1) {
+                            All.add(List.get(i));
+                        }else if (!(All.get(i).equals(List.get(i)))) {
+                            All.add(List.get(i));
+                            All.remove(i);
+                        }
+                    }
+                }else { }
 
-                    if (All.size() == List.size()) {
-                        for (int i = 0; i < List.size(); i++) {
-                            if (!(All.get(i).equals(List.get(i)))) {
-                                All.add(List.get(i));
-                                All.remove(i);
-                            }
-                        }
-                    }else if (All.size() > List.size()) {
-                        for (int i = 0; i < All.size(); i++) {
-                            if (i > List.size() - 1) {
-                                All.remove(i);
-                            }else if (!(All.get(i).equals(List.get(i)))) {
-                                All.remove(i);
-                                All.add(List.get(i));
-                            }
-                        }
-                    }else if (List.size() > All.size()) {
-                        for (int i = 0; i < List.size(); i++) {
-                            if (i > All.size() - 1) {
-                                All.add(List.get(i));
-                            }else if (!(All.get(i).equals(List.get(i)))) {
-                                All.add(List.get(i));
-                                All.remove(i);
-                            }
-                        }
-                    }else { }
-                }else{
-                    All = List;
-                    Start = false;
-                }
             } catch (JSONException e) {
                 Log.d(TAG, "showResult : ", e);
             }
@@ -823,12 +821,37 @@ public class Drawing extends View {
                         All.remove(index);
                         Log.d(TAG, All.toString());
                         //DB에서 삭제
-
-
                     }
                 });
 
                 alert.show();
+            }
+        }
+    }
+
+    private class LoopInvalidate extends Thread {
+        public void run() {
+            while (true) {
+                invalidate();
+
+                long now = System.currentTimeMillis(), past = now;
+                while (2500 >= now - past){ //HW 시간초 조절 필요
+                    now = System.currentTimeMillis();
+                }
+            }
+        }
+    }
+
+    private class RenewThread extends Thread {
+        public void run() {
+            while (true) {
+                GetDataThread gdt = new GetDataThread();
+                gdt.start();
+
+                long now = System.currentTimeMillis(), past = now;
+                while (10000 >= now - past){ //HW 시간초 조절 필요
+                    now = System.currentTimeMillis();
+                }
             }
         }
     }

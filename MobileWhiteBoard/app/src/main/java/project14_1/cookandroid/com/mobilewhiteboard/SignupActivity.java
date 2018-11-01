@@ -4,6 +4,7 @@ package project14_1.cookandroid.com.mobilewhiteboard;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -49,13 +50,28 @@ public class SignupActivity extends AppCompatActivity {
 
     Button btnResister, checkID;
     TextView txtLoginGo;
-    EditText edtID,edtName, edtEmail, edtPw, edtRePw;
-    String userID,userPW, userPWR, name, email, id, pw;
+    EditText edtID, edtName, edtEmail, edtPw, edtRePw;
+    String userID, userPW, name, email;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("회원가입");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_chevron_left_24dp));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         mArrayList = new ArrayList<>();
         txtLoginGo = (TextView) findViewById(R.id.txtLoginGo);
         btnResister = (Button) findViewById(R.id.btnResister);
@@ -71,8 +87,8 @@ public class SignupActivity extends AppCompatActivity {
         checkID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                id = edtID.getText().toString().trim();
-                pw = edtPw.getText().toString().trim();
+                String id = edtID.getText().toString().trim();
+                String pw = edtPw.getText().toString().trim();
                 GetData task = new GetData();
                 task.execute(id,pw);
             }
@@ -84,7 +100,7 @@ public class SignupActivity extends AppCompatActivity {
 
                 userID = edtID.getText().toString().trim();
                 userPW = edtPw.getText().toString().trim();
-                userPWR = edtRePw.getText().toString().trim();
+                String userPWR = edtRePw.getText().toString().trim();
                 name = edtName.getText().toString().trim();
                 email = edtEmail.getText().toString().trim();
 

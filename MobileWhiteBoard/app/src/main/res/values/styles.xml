@@ -7,11 +7,25 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
     <style name="TeamManage" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorToolbar</item>
         <item name="colorPrimaryDark">#fdfdee</item>
         <item name="colorAccent">#fdfdee</item>
     </style>
+
+    <style name="EditText" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlNormal">#eeeeee</item>
+        <item name="colorControlActivated">@color/loginColorLeft</item>
+        <item name="colorControlHighlight">@color/loginColorLeft</item>
+    </style>
+
+    <style name="Radio" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlNormal">#eeeeee</item>
+        <item name="colorControlActivated">#FFFFFF</item>
+        <item name="colorControlHighlight">#FFFFFF</item>
+    </style>
+
 
 </resources>

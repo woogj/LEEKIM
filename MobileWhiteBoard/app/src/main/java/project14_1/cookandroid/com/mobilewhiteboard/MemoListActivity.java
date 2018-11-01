@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,6 +19,10 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,33 +54,36 @@ public class MemoListActivity extends AppCompatActivity {
     private static final String TAG_DATE = "update_date";
     private static final String TAG_TITLE = "title";
     private static final String TAG_TEXT = "text";
-    static int type = 0;
+    public static int type = 0;
     JSONArray peoples = null;
     ArrayList<HashMap<String, String>> personList;
     ListView lvMemo;
     ImageButton ibPlus;
     Cursor cursor;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memo_list);
 
-        edtNo = (EditText) findViewById(R.id.edtNo);
-        ibPlus = (ImageButton) findViewById(R.id.ibPlus);
-        lvMemo = (ListView) findViewById(R.id.lvMemo);
-        personList = new ArrayList<HashMap<String, String>>();
-        getData("http://" + MainActivity.IPaddress + "/android_db_api/memoList.php"); //수정 필요
-
-        ibPlus.setOnClickListener(new View.OnClickListener() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("개인 메모");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_chevron_left_24dp));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 type = 0;
-                Intent intent1 = new Intent(getApplication(), MemoActivity.class);
-                startActivity(intent1);
                 finish();
             }
         });
+
+        lvMemo = (ListView) findViewById(R.id.lvMemo);
+
+        personList = new ArrayList<>();
         lvMemo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -101,7 +109,28 @@ public class MemoListActivity extends AppCompatActivity {
             }
         });
 
-        lvMemo.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        /*lvMemo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                type = 1;
+                String no, str, title, text;
+                str = personList.get(position).toString();
+                HashMap<String, String> item = personList.get(position);
+                //Toast.makeText(MemoListActivity.this, personList.get(position).toString(), Toast.LENGTH_SHORT).show();
+                Intent intent1 = new Intent(getApplication(), MemoActivity.class);
+                text = str.substring(str.indexOf("text")+5,str.indexOf("title")-2);
+                title = str.substring(str.indexOf("title")+6, str.indexOf("no")-2);
+                no = str.substring(str.indexOf("no")+3, str.indexOf("}"));
+                intent1.putExtra("text", text);
+                intent1.putExtra("title", title);
+                intent1.putExtra("no", no);
+                Toast.makeText(MemoListActivity.this, no, Toast.LENGTH_SHORT).show();
+                startActivity(intent1);
+
+            }
+        });*/
+
+    /*    lvMemo.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view,int position, long id) {
                 String getNo = null;
@@ -117,8 +146,15 @@ public class MemoListActivity extends AppCompatActivity {
                 getData("http://" + MainActivity.IPaddress + "/android_db_api/memoList.php");
                 return false;
             }
-        });
+        });*/
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getData("http://" + MainActivity.IPaddress + "/android_db_api/memoList.php"); //수정 필요
+    }
+
     private void deletetoToDatabase(String no) {
         class deleteData extends AsyncTask<String, Void, String> {
             ProgressDialog loading;
@@ -247,8 +283,26 @@ public class MemoListActivity extends AppCompatActivity {
         g.execute(url);
     }
     @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(getApplication(), MainViewActivity.class);
-        startActivity(intent);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //return super.onCreateOptionsMenu(menu);
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_memo, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_addmeno:
+                type = 0;
+                Intent intent1 = new Intent(getApplication(), MemoActivity.class);
+                startActivity(intent1);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 }

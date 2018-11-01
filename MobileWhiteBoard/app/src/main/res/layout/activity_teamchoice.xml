@@ -1,90 +1,239 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="0.2"
-        android:orientation="horizontal"
-        android:gravity="center"
-        >
-        <RadioGroup
-            android:id="@+id/rg_teamChoice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
-            android:paddingLeft="20dp">
+    <RelativeLayout
+        android:id="@+id/layout_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-            <RadioButton
-                android:id="@+id/rb_WB"
-                android:text="모바일 화이트 보드"
-                android:layout_marginLeft="30dp"
-                android:checked="true"
-                android:layout_width="wrap_content"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#00000000" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_toolbar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <project14_1.cookandroid.com.mobilewhiteboard.TextView.GradientTextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingBottom="32dp"
+                android:text="Mobile\nWhiteBoard"
+                android:textColor="#FFFFFF"
+                android:textSize="48sp"
+                android:textStyle="bold|italic" />
 
-            <RadioButton
-                android:id="@+id/rb_task"
-                android:text="업무 분담"
-                android:layout_marginLeft="30dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </RadioGroup>
-    </LinearLayout>
+            <RelativeLayout
+                android:id="@+id/ibtn_tName_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title"
+                android:background="@drawable/background_second_ripple"
+                android:clickable="true"
+                android:padding="24dp">
 
-    <ImageButton
-        android:id="@+id/ibtn_tName_1"
-        android:src="@drawable/nougat"
-        android:layout_width="98dp"
-        android:layout_height="104dp"
-        android:layout_marginTop="50dp"
-        android:layout_gravity="center_horizontal"
-        android:scaleType="centerInside"
-        android:layout_weight="0.04" />
-    <TextView
-        android:text="모바일 프로그래밍"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal" />
+                <ImageView
+                    android:id="@+id/imageAndroid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_android_24dp" />
 
-    <ImageButton
-        android:id="@+id/ibtn_tName_2"
-        android:src="@android:drawable/sym_def_app_icon"
-        android:layout_width="98dp"
-        android:layout_height="104dp"
-        android:layout_marginTop="50dp"
-        android:layout_gravity="center_horizontal"
-        android:scaleType="centerInside"
-        android:layout_weight="0.04" />
-    <TextView
-        android:text="전공종합설계"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageAndroid"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="0.8"
-        ></LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="0.4">
-        <ImageButton
-            android:id="@+id/ibtn_t_manage"
-            android:src="@drawable/iocn_setting"
-            android:layout_marginLeft="320dp"
-            android:layout_marginBottom="10dp"
-            android:scaleType="centerInside"
-            android:layout_width="80dp"
-            android:layout_weight="0.2"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+                    <TextView
+                        android:id="@+id/textTitleMobile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="2dp"
+                        android:text="모바일 프로그래밍"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
-</LinearLayout>
+                    <RadioGroup
+                        android:id="@+id/rg_teamChoice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/textTitleMobile"
+                        android:layout_marginTop="16dp"
+                        android:gravity="left"
+                        android:orientation="vertical"
+                        android:theme="@style/Radio">
+
+                        <RadioButton
+                            android:id="@+id/rb_WB"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="모바일 화이트 보드"
+                            android:textColor="#FFFFFF" />
+
+                        <RadioButton
+                            android:id="@+id/rb_task"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="업무 분담"
+                            android:textColor="#FFFFFF" />
+                    </RadioGroup>
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/view_shadow_first"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_alignTop="@+id/ibtn_tName_1"
+                android:background="@drawable/shadow_layout" />
+
+            <RelativeLayout
+                android:id="@+id/ibtn_tName_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ibtn_tName_1"
+                android:background="@drawable/background_third_ripple"
+                android:clickable="true"
+                android:padding="24dp">
+
+                <ImageView
+                    android:id="@+id/imageSettings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_android_24dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageSettings"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textTitleSettings"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="2dp"
+                        android:text="전공종합설계"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/view_shadow_second"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_alignTop="@+id/ibtn_tName_2"
+                android:background="@drawable/shadow_layout" />
+
+            <RelativeLayout
+                android:id="@+id/ibtn_tName_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ibtn_tName_2"
+                android:background="@drawable/background_fourth_ripple"
+                android:clickable="true"
+                android:padding="24dp">
+
+                <ImageView
+                    android:id="@+id/imageThird"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_android_24dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageThird"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textTitleThird"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="2dp"
+                        android:text="Text"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/view_shadow_third"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_alignTop="@+id/ibtn_tName_3"
+                android:background="@drawable/shadow_layout" />
+
+            <RelativeLayout
+                android:id="@+id/ibtn_tName_4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ibtn_tName_3"
+                android:background="@drawable/background_fifth_ripple"
+                android:clickable="true"
+                android:padding="24dp">
+
+                <ImageView
+                    android:id="@+id/imageForth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_android_24dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageForth"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textTitleForth"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="2dp"
+                        android:text="Text"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/view_shadow_forth"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_alignTop="@+id/ibtn_tName_4"
+                android:background="@drawable/shadow_layout" />
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

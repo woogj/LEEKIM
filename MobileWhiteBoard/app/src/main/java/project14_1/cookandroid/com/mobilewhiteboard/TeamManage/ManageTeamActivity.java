@@ -46,7 +46,7 @@ public class ManageTeamActivity extends AppCompatActivity implements AdapterView
     Spinner spinTeam;
     String[] item;
     int choseSearch =0;
-    static int teamtype = 0;
+    public static int teamtype = 0;
     String myJSON;
     JSONArray teamInfo = null;
     ArrayList<HashMap<String, String>> teamInfoList;

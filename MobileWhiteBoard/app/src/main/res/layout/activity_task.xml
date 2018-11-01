@@ -1,177 +1,218 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
 
-
-    <RelativeLayout
-        android:id="@+id/rlyTaskChoice"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_alignParentTop="true"
-        >
-        <TextView
-            android:id="@+id/tvTName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="25dp"
-            android:hint="Team Name"/>
-        <TextView
-            android:id="@+id/tvTSchedule"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="30dp"
-            android:hint="Team Schedule"
-            android:layout_below="@+id/tvTName"/>
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFFFFF" />
 
-        <RadioGroup
-            android:id="@+id/rgTaskChoice"
-            android:layout_below="@+id/tvTSchedule"
+    <View
+        android:id="@+id/view_shadow_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_below="@id/layout_menu"
+        android:background="@drawable/shadow_toolbar" />
+
+    <LinearLayout
+        android:id="@+id/layout_menu"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_below="@id/toolbar"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/layout_schedule"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:orientation="horizontal">
-            <RadioButton
-                android:id="@+id/rbAllTask"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
                 android:text="All Schedule"
-                android:layout_weight="1"
+                android:textColor="#222222" />
+
+            <View
+                android:id="@+id/viewSchedule"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/background_tap" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="1.5dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="#eeeeee" />
+
+        <RelativeLayout
+            android:id="@+id/layout_private"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true">
+
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:checked="true"/>
-            <RadioButton
-                android:id="@+id/rbPrivateTask"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
                 android:text="Private"
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent" />
-        </RadioGroup>
-    </RelativeLayout>
+                android:textColor="#222222" />
+
+            <View
+                android:id="@+id/viewPrivate"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/background_first2"
+                android:visibility="invisible" />
+        </RelativeLayout>
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/rlyTaskChoice">
-
-
+        android:layout_below="@+id/layout_menu">
 
         <RelativeLayout
             android:id="@+id/rlyALLTask"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible">
+            android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/btnAllTask"
-                android:text="AllTask"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
             <RelativeLayout
                 android:id="@+id/rty1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/btnAllTask">
-            <TextView
-                android:id="@+id/tvTitle1"
-                android:text="▶ 업무명"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginTop="10dp"
-                android:textSize="20dp" />
-            <TextView
-                android:text="▶ 담당자"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="40dp"
-                android:layout_marginTop="10dp"
-                android:layout_alignParentRight="true"
-                android:textSize="20dp" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvTitle1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginTop="12dp"
+                    android:text="업무명"
+                    android:textColor="#222222"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginRight="24dp"
+                    android:text="담당자"
+                    android:textColor="#222222"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
             </RelativeLayout>
+
+            <View
+                android:id="@+id/viewTask"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_below="@id/rty1"
+                android:layout_marginTop="8dp"
+                android:background="#eeeeee" />
+
             <ListView
                 android:id="@+id/lvTask"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/rty1">
-            </ListView>
+                android:layout_below="@+id/viewTask"
+                android:clipToPadding="false"
+                android:divider="#00000000"
+                android:dividerHeight="0dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:scrollbars="none" />
         </RelativeLayout>
 
-        <RelativeLayout
+        <android.support.v7.widget.CardView
             android:id="@+id/rlyTaskAdd"
-            android:layout_gravity="center"
-            android:background="@color/colorBaseBlue"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="60dp"
-            android:layout_marginTop="60dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
+            android:layout_margin="16dp"
+            android:padding="16dp"
             android:visibility="invisible">
 
-            <Spinner
-                android:id="@+id/spnMemberAdd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|top"></Spinner>
-            <Button
-                android:id="@+id/btnClose"
-                android:text="x"
-                android:layout_alignParentRight="true"
-                android:layout_width="60px"
-                android:layout_height="60px" />
-            <Button
-                android:id="@+id/btnInputTask"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/btnClose"
-                android:text="입력"
-                android:layout_width="120px"
-                android:layout_height="60px" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tvTask"
-                android:text="할 일을 입력하시오."
-                android:layout_below="@+id/spnMemberAdd"
-                android:layout_margin="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <Spinner
+                    android:id="@+id/spnMemberAdd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="16dp" />
 
-            <EditText
-                android:id="@+id/edtTask"
-                android:layout_below="@+id/tvTask"
-                android:layout_margin="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/tvUserID"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="invisible"/>
-            <TextView
-                android:id="@+id/tvNo"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="invisible"/>
-        </RelativeLayout>
+                <ImageButton
+                    android:id="@+id/btnInputTask"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_send_24dp" />
+
+                <View
+                    android:id="@+id/viewTask2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1.5dp"
+                    android:layout_below="@id/btnInputTask"
+                    android:background="#eeeeee" />
+
+                <EditText
+                    android:id="@+id/edtTask"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/viewTask2"
+                    android:layout_margin="16dp"
+                    android:background="#00000000"
+                    android:gravity="top"
+                    android:hint="한 일을 입력하세요." />
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
         <RelativeLayout
             android:id="@+id/rlyPrivateTask"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="invisible">
-            <Button
-                android:id="@+id/btnAddTask"
-                android:text="+"
-                android:layout_alignParentRight="true"
+
+            <Spinner
+                android:id="@+id/spnMember"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp" />
+
+            <ImageButton
+                android:id="@+id/btnAddTask"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_margin="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_add_24dp" />
 
             <RelativeLayout
                 android:id="@+id/rlyViewPrivate"
-                android:layout_below="@+id/btnAddTask"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_below="@+id/spnMember">
 
                 <project14_1.cookandroid.com.mobilewhiteboard.TaskDrawing
                     android:id="@+id/TaskDrawing"
@@ -182,9 +223,6 @@
                     android:background="@color/colorWhite" />
 
             </RelativeLayout>
-
         </RelativeLayout>
-
     </FrameLayout>
-
 </RelativeLayout>

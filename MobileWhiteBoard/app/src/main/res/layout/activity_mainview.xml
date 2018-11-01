@@ -1,64 +1,235 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="0dip"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.14"
-        >
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="0dip"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.28"
-        android:gravity="center"
-        >
-        <Button
-            android:id="@+id/btn_personal"
-            android:text="개인 일정 관리"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="40dp"
-            android:paddingBottom="40dp"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            />
-    </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/layout_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="0dip"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.14"
-        >
-    </LinearLayout>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#00000000" />
+    </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="0dip"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.28"
-        android:gravity="center"
-        >
-        <Button
-            android:id="@+id/btn_team"
-            android:text="  팀 프로젝트  "
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="40dp"
-            android:paddingBottom="40dp"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            />
-    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_toolbar">
 
-    <LinearLayout
-        android:layout_width="0dip"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.14"
-        >
-    </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+            <project14_1.cookandroid.com.mobilewhiteboard.TextView.GradientTextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingBottom="32dp"
+                android:text="Mobile\nWhiteBoard"
+                android:textColor="#FFFFFF"
+                android:textSize="48sp"
+                android:textStyle="bold|italic" />
 
-</LinearLayout>
+            <RelativeLayout
+                android:id="@+id/btn_personal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title"
+                android:background="@drawable/background_second_ripple"
+                android:clickable="true"
+                android:padding="32dp">
+
+                <ImageView
+                    android:id="@+id/imagePeople"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_perm_identity_24dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="32dp"
+                    android:layout_toRightOf="@+id/imagePeople"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="개인 일정 관리"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="개인메모와 날짜관리"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/view_shadow_first"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_alignTop="@id/btn_personal"
+                android:background="@drawable/shadow_layout" />
+
+            <RelativeLayout
+                android:id="@+id/btn_team"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_personal"
+                android:background="@drawable/background_third_ripple"
+                android:clickable="true"
+                android:padding="32dp">
+
+                <ImageView
+                    android:id="@+id/imageTeam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_people_outline_24dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="32dp"
+                    android:layout_toRightOf="@+id/imageTeam"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#00000000"
+                        android:text="팀 프로젝트"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="팀전체의 일정 관리"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/view_shadow_second"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_below="@id/btn_personal"
+                android:background="@drawable/shadow_layout" />
+
+            <RelativeLayout
+                android:id="@+id/btn_third"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_team"
+                android:background="@drawable/background_fourth_ripple"
+                android:clickable="true"
+                android:padding="32dp">
+
+                <ImageView
+                    android:id="@+id/imageThird"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_people_outline_24dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="32dp"
+                    android:layout_toRightOf="@+id/imageThird"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#00000000"
+                        android:text="Title"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Subtitle"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/view_shadow_third"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_below="@id/btn_team"
+                android:background="@drawable/shadow_layout" />
+
+            <RelativeLayout
+                android:id="@+id/btn_forth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_third"
+                android:background="@drawable/background_fifth_ripple"
+                android:clickable="true"
+                android:padding="32dp">
+
+                <ImageView
+                    android:id="@+id/imageForth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_people_outline_24dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="32dp"
+                    android:layout_toRightOf="@+id/imageForth"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#00000000"
+                        android:text="Title"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Subtitle"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/view_shadow_forth"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_below="@id/btn_third"
+                android:background="@drawable/shadow_layout" />
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

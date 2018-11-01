@@ -15,4 +15,17 @@
     <color name="colorOriginButton">#eaf9e2</color>
     <color name="colorOriginButton1">#60AF62</color>
     <color name="colorChangeButton">#789579</color>
+  <color name="loginColorLeft">#3d8bbb</color>
+    <color name="loginColorRight">#50aed0</color>
+
+    <color name="mainFirstColor">#4fd0cc</color>
+    <color name="mainFirstColorPress">#37ccb8</color>
+    <color name="mainSecondColor">#4fb0d3</color>
+    <color name="mainSecondColorPress">#5a99cc</color>
+    <color name="mainThirdColor">#4f80ba</color>
+    <color name="mainThirdColorPress">#507da6</color>
+    <color name="mainFourthColor">#61559d</color>
+    <color name="mainFourthColorPress">#575481</color>
+    <color name="mainFifthColor">#614172</color>
+    <color name="mainFifthColorPress">#514462</color>
 </resources>
