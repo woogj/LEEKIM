@@ -17,10 +17,14 @@ import android.widget.Toast;
 import project14_1.cookandroid.com.mobilewhiteboard.TeamManage.ManageTeamActivity;
 import project14_1.cookandroid.com.mobilewhiteboard.Whiteboard.WhiteboardActivity;
 
+import static project14_1.cookandroid.com.mobilewhiteboard.MainActivity.IPaddress;
 /**
  * Created by com on 2018-01-21.
  */
 public class TeamChoiceActivity extends AppCompatActivity {
+
+    DAO dao = new DAO();
+
     protected void onCreate(Bundle savedIntanteState){
         super.onCreate(savedIntanteState);
         setContentView(R.layout.activity_teamchoice);
@@ -44,6 +48,11 @@ public class TeamChoiceActivity extends AppCompatActivity {
         RelativeLayout ibtn_tName_1 = (RelativeLayout) findViewById(R.id.ibtn_tName_1);
         RelativeLayout ibtn_tName_2 = (RelativeLayout) findViewById(R.id.ibtn_tName_2);
 
+        String serverURL = "http://" + IPaddress + "/android_db_api/get_team_list.php";
+        String postParameters = "id="+MainActivity.id;
+        dao.DAO(serverURL,postParameters);
+
+        Toast.makeText(this, "result is "+dao.myJSON, Toast.LENGTH_SHORT).show();
         ibtn_tName_1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
