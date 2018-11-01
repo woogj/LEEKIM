@@ -18,9 +18,12 @@
     <RelativeLayout
         android:id="@+id/rlyResultTeamInfo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="450dp"
         android:layout_below="@+id/toolbarResult"
-        >
+        android:layout_above="@+id/rlyChange"
+        android:clickable="false"
+        android:padding="8dp">
+
         <TextView
             android:id="@+id/timErum"
             android:layout_width="wrap_content"
@@ -28,131 +31,135 @@
             android:layout_marginLeft="15dp"
             android:layout_marginTop="10dp"
             android:text="팀 이름  : "
-            android:textSize="22dp"
             android:textColor="#000000"
-            android:textStyle="bold"
-            android:background="@color/colorBackGround"/>
+            android:textSize="22dp"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/tvTeamName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_alignRight="@+id/timErum"
             android:layout_alignParentRight="true"
-            android:textSize="22dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/timErum"
             android:textColor="#1c2e44"
+            android:textSize="22dp"
             android:textStyle="bold"
-            android:background="@color/colorBackGround"
-            tools:textSize="22dp"
             tools:textColor="#1c2e44"
-            tools:textStyle="bold"/>
+            tools:textSize="22dp"
+            tools:textStyle="bold" />
+
         <TextView
             android:id="@+id/juje"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/timErum"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="10dp"
-            android:layout_below="@+id/timErum"
-            android:text="팀 주제  : "
-            android:textSize="18dp"
             android:focusable="false"
+            android:text="팀 주제  : "
             android:textColor="#000000"
-            android:textStyle="bold"
-            android:background="@color/colorBackGround"/>
+            android:textSize="18dp"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/edtTeamObject"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_below="@+id/tvTeamName"
             android:layout_marginTop="8dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="6dp"
             android:layout_toRightOf="@+id/juje"
+            android:background="@null"
             android:breakStrategy="balanced"
+            android:singleLine="true"
             android:textColor="#000000"
             android:textSize="16dp"
-            android:background="@null"
-            tools:text="test"
-            />
+            tools:text="test" />
 
         <TextView
             android:id="@+id/timgeayo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/juje"
+            android:layout_marginBottom="10dp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="15dp"
-            android:layout_marginBottom="10dp"
-            android:layout_below="@+id/juje"
+            android:background="@color/colorBackGround"
             android:text="개요  "
-            android:textSize="18dp"
             android:textColor="#000000"
-            android:textStyle="bold"
-            android:background="@color/colorBackGround"/>
+            android:textSize="18dp"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/edtTeamSummary"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="15dp"
-            android:padding="10dp"
             android:layout_below="@+id/timgeayo"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp"
             android:background="@null"
-            android:textSize="20dp"
+            android:gravity="top"
+            android:padding="10dp"
             android:textColor="#000000"
-            tools:text="test"/>
+            android:textSize="20dp"
+            tools:text="test" />
 
         <!--android:focusable="false"-->
 
         <ImageButton
             android:id="@+id/ibLeader"
-            android:layout_below="@+id/edtTeamSummary"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:layout_marginTop="15dp"
+            android:layout_below="@+id/edtTeamSummary"
             android:layout_marginLeft="30dp"
-            android:background="@drawable/leadership"/>
+            android:layout_marginTop="15dp"
+            android:background="@drawable/leadership" />
+
         <TextView
             android:id="@+id/tvTeamMaster"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="15dp"
-            android:padding="10dp"
-            android:layout_toRightOf="@+id/ibLeader"
             android:layout_below="@+id/edtTeamSummary"
-            android:textSize="20dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/ibLeader"
+            android:padding="10dp"
             android:textColor="#000000"
-            tools:text="test"
-           />
+            android:textSize="20dp"
+            tools:text="test" />
+
         <ImageButton
             android:id="@+id/ibMember"
-            android:layout_below="@+id/ibLeader"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginTop="35dp"
+            android:layout_below="@+id/ibLeader"
             android:layout_marginLeft="30dp"
-            android:background="@drawable/network"/>
+            android:layout_marginTop="35dp"
+            android:background="@drawable/network" />
 
         <TextView
             android:id="@+id/tvTeamMember"
             android:layout_width="270dp"
             android:layout_height="44dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="8dp"
             android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/ibMember" />
+            android:layout_alignTop="@+id/ibMember"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="8dp" />
 
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rlyChange"
         android:layout_width="match_parent"
-        android:layout_height="62dp"
+        android:layout_height="30dp"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/rlyResultTeamInfo"
+        android:layout_alignParentEnd="true"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"

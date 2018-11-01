@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     String pw, name, mJsonString;
     public static String id,
 
-            IPaddress = "192.168.10.5"; //내 IP
+            IPaddress = "14.63.168.206"; //내 IP
 
     /** 서버       : 14.63.168.206
      *  LHW 집     : 192.168.219.169:81
@@ -213,7 +213,8 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if(System.currentTimeMillis() - prevPressTime <= DURATION_TIME) {
             moveTaskToBack(true);
-            finish();
+           // finish();
+            finishAffinity();
             android.os.Process.killProcess(android.os.Process.myPid());
         }else{
             prevPressTime = System.currentTimeMillis();
