@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     String pw, name, mJsonString;
     public static String id,
 
-            IPaddress = "192.168.219.169:81"; //내 IP
+            IPaddress = "192.168.43.35:81"; //내 IP
 
     /** 서버       : 14.63.168.206
      *  LHW 집     : 192.168.219.169:81

@@ -64,7 +64,9 @@ public class Drawing extends View {
     int dragCount = 0;
     int index = -1;
     Boolean Press = false,
-            Start = true;
+            Start = true,
+            OtherSigI = false,
+            OtherSigP = false;
     Long timer;
 
     int MaxBufferSize = 1 * 1024 * 1024;
@@ -112,30 +114,30 @@ public class Drawing extends View {
 
             } else {
                 //배열에 있는 것들을 그린다.
-                ContentHistory map = All.get(i);
-                if (map.getType().equals("Text")) {
+                ContentHistory ch = All.get(i);
+                if (ch.getType().equals("Text")) {
                     //글 그리기
-                    map.drawCanvas(canvas);
-                } else if (map.getType().equals("Drawing")) {
+                    ch.drawCanvas(canvas);
+                } else if (ch.getType().equals("Drawing")) {
                     //손글씨 그리기
-                    if (Paths != null) {
-                        map.setCoord(Paths);
-                        Paths = null;
-                        map.setSig("N");
-                    } else if (map.getCoord().equals("null") && map.getSig() == "N") {
-                        //경로가 비어있을 경우
-                        load_paths task1 = new load_paths();
-                        if (task1.getStatus() == AsyncTask.Status.RUNNING) {
-                            task1.cancel(true);
+                    if (Paths != null && ch.getSig() == "Y") {
+                        ch.setCoord(Paths);
+                        ch.setSig("N");
+                    } else if (ch.getCoord().equals("null") && ch.getSig() == "N") {
+                        if(!OtherSigP) {
+                            //경로가 비어있을 경우
+                            load_paths task1 = new load_paths();
+                            task1.execute("http://" + MainActivity.IPaddress + "/android_db_api/" + ch.getPath());
+                            ch.setSig("Y");
+                            OtherSigP = true;
                         }
-                        task1.execute("http://" + MainActivity.IPaddress + "/android_db_api/" + map.getPath());
-                        map.setSig("Y");
-                    } else if (map.getCoord().startsWith("{")) {
+                    } else if (ch.getCoord().startsWith("{")) {
                         //경로가 json형식으로 저장되있는 경우 내용을 배열에 넣는다.
+                        Log.d("TAG", Paths);
                         showPaths(i);
-                    } else {
+                    } else if (!ch.getCoord().equals("null")){
                         //배열에 있는 정보로 그림 그리기
-                        String[] coordA = map.getCoord().split("/"), coordB;
+                        String[] coordA = ch.getCoord().split("/"), coordB;
                         float touchX = 0, touchY = 0;
                         for (int j = 0; j < coordA.length; j++) {
                             coordB = coordA[j].split(",");
@@ -152,30 +154,31 @@ public class Drawing extends View {
                                 drawPath1.lineTo(touchX, touchY);
                             }
                         }
-                        drawPaint1.setColor(map.getColor());
+                        drawPaint1.setColor(ch.getColor());
                         drawCanvas.drawPath(drawPath1, drawPaint1);
                         drawPath1.reset();
-                    }
-                } else if (map.getType().equals("Picture")) {
+                    }else { }
+                } else if (ch.getType().equals("Picture")) {
                     // 사진 그리기
-                    if (DownIMG != null) {
-                        map.setBitmap(DownIMG);
-                        All.add(i, map);
+                    if (DownIMG != null && ch.getSig() == "Y") {
+                        ch.setBitmap(DownIMG);
+                        All.add(i, ch);
                         DownIMG = null;
-                        map.setSig("N");
-                    } else if (map.checkBitmap().equals("null") && map.getSig() == "N") {
-                        load_image task2 = new load_image();
-                        if (task2.getStatus() == AsyncTask.Status.RUNNING) {
-                            task2.cancel(true);
+                        ch.setSig("N");
+                    } else if (ch.checkBitmap().equals("null") && ch.getSig() == "N") {
+                        if (!OtherSigI) {
+                            load_image task2 = new load_image();
+                            task2.execute("http://" + MainActivity.IPaddress + "/android_db_api/" + ch.getPath());
+                            ch.setSig("Y");
+                            OtherSigI = true;
                         }
-                        task2.execute("http://" + MainActivity.IPaddress + "/android_db_api/" + map.getPath());
-                        map.setSig("Y");
-                    } else {
-                        int nh = (int) (map.getBitmap().getHeight() * (512.0 / map.getBitmap().getWidth()));
-                        Bitmap scaled = Bitmap.createScaledBitmap(map.getBitmap(), 512, nh, true);
-                        canvas.drawBitmap(scaled, null, map.getSetXY(), null);
-                        scaled.recycle();
-                    }
+                    } else if (!ch.checkBitmap().equals("null")) {
+                        int nh1 = (int) (ch.getBitmap().getHeight() * (512.0 / ch.getBitmap().getWidth()));
+                        Bitmap scaled1 = Bitmap.createScaledBitmap(ch.getBitmap(), 512, nh1, true);
+                        canvas.drawBitmap(scaled1, null, ch.getSetXY(), null);
+                        scaled1.recycle();
+                        OtherSigI = false;
+                    }else { }
                 } else {
                     Log.d(TAG, "error");
                 }
@@ -193,10 +196,10 @@ public class Drawing extends View {
 
                 bitmap = WhiteboardActivity.bitmap;
                 if (bitmap != null) {
-                    int nh = (int) (bitmap.getHeight() * (512.0 / bitmap.getWidth()));
-                    Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
-                    canvas.drawBitmap(scaled, null, setXY, null);
-                    scaled.recycle();
+                    int nh2 = (int) (bitmap.getHeight() * (512.0 / bitmap.getWidth()));
+                    Bitmap scaled2 = Bitmap.createScaledBitmap(bitmap, 512, nh2, true);
+                    canvas.drawBitmap(scaled2, null, setXY, null);
+                    scaled2.recycle();
                 }
             } else {
             }
@@ -386,21 +389,18 @@ public class Drawing extends View {
                             if(All.get(i).isClicked(event.getX(), event.getY())){
                                 index = i;
                                 Draw.add(All.get(i));
-                                Draw.get(i).makeGapX(event.getX());
-                                Draw.get(i).makeGapY(event.getY());
+                                Draw.get(0).makeGapX(event.getX());
+                                Draw.get(0).makeGapY(event.getY());
 
                                 lce = new LongClickEvent();
-                                if(lce.getStatus()== AsyncTask.Status.RUNNING){
-                                    lce.cancel(true);
-                                }
                                 lce.execute(System.currentTimeMillis());
-                                break;
+                                i = All.size();
                             }
                         }
                         break;
                     case MotionEvent.ACTION_MOVE:
                         if (dragCount > 5 && index != -1) {
-                            Draw.get(index).setPosition(event.getX(), event.getY());
+                            Draw.get(0).setPosition(event.getX(), event.getY());
                         }else {
                             dragCount++;
                         }
@@ -410,40 +410,40 @@ public class Drawing extends View {
                         if(index == -1){
 
                         }else if(dragCount > 5){
-                            switch (Draw.get(index).getType()) {
+                            switch (Draw.get(0).getType()) {
                                 case "Text" :
                                     GetData PutText = new GetData();
                                     if(PutText.getStatus()== AsyncTask.Status.RUNNING){
                                         PutText.cancel(true);
                                     }
-                                    PutText.execute(Draw.get(index).getText(), Draw.get(index).getText(),"Text", Float.toString(Draw.get(index).getX()) , Float.toString(Draw.get(index).getY()), Float.toString(Draw.get(index).getWidth()), Float.toString(Draw.get(index).getHeight()));
+                                    PutText.execute(Draw.get(0).getText(), Draw.get(0).getText(),"Text", Float.toString(Draw.get(0).getX()) , Float.toString(Draw.get(0).getY()), Float.toString(Draw.get(0).getWidth()), Float.toString(Draw.get(0).getHeight()));
                                     break;
                                 case "Picture" :
                                     GetData PutPicture= new GetData();
                                     if(PutPicture.getStatus()== AsyncTask.Status.RUNNING){
                                         PutPicture.cancel(true);
                                     }
-                                    PutPicture.execute(Draw.get(index).getPath(), Draw.get(index).getPath(),"Picture", Float.toString(Draw.get(index).getX()) , Float.toString(Draw.get(index).getY()), Float.toString(Draw.get(index).getWidth()), Float.toString(Draw.get(index).getHeight()));
+                                    PutPicture.execute(Draw.get(0).getPath(), Draw.get(0).getPath(),"Picture", Float.toString(Draw.get(0).getX()) , Float.toString(Draw.get(0).getY()), Float.toString(Draw.get(0).getWidth()), Float.toString(Draw.get(0).getHeight()));
                                     break;
                             }
-                        }else if (Draw.get(index).getType().equals("Text")) {
+                        }else if (Draw.get(0).getType().equals("Text")) {
                             // 텍스트의 내용을 수정시킨다.
                             final WhiteboardActivity activity = (WhiteboardActivity) this.getContext();
                             AlertDialog.Builder alert = new AlertDialog.Builder(activity);
                             alert.setTitle("텍스트 수정");
                             // Create TextView
                             final EditText input = new EditText(activity);
-                            WhiteboardActivity.data = Draw.get(index).getText();
-                            input.setText(Draw.get(index).getText().toString());
+                            WhiteboardActivity.data = Draw.get(0).getText();
+                            input.setText(Draw.get(0).getText().toString());
                             alert.setView(input);
                             alert.setPositiveButton("입력", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    Draw.get(index).editText(input.getText().toString());
+                                    Draw.get(0).editText(input.getText().toString());
                                     GetData SetText = new GetData();
                                     if(SetText.getStatus()== AsyncTask.Status.RUNNING){
                                         SetText.cancel(true);
                                     }
-                                    SetText.execute(WhiteboardActivity.data, Draw.get(index).getText(),"Text", Float.toString(Draw.get(index).getX()) , Float.toString(Draw.get(index).getY()), Float.toString(Draw.get(index).getWidth()), Float.toString(Draw.get(index).getHeight()));
+                                    SetText.execute(WhiteboardActivity.data, Draw.get(0).getText(),"Text", Float.toString(Draw.get(0).getX()) , Float.toString(Draw.get(0).getY()), Float.toString(Draw.get(0).getWidth()), Float.toString(Draw.get(0).getHeight()));
                                 }
                             });
                             alert.show();
@@ -579,6 +579,7 @@ public class Drawing extends View {
                 map.setColor(Integer.parseInt(item.getString("color")));
                 All.add(j, map);
             }
+            OtherSigP = false;
             Paths = null;
         } catch (JSONException e) {
             Log.d(TAG, "showPaths : ", e);
@@ -629,7 +630,7 @@ public class Drawing extends View {
                 }
 
                 for (int i = 0; i < List.size(); i++) {
-                    for (int j = 0; j < New.size(); j++) {
+                    for (int j = i + 1; j < New.size(); j++) {
                         if (List.get(i).getPath().equals(New.get(j).getPath())) {
                             if ((List.get(i).getX() == New.get(j).getX()) && (List.get(i).getY() == New.get(j).getY())) {
                                 if ((i != j) && (i < j)) {
@@ -641,19 +642,6 @@ public class Drawing extends View {
                                     New.add(i, New.get(j));
                                     New.remove(j + 1);
                                 }
-                                switch (New.get(i).getType()) {
-                                    case "Picture":
-                                        New.get(i).setWidth(List.get(i).getWidth());
-                                        New.get(i).setHeight(List.get(i).getHeight());
-                                        New.get(i).setBitmap(List.get(i).getBitmap());
-                                        break;
-                                    case "Drawing":
-                                        New.get(i).setWidth(List.get(i).getWidth());
-                                        New.get(i).setHeight(List.get(i).getHeight());
-                                        New.get(i).setCoord(List.get(i).getCoord());
-                                        New.get(i).setColor(List.get(i).getColor());
-                                        break;
-                                }
                                 New.get(i).setX(List.get(i).getX());
                                 New.get(i).setY(List.get(i).getY());
                             }
@@ -663,7 +651,7 @@ public class Drawing extends View {
 
                 if (New.size() == List.size()) {
                     for (int i = 0; i < List.size(); i++) {
-                        if (!(New.get(i).equals(List.get(i)))) {
+                        if (!(New.get(i).getPath().equals(List.get(i).getPath()))) {
                             New.add(List.get(i));
                             New.remove(i);
                         }
@@ -672,16 +660,16 @@ public class Drawing extends View {
                     for (int i = 0; i < New.size(); i++) {
                         if (i > List.size() - 1) {
                             New.remove(i);
-                        }else if (!(New.get(i).equals(List.get(i)))) {
-                            New.remove(i);
+                        }else if (!(New.get(i).getPath().equals(List.get(i).getPath()))) {
                             New.add(List.get(i));
+                            New.remove(i);
                         }
                     }
                 }else if (List.size() > New.size()) {
                     for (int i = 0; i < List.size(); i++) {
                         if (i > New.size() - 1) {
                             New.add(List.get(i));
-                        }else if (!(New.get(i).equals(List.get(i)))) {
+                        }else if (!(New.get(i).getPath().equals(List.get(i).getPath()))) {
                             New.add(List.get(i));
                             New.remove(i);
                         }
@@ -844,10 +832,8 @@ public class Drawing extends View {
                 //HW
                 alert.setNegativeButton("삭제", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        //배열에서 삭제
-                        All.remove(index);
-                        Log.d(TAG, All.toString());
                         //DB에서 삭제
+
                     }
                 });
 
@@ -876,7 +862,7 @@ public class Drawing extends View {
                 gdt.start();
 
                 long now = System.currentTimeMillis(), past = now;
-                while (4500 >= now - past){ //HW 시간초 조절 필요
+                while (6000 >= now - past){ //HW 시간초 조절 필요
                     now = System.currentTimeMillis();
                 }
             }
@@ -943,7 +929,7 @@ public class Drawing extends View {
                 errorString = e.toString();
             }
             if (result == null){
-                Toast.makeText(Drawing.this.getContext(), errorString, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(Drawing.this.getContext(), errorString, Toast.LENGTH_SHORT).show();
             } else if (result.startsWith("{")) {
                 mJsonString = result;
                 showResult sr = new showResult();
