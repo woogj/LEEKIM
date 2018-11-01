@@ -107,6 +107,7 @@ public class Drawing extends View {
                 if(Paths != null) {
                     map.setCoord(Paths);
                     Paths = null;
+                    map.setSig("N");
                 }else if (map.getCoord().equals("null") && map.getSig() == "N") {
                     //경로가 비어있을 경우
                     load_paths task1 = new load_paths();
@@ -147,6 +148,7 @@ public class Drawing extends View {
                     map.setBitmap(DownIMG);
                     All.add(i, map);
                     DownIMG = null;
+                    map.setSig("N");
                 }else if (map.checkBitmap().equals("null") && map.getSig() == "N") {
                     load_image task2 = new load_image();
                     if(task2.getStatus()== AsyncTask.Status.RUNNING){
@@ -231,6 +233,7 @@ public class Drawing extends View {
             RenewThread rt = new RenewThread();
             li.start();
             rt.start();
+            Start = false;
         }
         //Log.d("TAG", All.toString()); //배열 확인용
     }
@@ -600,71 +603,66 @@ public class Drawing extends View {
                     List.remove(overlap.get(i));
                 }
 
-                //HW 사진 경로 있는 것인지 확인
-                if (!Start) {
-                    for (int i = 0; i < List.size(); i++) {
-                        for (int j = 0; j < All.size(); j++) {
-                            if (List.get(i).getPath().equals(All.get(j).getPath())) {
-                                if ((List.get(i).getX() == All.get(j).getX()) && (List.get(i).getY() == All.get(j).getY())) {
-                                    if ((i != j) && (i < j)) {
-                                        All.add(i, All.get(j));
-                                        All.remove(j + 1);
-                                    }
-                                } else {
-                                    if ((i != j) && (i < j)) {
-                                        All.add(i, All.get(j));
-                                        All.remove(j + 1);
-                                    }
-                                    switch (All.get(i).getType()) {
-                                        case "Drawing":
-                                            All.get(i).setWidth(List.get(i).getWidth());
-                                            All.get(i).setHeight(List.get(i).getHeight());
-                                            All.get(i).setBitmap(List.get(i).getBitmap());
-                                            break;
-                                        case "Picture":
-                                            All.get(i).setWidth(List.get(i).getWidth());
-                                            All.get(i).setHeight(List.get(i).getHeight());
-                                            All.get(i).setCoord(List.get(i).getCoord());
-                                            All.get(i).setColor(List.get(i).getColor());
-                                            break;
-                                    }
-                                    All.get(i).setX(List.get(i).getX());
-                                    All.get(i).setY(List.get(i).getY());
+                for (int i = 0; i < List.size(); i++) {
+                    for (int j = 0; j < All.size(); j++) {
+                        if (List.get(i).getPath().equals(All.get(j).getPath())) {
+                            if ((List.get(i).getX() == All.get(j).getX()) && (List.get(i).getY() == All.get(j).getY())) {
+                                if ((i != j) && (i < j)) {
+                                    All.add(i, All.get(j));
+                                    All.remove(j + 1);
                                 }
-                            } else { }
+                            } else {
+                                if ((i != j) && (i < j)) {
+                                    All.add(i, All.get(j));
+                                    All.remove(j + 1);
+                                }
+                                switch (All.get(i).getType()) {
+                                    case "Drawing":
+                                        All.get(i).setWidth(List.get(i).getWidth());
+                                        All.get(i).setHeight(List.get(i).getHeight());
+                                        All.get(i).setBitmap(List.get(i).getBitmap());
+                                        break;
+                                    case "Picture":
+                                        All.get(i).setWidth(List.get(i).getWidth());
+                                        All.get(i).setHeight(List.get(i).getHeight());
+                                        All.get(i).setCoord(List.get(i).getCoord());
+                                        All.get(i).setColor(List.get(i).getColor());
+                                        break;
+                                }
+                                All.get(i).setX(List.get(i).getX());
+                                All.get(i).setY(List.get(i).getY());
+                            }
+                        } else { }
+                    }
+                }
+
+                if (All.size() == List.size()) {
+                    for (int i = 0; i < List.size(); i++) {
+                        if (!(All.get(i).equals(List.get(i)))) {
+                            All.add(List.get(i));
+                            All.remove(i);
                         }
                     }
+                }else if (All.size() > List.size()) {
+                    for (int i = 0; i < All.size(); i++) {
+                        if (i > List.size() - 1) {
+                            All.remove(i);
+                        }else if (!(All.get(i).equals(List.get(i)))) {
+                            All.remove(i);
+                            All.add(List.get(i));
+                        }
+                    }
+                }else if (List.size() > All.size()) {
+                    for (int i = 0; i < List.size(); i++) {
+                        if (i > All.size() - 1) {
+                            All.add(List.get(i));
+                        }else if (!(All.get(i).equals(List.get(i)))) {
+                            All.add(List.get(i));
+                            All.remove(i);
+                        }
+                    }
+                }else { }
 
-                    if (All.size() == List.size()) {
-                        for (int i = 0; i < List.size(); i++) {
-                            if (!(All.get(i).equals(List.get(i)))) {
-                                All.add(List.get(i));
-                                All.remove(i);
-                            }
-                        }
-                    }else if (All.size() > List.size()) {
-                        for (int i = 0; i < All.size(); i++) {
-                            if (i > List.size() - 1) {
-                                All.remove(i);
-                            }else if (!(All.get(i).equals(List.get(i)))) {
-                                All.remove(i);
-                                All.add(List.get(i));
-                            }
-                        }
-                    }else if (List.size() > All.size()) {
-                        for (int i = 0; i < List.size(); i++) {
-                            if (i > All.size() - 1) {
-                                All.add(List.get(i));
-                            }else if (!(All.get(i).equals(List.get(i)))) {
-                                All.add(List.get(i));
-                                All.remove(i);
-                            }
-                        }
-                    }else { }
-                }else{
-                    All = List;
-                    Start = false;
-                }
             } catch (JSONException e) {
                 Log.d(TAG, "showResult : ", e);
             }
@@ -837,7 +835,7 @@ public class Drawing extends View {
                 invalidate();
 
                 long now = System.currentTimeMillis(), past = now;
-                while (5000 >= now - past){ //HW 시간초 조절 필요
+                while (2500 >= now - past){ //HW 시간초 조절 필요
                     now = System.currentTimeMillis();
                 }
             }
