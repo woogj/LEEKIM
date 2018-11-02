@@ -23,6 +23,7 @@ public class ContentHistory {
         map = new HashMap<String, Object>();
         map.put("type", "Text");
         map.put("text", text);
+        map.put("path", text);
         map.put("x", x);
         map.put("y", y);
         TextPaint textPaint = new TextPaint();
@@ -33,6 +34,7 @@ public class ContentHistory {
         map.put("textPaint", textPaint);
         map.put("width", (float)bounds.width());
         map.put("height", (float)bounds.height());
+
     }
 
     public void editText(String text) {
@@ -128,6 +130,10 @@ public class ContentHistory {
 
     public void setBitmap (Bitmap bitmap) {
         map.put("bitmap", bitmap);
+    }
+
+    public void setXY (RectF rectF) {
+        map.put("setXY", rectF);
     }
 
     public Bitmap getBitmap() {

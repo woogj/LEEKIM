@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
@@ -42,6 +44,8 @@ import project14_1.cookandroid.com.mobilewhiteboard.MainActivity;
 import project14_1.cookandroid.com.mobilewhiteboard.R;
 
 import static android.content.ContentValues.TAG;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 
 public class Drawing extends View {
     float startX = -1, startY = -1, stopX = -1, stopY = -1, oldx = -1, oldy = -1, i=0;//터치 좌표
@@ -135,7 +139,7 @@ public class Drawing extends View {
                         //경로가 json형식으로 저장되있는 경우 내용을 배열에 넣는다.
                         Log.d("TAG", Paths);
                         showPaths(i);
-                    } else if (!ch.getCoord().equals("null")){
+                    } else if (!ch.getCoord().equals("null") && Paths == null){
                         //배열에 있는 정보로 그림 그리기
                         String[] coordA = ch.getCoord().split("/"), coordB;
                         float touchX = 0, touchY = 0;
@@ -393,7 +397,7 @@ public class Drawing extends View {
                                 Draw.get(0).makeGapY(event.getY());
 
                                 lce = new LongClickEvent();
-                                lce.execute(System.currentTimeMillis());
+                                lce.execute(Draw.get(0));
                                 i = All.size();
                             }
                         }
@@ -629,21 +633,25 @@ public class Drawing extends View {
                     List.remove(overlap.get(i));
                 }
 
+
                 for (int i = 0; i < List.size(); i++) {
-                    for (int j = i + 1; j < New.size(); j++) {
+                    for (int j = i; j < New.size(); j++) {
                         if (List.get(i).getPath().equals(New.get(j).getPath())) {
                             if ((List.get(i).getX() == New.get(j).getX()) && (List.get(i).getY() == New.get(j).getY())) {
-                                if ((i != j) && (i < j)) {
+                                if (i != j) {
                                     New.add(i, New.get(j));
                                     New.remove(j + 1);
                                 }
                             } else {
-                                if ((i != j) && (i < j)) {
+                                if (i != j) {
                                     New.add(i, New.get(j));
                                     New.remove(j + 1);
                                 }
                                 New.get(i).setX(List.get(i).getX());
                                 New.get(i).setY(List.get(i).getY());
+                                if (New.get(i).getType().equals("Picture")) {
+                                    New.get(i).setXY(new RectF(List.get(i).getX(), List.get(i).getY(), List.get(i).getX() + List.get(i).getWidth(), List.get(i).getY() + List.get(i).getHeight()));
+                                }
                             }
                         } else { }
                     }
@@ -661,8 +669,8 @@ public class Drawing extends View {
                         if (i > List.size() - 1) {
                             New.remove(i);
                         }else if (!(New.get(i).getPath().equals(List.get(i).getPath()))) {
-                            New.add(List.get(i));
                             New.remove(i);
+                            New.add(List.get(i));
                         }
                     }
                 }else if (List.size() > New.size()) {
@@ -786,14 +794,17 @@ public class Drawing extends View {
         }
     }
 
-    private class LongClickEvent extends AsyncTask<Long,String,Boolean> {
+    private class LongClickEvent extends AsyncTask<ContentHistory,String,Boolean> {
+        ContentHistory cont;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
         }
 
         @Override
-        protected Boolean doInBackground(Long... Time) {
+        protected Boolean doInBackground(ContentHistory... Time) {
+            cont = Time[0];
             long now = System.currentTimeMillis(), past = now;
             while (1000 >= now - past){
                 now = System.currentTimeMillis();
@@ -833,7 +844,8 @@ public class Drawing extends View {
                 alert.setNegativeButton("삭제", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         //DB에서 삭제
-
+                        RemoveData rd = new RemoveData();
+                        rd.execute(cont.getPath(), cont.getType(), Float.toString(cont.getX()), Float.toString(cont.getY()));
                     }
                 });
 
@@ -862,7 +874,7 @@ public class Drawing extends View {
                 gdt.start();
 
                 long now = System.currentTimeMillis(), past = now;
-                while (6000 >= now - past){ //HW 시간초 조절 필요
+                while (500 >= now - past){ //HW 시간초 조절 필요
                     now = System.currentTimeMillis();
                 }
             }
@@ -929,7 +941,8 @@ public class Drawing extends View {
                 errorString = e.toString();
             }
             if (result == null){
-                //Toast.makeText(Drawing.this.getContext(), errorString, Toast.LENGTH_SHORT).show();
+                All.clear();
+                drawPaint1.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
             } else if (result.startsWith("{")) {
                 mJsonString = result;
                 showResult sr = new showResult();
@@ -940,6 +953,94 @@ public class Drawing extends View {
             } else { }
         }
     }
+
+    private class RemoveData extends AsyncTask<String, Void, String> {
+        String errorString = null;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            Log.d(TAG, "response - " + result);
+
+            if (result == null){
+                Toast.makeText(Drawing.this.getContext(), errorString, Toast.LENGTH_SHORT).show();
+            } else {
+                //Toast.makeText(Drawing.this.getContext(), result, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String serverURL = "";
+            String postParameters = "";
+
+            HttpURLConnection conn = null;
+            DataOutputStream dos = null;
+
+            String lineEnd = "\r\n";
+            String twoHypens = "--";
+            String boundary = "*****";
+            if (params.length == 4) {
+                String searchKeyword1 = params[0];
+                String searchKeyword2 = params[1];
+                String searchKeyword3 = params[2];
+                String searchKeyword4 = params[3];
+
+                serverURL = "http://" + MainActivity.IPaddress + "/android_db_api/whiteboardDBdelete.php";
+                postParameters = "content_path=" + searchKeyword1 + "&content_type=" + searchKeyword2 + "&contentX=" + searchKeyword3 + "&contentY=" + searchKeyword4;
+
+                try {
+                    URL url = new URL(serverURL);
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(5000);
+                    conn.setConnectTimeout(5000);
+                    conn.setRequestMethod("POST");
+                    conn.setDoInput(true);
+                    conn.connect();
+
+                    OutputStream outputStream = conn.getOutputStream();
+                    outputStream.write(postParameters.getBytes("UTF-8"));
+                    outputStream.flush();
+                    outputStream.close();
+
+                    int responseStatusCode = conn.getResponseCode();
+                    Log.d(TAG, "response code Text - " + responseStatusCode);
+
+                    InputStream inputStream;
+                    if (responseStatusCode == HttpURLConnection.HTTP_OK) {
+                        inputStream = conn.getInputStream();
+                    } else {
+                        inputStream = conn.getErrorStream();
+                    }
+
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+
+                    while ((line = bufferedReader.readLine()) != null) {
+                        sb.append(line);
+                    }
+
+                    bufferedReader.close();
+                    conn.disconnect();
+
+                    return sb.toString().trim();
+                } catch (Exception e) {
+                    Log.d(TAG, "InsertData: Error ", e);
+                    errorString = e.toString();
+                }
+            }
+            return null;
+        }
+    }
+
+
 
     private class GetData extends AsyncTask<String, Void, String> {
         String errorString = null;

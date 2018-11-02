@@ -130,7 +130,7 @@ public class MemoListActivity extends AppCompatActivity {
             }
         });*/
 
-    /*    lvMemo.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        lvMemo.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view,int position, long id) {
                 String getNo = null;
@@ -146,7 +146,7 @@ public class MemoListActivity extends AppCompatActivity {
                 getData("http://" + MainActivity.IPaddress + "/android_db_api/memoList.php");
                 return false;
             }
-        });*/
+        });
     }
 
     @Override

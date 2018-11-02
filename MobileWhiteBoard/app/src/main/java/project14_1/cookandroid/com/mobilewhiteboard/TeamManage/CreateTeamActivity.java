@@ -58,7 +58,6 @@ public class CreateTeamActivity extends AppCompatActivity {
         edtTeamTitle = (EditText)findViewById(R.id.edtTeamTitle);
         edtTeamSummary = (EditText)findViewById(R.id.edtTeamSummary);
         btnTeamCreate= (Button)findViewById(R.id.btnTeamCreate);
-        Toast.makeText(getApplicationContext(), " id ="+masterID, Toast.LENGTH_LONG).show();
         btnTeamCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

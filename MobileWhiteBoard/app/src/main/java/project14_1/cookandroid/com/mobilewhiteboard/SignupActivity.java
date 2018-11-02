@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -48,7 +49,8 @@ public class SignupActivity extends AppCompatActivity {
     String mJsonString;
     ArrayList<HashMap<String, String>> mArrayList;
 
-    Button btnResister, checkID;
+    Button btnResister;
+    ImageButton checkID;
     TextView txtLoginGo;
     EditText edtID, edtName, edtEmail, edtPw, edtRePw;
     String userID, userPW, name, email;
@@ -80,7 +82,7 @@ public class SignupActivity extends AppCompatActivity {
         edtEmail = (EditText) findViewById(R.id.edtEmail);
         edtPw = (EditText) findViewById(R.id.edtPw);
         edtRePw = (EditText) findViewById(R.id.edtRePw);
-        checkID = (Button) findViewById(R.id.checkID);
+        checkID = (ImageButton) findViewById(R.id.checkID);
         edtPw.setOnTouchListener(mOnTouchListener);
         edtRePw.setOnTouchListener(mOnTouchListener1);
 

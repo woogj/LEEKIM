@@ -77,7 +77,6 @@ public class ShowTeamInfoActivity extends AppCompatActivity{
 
         TeamMaster = intent.getStringExtra("masterID");
 
-        Toast.makeText(getApplicationContext(),"masterID is "+TeamMaster+"and login id is "+MainActivity.id,Toast.LENGTH_LONG).show();
         if(TeamMaster.toString().equals(MainActivity.id)){
             btInviteTeam.setEnabled(true);
             btnChangeTeam.setEnabled(true);
