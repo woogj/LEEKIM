@@ -21,7 +21,7 @@ $no = $_POST['no'];
 $result = mysqli_query($con, "update memo set title = '$title', text = '$text', update_date = now() where no = '$no' and userID = '$userID'");
 
 if($result) {
-	echo 'success';
+	echo 'ss';
 } else {
 	echo 'failure';
 }

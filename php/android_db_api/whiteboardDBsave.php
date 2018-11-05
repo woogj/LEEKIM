@@ -15,17 +15,13 @@ $teamID = 1; //임시 값
 $userID = $_REQUEST['userID'];
 $content_path = $_REQUEST['content_path'];
 $content_type = $_REQUEST['content_type'];
-
-if ($content_type != "Drawing") {
-	$contentX = $_REQUEST['contentX'];
-	$contentY = $_REQUEST['contentY'];
-	$content_width = $_REQUEST['content_width'];
-	$content_height = $_REQUEST['content_height'];
+$contentX = $_REQUEST['contentX'];
+$contentY = $_REQUEST['contentY'];
+$content_width = $_REQUEST['content_width'];
+$content_height = $_REQUEST['content_height'];
 	
-	$sql = "INSERT into whiteboard (whiteboardID, teamID, userID, content_path, content_type, contentX, contentY, content_width, content_height) values('$whiteboardID', '$teamID', '$userID', '$content_path', '$content_type', '$contentX', '$contentY', '$content_width', '$content_height')";
-}else {
-	$sql = "INSERT into whiteboard (whiteboardID, teamID, userID, content_path, content_type) values('$whiteboardID', '$teamID', '$userID', '$content_path', '$content_type')";
-}
+$sql = "INSERT into whiteboard (whiteboardID, teamID, userID, content_path, content_type, contentX, contentY, content_width, content_height) values('$whiteboardID', '$teamID', '$userID', '$content_path', '$content_type', '$contentX', '$contentY', '$content_width', '$content_height')";
+
 $result = mysqli_query($link,$sql);
 
 if($result) {

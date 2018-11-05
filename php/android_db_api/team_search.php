@@ -10,15 +10,14 @@ if(mysqli_connect_errno($con))
 mysqli_set_charset($con,"utf8");
 
 
-//$id = $_REQUEST['userID'];
 
-$sql = "SELECT * FROM teamList";
+$sql = "SELECT teamList.* , members FROM teamList INNER JOIN (SELECT teamID, count(*) AS members FROM team GROUP BY teamID)t ON teamList.teamID = t.teamID";
 $result = mysqli_query($con,$sql);
 $data = array();
 
 while($row = mysqli_fetch_array($result)) {
 
-array_push($data, array('teamID'=>$row["teamID"], 'teamName'=>$row["teamName"], 'object'=>$row["object"], 'summary'=>$row["summary"], 'masterID'=>$row["masterID"],'reg_date'=>$row["reg_date"]));
+array_push($data, array('teamID'=>$row["teamID"], 'teamName'=>$row["teamName"], 'object'=>$row["object"], 'summary'=>$row["summary"], 'masterID'=>$row["masterID"],'members'=>$row["members"],'reg_date'=>$row["reg_date"]));
 
 
                    
