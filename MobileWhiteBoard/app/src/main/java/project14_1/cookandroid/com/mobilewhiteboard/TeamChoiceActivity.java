@@ -38,7 +38,7 @@ public class TeamChoiceActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                onBackPressed();
             }
         });
 
@@ -88,9 +88,9 @@ public class TeamChoiceActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        /*Intent intent = new Intent(getApplication(), MainViewActivity.class);
-        startActivity(intent);*/
-        finish();
+        Intent intent = new Intent(getApplication(), MainViewActivity.class);
+        startActivity(intent);
+        //finish();
     }
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
